@@ -1,0 +1,34 @@
+package org.imrofli.godfall.dao;
+
+import org.imrofli.godfall.data.Converter;
+import org.imrofli.godfall.data.Welcome;
+import org.imrofli.godfall.helpers.DataHelper;
+import org.imrofli.godfall.dao.intf.DataDao;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
+
+@Service
+public class DataDaoImpl implements DataDao {
+
+    private Welcome mainData;
+    @Override
+    public Welcome getMainData() {
+        if(mainData==null){
+            String filePath = DataHelper.getDatasetPath();
+            String content = null;
+            try {
+                content = Files.lines(Paths.get(filePath))
+                        .collect(Collectors.joining(System.lineSeparator()));
+                mainData = Converter.fromJsonString(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return mainData;
+    }
+}

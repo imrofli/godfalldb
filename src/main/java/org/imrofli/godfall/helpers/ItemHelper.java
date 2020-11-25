@@ -4,6 +4,9 @@ import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.dao.model.ItemType;
 import org.imrofli.godfall.dao.model.Magnitude;
 import org.imrofli.godfall.data.*;
+import org.imrofli.godfall.services.ItemScalingServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -11,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 public final class ItemHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemHelper.class);
 
     public static final String getLocation(List<String> tags) {
         if (tags != null && !tags.isEmpty()) {
@@ -177,6 +181,9 @@ public final class ItemHelper {
             for (FluffyNamedLootEffect named : namedLootEffects) {
                 LootEffect lootEffect = new LootEffect();
                 lootEffect.setName(named.getName());
+                if("ConnectedMightCritOvershield".equals(named.getName())){
+                    LOGGER.info("Magnitude {}", named.getMagnitudes());
+                }
                 Set<org.imrofli.godfall.dao.model.Magnitude> magnitudeSet = new HashSet<>();
                 if (named.getMagnitudes() != null) {
                     for (org.imrofli.godfall.data.Magnitude magn : named.getMagnitudes()) {
@@ -203,24 +210,29 @@ public final class ItemHelper {
             }
             if(effect.getLootEffectType() == LootEffectType.CONDITIONAL){
                 for(ConditionalLootEffectsCollection effectsCollection : conditionalLootEffects.getCollection()){
-                    if(effectsCollection.getNamedLootEffects()!=null) {
-                        for (PurpleNamedLootEffect purpleNamedLootEffect : effectsCollection.getNamedLootEffects()) {
-                            if (purpleNamedLootEffect.getMagnitudes() != null) {
-                                for (org.imrofli.godfall.data.Magnitude magn : purpleNamedLootEffect.getMagnitudes()) {
-                                    boolean wasAlreadyIn = false;
-                                    for (Magnitude lootMagnitude : effect.getMagnitudes()) {
-                                        if (lootMagnitude.getName().equals(magn.getMagnitudeName().toValue())) {
-                                            lootMagnitude.setScalar(magn.getScalar());
-                                            wasAlreadyIn = true;
+                    if(effectsCollection.getName().equals(effect.getName())) {
+                        if (effectsCollection.getNamedLootEffects() != null) {
+                            for (PurpleNamedLootEffect purpleNamedLootEffect : effectsCollection.getNamedLootEffects()) {
+                                if (purpleNamedLootEffect.getMagnitudes() != null) {
+                                    for (org.imrofli.godfall.data.Magnitude magn : purpleNamedLootEffect.getMagnitudes()) {
+                                        boolean wasAlreadyIn = false;
+                                        for (Magnitude lootMagnitude : effect.getMagnitudes()) {
+                                            if ("ConnectedMightCritOvershield".equals(effect.getName())) {
+                                                LOGGER.info("Magnitude {}", magn);
+                                            }
+                                            if (lootMagnitude.getName().equals(magn.getMagnitudeName().toValue())) {
+                                                lootMagnitude.setScalar(magn.getScalar());
+                                                wasAlreadyIn = true;
+                                            }
                                         }
-                                    }
-                                    if (!wasAlreadyIn) {
-                                        org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
-                                        entry.setName(magn.getMagnitudeName().toValue());
-                                        entry.setParameterType(getParamType(magn.getParamType()));
-                                        entry.setScalar(magn.getScalar());
+                                        if (!wasAlreadyIn) {
+                                            org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
+                                            entry.setName(magn.getMagnitudeName().toValue());
+                                            entry.setParameterType(getParamType(magn.getParamType()));
+                                            entry.setScalar(magn.getScalar());
 
-                                        effect.getMagnitudes().add(entry);
+                                            effect.getMagnitudes().add(entry);
+                                        }
                                     }
                                 }
                             }

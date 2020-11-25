@@ -9,5 +9,6 @@ public interface WeaponService {
 
     Set<Weapon> getWeapons();
     Weapon getWeapon(Long weaponId);
+    Weapon getWeaponByIdLoadAffinity(Long id);
 
 }

@@ -35,4 +35,9 @@ public class AugmentServiceImpl implements AugmentService {
         LOGGER.info("Getting augment id: {}", id);
         return augmentDao.findByIdAndFetchTraits(id);
     }
+
+    @Override
+    public Augment getAugmentByIdLoadAffinity(Long id) {
+        return augmentDao.findByIdAndFetchAffinities(id);
+    }
 }

@@ -10,4 +10,5 @@ public interface AugmentService {
 
     public Set<Augment> getAugments();
     public Augment getAugmentById(Long id);
+    public Augment getAugmentByIdLoadAffinity(Long id);
 }

@@ -40,4 +40,9 @@ public class BannerServiceImpl implements BannerService {
         Banner buffer = bannerDao.findByIdAndFetchTraits(bannerID);
         return buffer;
     }
+
+    @Override
+    public Banner getBannerByIdLoadAffinity(Long id) {
+        return bannerDao.findByIdAndFetchAffinities(id);
+    }
 }

@@ -34,4 +34,9 @@ public class WeaponServiceImpl implements WeaponService {
         Weapon buffer = weaponDao.findByIdAndFetchTraits(weaponId);
         return buffer;
     }
+
+    @Override
+    public Weapon getWeaponByIdLoadAffinity(Long id) {
+        return weaponDao.findByIdAndFetchAffinities(id);
+    }
 }

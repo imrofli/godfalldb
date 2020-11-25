@@ -9,4 +9,5 @@ public interface LifeStoneService {
 
     public Set<LifeStone> getLifeStones();
     public LifeStone getLifeStoneById(Long id);
+    LifeStone getLifeStoneByIdLoadAffinity(Long id);
 }

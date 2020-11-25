@@ -13,6 +13,7 @@ public interface TrinketService {
     public Set<Trinket> getRings();
     public Set<Trinket> getCharms();
     Trinket getTrinketById(Long id);
+    Trinket getTrinketByIdLoadAffinity(Long id);
 
 
 

@@ -28,4 +28,9 @@ public class LifeStoneServiceImpl implements LifeStoneService {
         LOGGER.info("Getting LifeStone id: {}", id);
         return lifeStoneDao.findByIdAndFetchTraits(id);
     }
+
+    @Override
+    public LifeStone getLifeStoneByIdLoadAffinity(Long id) {
+        return lifeStoneDao.findByIdAndFetchAffinities(id);
+    }
 }

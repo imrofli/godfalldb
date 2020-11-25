@@ -43,11 +43,12 @@ public class MainView extends AppLayout {
         RouterLink listLink_5 = new RouterLink("Rings", RingView.class);
         RouterLink listLink_6 = new RouterLink("Amulets", AmuletView.class);
         RouterLink listLink_7 = new RouterLink("Charms", CharmView.class);
+        RouterLink listLink_8 = new RouterLink("Traits", TraitView.class);
 
 
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
-        addToDrawer(new VerticalLayout(listLink, listLink_2, listLink_3, listLink_4, listLink_5, listLink_6, listLink_7));
+        addToDrawer(new VerticalLayout(listLink, listLink_2, listLink_3, listLink_4, listLink_5, listLink_6, listLink_7, listLink_8));
 
 
 

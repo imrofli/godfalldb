@@ -55,5 +55,10 @@ public class TrinketServiceImpl implements TrinketService {
         return trinketDao.findByIdAndFetchTraits(id);
     }
 
+    @Override
+    public Trinket getTrinketByIdLoadAffinity(Long id) {
+        return trinketDao.findByIdAndFetchAffinities(id);
+    }
+
 
 }

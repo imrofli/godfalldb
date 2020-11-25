@@ -1,5 +1,6 @@
 package org.imrofli.godfall.services;
 
+import com.helger.commons.math.RoundHelper;
 import org.imrofli.godfall.dao.intf.ItemScalingDao;
 import org.imrofli.godfall.dao.intf.LootEffectDao;
 import org.imrofli.godfall.dao.intf.TraitDao;
@@ -40,22 +41,32 @@ public class ItemScalingServiceImpl implements ItemScalingService {
             effectId=l.getId();
         }
         LootEffect lootEffect = lootEffectDao.findByIdAndFetch(effectId);
-        String toCompile = "\\%\\(([\\w\\.]+\\.?\\w*)\\)[df]\\%*";
+        String toCompile = "\\%(\\([\\w\\.]+\\.?\\w*\\)[df])\\%*";
         Pattern pattern = Pattern.compile(toCompile);
         Matcher matcher = pattern.matcher(trait.getDescription());
         String endString = trait.getDescription();
         while (matcher.find()) {
             String matched = matcher.group(1);
             for(Magnitude magnitude : lootEffect.getMagnitudes()){
+                Boolean  isFloat = false;
+                Boolean isDecimal = false;
+                if(matched.endsWith("f%") || matched.endsWith("f")){
+                    isFloat=true;
+                }
+                if(matched.endsWith("d%") || matched.endsWith("d")){
+                    isDecimal=true;
+                }
+
                 String[] matchSplit = matched.split("\\.");
                 String[] magnSplit = magnitude.getName().split("\\.");
+
                 if(magnSplit[magnSplit.length-1].equals(matchSplit[matchSplit.length-1])){
-                    String replaceValue = calculateSingleEntry(magnitude, itemScaling);
-                    endString = endString.replaceAll("\\%\\("+matched + "\\)[df]\\%?", replaceValue);
+                    String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
+                    endString = endString.replaceAll("\\%"+matched + "\\%?", replaceValue);
                 }
-                else if(matched.startsWith("Increase") && magnitude.getName().equals("Magnitude.X")){
-                    String replaceValue = calculateSingleEntry(magnitude, itemScaling);
-                    endString = endString.replaceAll("\\%\\("+matched + "\\)[df]\\%?", replaceValue);
+                else if(matched.startsWith("Increase") && (magnitude.getName().equals("Magnitude.X") || magnitude.getName().startsWith("Increase"))){
+                    String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
+                    endString = endString.replaceAll("\\%"+matched + "\\%?", replaceValue);
                 }
             }
 
@@ -63,7 +74,7 @@ public class ItemScalingServiceImpl implements ItemScalingService {
         return endString;
     }
 
-    private String calculateSingleEntry(Magnitude magnitude, ItemScaling itemScaling){
+    private String calculateSingleEntry(Magnitude magnitude, ItemScaling itemScaling, Boolean isFloat, Boolean isDecimal){
         LOGGER.info("Calculating: Magnitude - {} Scaling", magnitude, itemScaling);
         double min = 0;
         double max = 0;
@@ -72,6 +83,13 @@ public class ItemScalingServiceImpl implements ItemScalingService {
             case NON_SCALING:
                 min = magnitude.getScalar();
                 max = magnitude.getScalar();
+                if(magnitude.getName().equals("Magnitude.Chance")){
+                    min *= 100;
+                    min = RoundHelper.getRoundedUpFix(min, 0);
+                    max *= 100;
+                    max = RoundHelper.getRoundedUpFix(max, 0);
+                }
+
                 if(!magnitude.getName().equals("Duration") && !magnitude.getName().equals("Magnitude.Seconds.A") &&
                         !magnitude.getName().equals("Magnitude.Seconds.B") ) {
                     takeFaceValue=true;

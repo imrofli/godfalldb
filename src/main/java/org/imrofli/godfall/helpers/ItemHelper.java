@@ -57,7 +57,7 @@ public final class ItemHelper {
     public static final String getTraitName(List<String> tags) {
         if (tags != null && !tags.isEmpty()) {
             for (String entry : tags) {
-                if (entry.startsWith("Trigger.") || entry.startsWith("Connected")) {
+                if (entry.startsWith("Trigger.") || entry.startsWith("Connected") || entry.startsWith("Scale")) {
                     return entry;
                 }
             }
@@ -217,9 +217,6 @@ public final class ItemHelper {
                                     for (org.imrofli.godfall.data.Magnitude magn : purpleNamedLootEffect.getMagnitudes()) {
                                         boolean wasAlreadyIn = false;
                                         for (Magnitude lootMagnitude : effect.getMagnitudes()) {
-                                            if ("ConnectedMightCritOvershield".equals(effect.getName())) {
-                                                LOGGER.info("Magnitude {}", magn);
-                                            }
                                             if (lootMagnitude.getName().equals(magn.getMagnitudeName().toValue())) {
                                                 lootMagnitude.setScalar(magn.getScalar());
                                                 wasAlreadyIn = true;
@@ -236,6 +233,33 @@ public final class ItemHelper {
                                     }
                                 }
                             }
+                        }
+                        else if(effectsCollection.getTraitModifiers()!=null){
+                                if (effectsCollection.getTraitModifiers() != null) {
+                                        boolean wasAlreadyIn = false;
+                                        for (Magnitude lootMagnitude : effect.getMagnitudes()) {
+                                            for(String s : effectsCollection.getTraitModifiers().getModifierNames()){
+                                                if (lootMagnitude.getName().equals("s")) {
+                                                    lootMagnitude.setScalar((double) effectsCollection.getTraitModifiers().getScalar());
+                                                    wasAlreadyIn = true;
+                                                }
+                                            }
+
+                                        }
+                                        if (!wasAlreadyIn) {
+                                            org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
+                                            for(String s : effectsCollection.getTraitModifiers().getModifierNames()){
+                                                entry.setName(s);
+                                                entry.setParameterType(getParamType(effectsCollection.getConditionParamType()));
+                                                entry.setScalar((double) effectsCollection.getTraitModifiers().getScalar());
+
+                                                effect.getMagnitudes().add(entry);
+                                            }
+
+                                        }
+
+                                }
+
                         }
                     }
 

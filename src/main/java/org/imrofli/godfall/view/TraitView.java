@@ -6,12 +6,15 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import org.imrofli.godfall.dao.model.Trait;
+import org.imrofli.godfall.dao.model.TraitType;
 import org.imrofli.godfall.services.intf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
 
 @Route(value = "traits", layout = MainView.class)
 public class TraitView extends HorizontalLayout {
@@ -59,7 +62,8 @@ public class TraitView extends HorizontalLayout {
 
     @PostConstruct
     public void init() {
-        traitGrid.setItems(traitService.getTrait());
+        Set<Trait> traitSet = traitService.getTrait();
+        traitGrid.setItems(traitSet);
         traitGrid.setSizeFull();
         traitDetailView = new TraitDetailView(traitService, weaponService, trinketService,  augmentService,  bannerService, lifeStoneService);
         this.addAndExpand(traitDetailView);

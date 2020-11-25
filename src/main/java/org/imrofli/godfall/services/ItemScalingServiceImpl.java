@@ -57,16 +57,21 @@ public class ItemScalingServiceImpl implements ItemScalingService {
                     isDecimal=true;
                 }
 
-                String[] matchSplit = matched.split("\\.");
-                String[] magnSplit = magnitude.getName().split("\\.");
+                Pattern patternTwo = Pattern.compile("\\(([\\w\\.]+\\.?\\w*)\\)[df]");
+                Matcher matcherTwo = patternTwo.matcher(matched);
+                while (matcherTwo.find()){
+                    String matchedTwo = matcherTwo.group(1);
+                    String[] matchSplit = matchedTwo.split("\\.");
+                    String[] magnSplit = magnitude.getName().split("\\.");
 
-                if(magnSplit[magnSplit.length-1].equals(matchSplit[matchSplit.length-1])){
-                    String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
-                    endString = endString.replaceAll("\\%"+matched + "\\%?", replaceValue);
-                }
-                else if(matched.startsWith("Increase") && (magnitude.getName().equals("Magnitude.X") || magnitude.getName().startsWith("Increase"))){
-                    String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
-                    endString = endString.replaceAll("\\%"+matched + "\\%?", replaceValue);
+                    if(magnSplit[magnSplit.length-1].equals(matchSplit[matchSplit.length-1])){
+                        String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
+                        endString = endString.replaceAll("\\%\\("+matchedTwo + "\\)[df]\\%?", replaceValue);
+                    }
+                    else if(matched.startsWith("Increase") && (magnitude.getName().equals("Magnitude.X") || magnitude.getName().startsWith("Increase"))){
+                        String replaceValue = calculateSingleEntry(magnitude, itemScaling, isFloat, isDecimal);
+                        endString = endString.replaceAll("\\%\\("+matchedTwo + "\\)[df]\\%?", replaceValue);
+                    }
                 }
             }
 
@@ -83,11 +88,15 @@ public class ItemScalingServiceImpl implements ItemScalingService {
             case NON_SCALING:
                 min = magnitude.getScalar();
                 max = magnitude.getScalar();
-                if(magnitude.getName().equals("Magnitude.Chance")){
-                    min *= 100;
-                    min = RoundHelper.getRoundedUpFix(min, 0);
-                    max *= 100;
-                    max = RoundHelper.getRoundedUpFix(max, 0);
+
+                if(!magnitude.getName().equals("Magnitude.Duration") && !magnitude.getName().equals("Magnitude.Seconds.A") &&
+                        !magnitude.getName().equals("Magnitude.Seconds.B") ) {
+                    if (isDecimal) {
+                        min *= 100;
+                        min = RoundHelper.getRoundedUpFix(min, 0);
+                        max *= 100;
+                        max = RoundHelper.getRoundedUpFix(max, 0);
+                    }
                 }
 
                 if(!magnitude.getName().equals("Duration") && !magnitude.getName().equals("Magnitude.Seconds.A") &&

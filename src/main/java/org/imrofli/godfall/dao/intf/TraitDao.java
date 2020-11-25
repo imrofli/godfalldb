@@ -20,6 +20,11 @@ public interface TraitDao extends JpaRepository<Trait,Long> {
     Set<Trait> findAllAndFetch();
     @Query(value = "SELECT distinct t from Trait t order by t.traitType")
     Set<Trait> findAllAndOrderByTraitType();
+    @Query(value = "SELECT distinct t from Trait t LEFT JOIN FETCH t.weapons LEFT JOIN fetch t.augments LEFT join fetch t.trinkets LEFT join fetch t.lifeStones LEFT join fetch t.banners where t.traitType not in :types order by t.traitType")
+    Set<Trait> findAllAndOrderByTraitType(@Param("types") Set<TraitType> traitTypes);
+    @Query(value = "SELECT * from Trait t where t.trait_Type not in ('SKILLGRID', 'BOON') and (t.id in(Select b.trait_id from banner_traits b) or  (t.id in(Select au.trait_id from augment_traits au)) or (t.id in(Select lf.trait_id from lifestone_traits lf)) or (t.id in(Select tr.trait_id from trinket_traits tr)) or (t.id in(Select w.trait_id from weapon_traits w))) order by t.trait_Type", nativeQuery = true)
+    Set<Trait> findAllThatHavEntryAndOrderByTraitType(@Param("types") Set<TraitType> traitTypes);
+
     Set<Trait> findAllByTraitGroup(String traitGroup);
     @Query(value = "SELECT t from Trait t LEFT JOIN FETCH t.weapons LEFT JOIN fetch t.augments LEFT JOIN fetch t.trinkets LEFT JOIN fetch t.lifeStones LEFT JOIN fetch t.banners WHERE t.id = :id")
     Trait findByIdAndFetchAll(@Param("id") Long id);

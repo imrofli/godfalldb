@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.dao.intf.TraitDao;
 import org.imrofli.godfall.dao.model.Trait;
+import org.imrofli.godfall.dao.model.TraitType;
 import org.imrofli.godfall.data.*;
 import org.imrofli.godfall.models.NamedLootEffect;
 import org.imrofli.godfall.models.TraitInfo;
@@ -13,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TraitServiceImpl implements TraitService {
@@ -30,7 +28,10 @@ public class TraitServiceImpl implements TraitService {
 
     @Override
     public Set<Trait> getTrait() {
-        return traitDao.findAllAndOrderByTraitType();
+        Set<TraitType> traitTypes = new HashSet<TraitType>();
+        traitTypes.add(TraitType.BOON);
+        traitTypes.add(TraitType.SKILLGRID);
+        return traitDao.findAllThatHavEntryAndOrderByTraitType(traitTypes);
     }
 
     @Override

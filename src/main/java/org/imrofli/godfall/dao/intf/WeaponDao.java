@@ -16,5 +16,7 @@ public interface WeaponDao extends JpaRepository<Weapon, Long> {
 
     @Query(value = "SELECT w from Weapon w LEFT join fetch w.affinities where w.id = :id")
     Weapon findByIdAndFetchAffinities(@Param("id") Long id);
+    @Query(value = "SELECT * from Weapon w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
+    Set<Weapon> findAllByLootInfoId(@Param("tag") String lootInfoTag);
 
 }

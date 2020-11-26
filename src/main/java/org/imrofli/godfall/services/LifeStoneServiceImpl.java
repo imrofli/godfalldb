@@ -33,4 +33,9 @@ public class LifeStoneServiceImpl implements LifeStoneService {
     public LifeStone getLifeStoneByIdLoadAffinity(Long id) {
         return lifeStoneDao.findByIdAndFetchAffinities(id);
     }
+
+    @Override
+    public Set<LifeStone> getAllByLootInfoDropTag(String dropTag) {
+        return null;
+    }
 }

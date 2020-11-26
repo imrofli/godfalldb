@@ -40,4 +40,9 @@ public class AugmentServiceImpl implements AugmentService {
     public Augment getAugmentByIdLoadAffinity(Long id) {
         return augmentDao.findByIdAndFetchAffinities(id);
     }
+
+    @Override
+    public Set<Augment> getAllByLootInfoDropTag(String dropTag) {
+        return augmentDao.findAllByLootInfoId(dropTag);
+    }
 }

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class LootInfoServiceImpl implements LootInfoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LootInfo.class);
@@ -24,5 +26,15 @@ public class LootInfoServiceImpl implements LootInfoService {
     public LootInfo getLootInfo(Long lootInfoId) {
         LOGGER.info("Getting LootInfo id: {}", lootInfoId);
         return lootInfoDao.findByIdAndFetch(lootInfoId);
+    }
+
+    @Override
+    public Set<LootInfo> getAllLootInfo() {
+        return lootInfoDao.findAllAndFetch();
+    }
+
+    @Override
+    public Set<String> getAllDropTags() {
+        return lootInfoDao.findAllDropTags();
     }
 }

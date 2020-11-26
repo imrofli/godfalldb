@@ -39,4 +39,10 @@ public class WeaponServiceImpl implements WeaponService {
     public Weapon getWeaponByIdLoadAffinity(Long id) {
         return weaponDao.findByIdAndFetchAffinities(id);
     }
+
+    @Override
+    public Set<Weapon> getAllByLootInfoDropTag(String dropTag) {
+        return weaponDao.findAllByLootInfoId(dropTag);
+    }
+
 }

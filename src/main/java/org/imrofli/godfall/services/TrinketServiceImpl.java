@@ -60,5 +60,10 @@ public class TrinketServiceImpl implements TrinketService {
         return trinketDao.findByIdAndFetchAffinities(id);
     }
 
+    @Override
+    public Set<Trinket> getAllByLootInfoDropTag(String dropTag) {
+        return trinketDao.findAllByLootInfoId(dropTag);
+    }
+
 
 }

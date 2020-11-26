@@ -11,5 +11,6 @@ public interface BannerService {
     Set<Banner> getBanners();
     Banner getBannerByID(Long banneerId);
     Banner getBannerByIdLoadAffinity(Long id);
+    Set<Banner> getAllByLootInfoDropTag(String dropTag);
 
 }

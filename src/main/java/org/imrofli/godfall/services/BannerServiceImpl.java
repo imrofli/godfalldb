@@ -45,4 +45,9 @@ public class BannerServiceImpl implements BannerService {
     public Banner getBannerByIdLoadAffinity(Long id) {
         return bannerDao.findByIdAndFetchAffinities(id);
     }
+
+    @Override
+    public Set<Banner> getAllByLootInfoDropTag(String dropTag) {
+        return bannerDao.findAllByLootInfoId(dropTag);
+    }
 }

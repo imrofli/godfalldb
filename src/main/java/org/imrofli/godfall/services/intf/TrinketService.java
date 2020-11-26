@@ -14,6 +14,7 @@ public interface TrinketService {
     public Set<Trinket> getCharms();
     Trinket getTrinketById(Long id);
     Trinket getTrinketByIdLoadAffinity(Long id);
+    Set<Trinket> getAllByLootInfoDropTag(String dropTag);
 
 
 

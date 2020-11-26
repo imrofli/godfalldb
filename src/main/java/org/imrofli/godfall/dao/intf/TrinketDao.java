@@ -3,6 +3,7 @@ package org.imrofli.godfall.dao.intf;
 import org.imrofli.godfall.dao.model.LifeStone;
 import org.imrofli.godfall.dao.model.Trinket;
 import org.imrofli.godfall.dao.model.ItemType;
+import org.imrofli.godfall.dao.model.Weapon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,7 @@ public interface TrinketDao extends JpaRepository<Trinket, Long> {
 
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.affinities where a.id = :id")
     Trinket findByIdAndFetchAffinities(@Param("id") Long id);
+    Set<Trinket> findAllByLootInfoId(Long lootInfoId);
+    @Query(value = "SELECT * from Trinket w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
+    Set<Trinket> findAllByLootInfoId(@Param("tag") String lootInfoTag);
 }

@@ -38,11 +38,13 @@ public class AugmentServiceImpl implements AugmentService {
 
     @Override
     public Augment getAugmentByIdLoadAffinity(Long id) {
+        LOGGER.info("Getting Augment by id and Fetch: {}", id);
         return augmentDao.findByIdAndFetchAffinities(id);
     }
 
     @Override
     public Set<Augment> getAllByLootInfoDropTag(String dropTag) {
-        return augmentDao.findAllByLootInfoId(dropTag);
+        LOGGER.info("Getting Augment by drop tag: {}", dropTag);
+        return augmentDao.findAllByLootInfoTag(dropTag);
     }
 }

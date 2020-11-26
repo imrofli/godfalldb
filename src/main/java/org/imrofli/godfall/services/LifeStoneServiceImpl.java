@@ -31,11 +31,13 @@ public class LifeStoneServiceImpl implements LifeStoneService {
 
     @Override
     public LifeStone getLifeStoneByIdLoadAffinity(Long id) {
+        LOGGER.info("Getting Lifestone by id and fetch affinity: {}", id);
         return lifeStoneDao.findByIdAndFetchAffinities(id);
     }
 
     @Override
     public Set<LifeStone> getAllByLootInfoDropTag(String dropTag) {
-        return null;
+        LOGGER.info("Getting Lifestones by drop tag: {}", dropTag);
+        return lifeStoneDao.findAllByLootInfoTag(dropTag);
     }
 }

@@ -28,6 +28,7 @@ public class TraitServiceImpl implements TraitService {
 
     @Override
     public Set<Trait> getTrait() {
+        LOGGER.info("Getting all Traits");
         Set<TraitType> traitTypes = new HashSet<TraitType>();
         traitTypes.add(TraitType.BOON);
         traitTypes.add(TraitType.SKILLGRID);
@@ -36,11 +37,13 @@ public class TraitServiceImpl implements TraitService {
 
     @Override
     public Trait getTrait(Long traitId) {
+        LOGGER.info("Getting Trait by id: {}", traitId);
         return traitDao.findByIdAndFetchWeapons(traitId);
     }
 
     @Override
     public Trait getTraitAndFetch(Long traitId) {
+        LOGGER.info("Getting Trait and Fetch by id: {}", traitId);
         return traitDao.findByIdAndFetchAll(traitId);
     }
 }

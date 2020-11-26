@@ -1,22 +1,13 @@
 package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.dao.intf.BannerDao;
-import org.imrofli.godfall.dao.intf.WeaponDao;
 import org.imrofli.godfall.dao.model.Banner;
-import org.imrofli.godfall.dao.model.Weapon;
-import org.imrofli.godfall.data.BannersCollection;
-import org.imrofli.godfall.helpers.ItemHelper;
 import org.imrofli.godfall.services.intf.BannerService;
-import org.imrofli.godfall.dao.intf.DataDao;
-import org.imrofli.godfall.services.intf.LootInfoService;
-import org.imrofli.godfall.services.intf.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -43,11 +34,13 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public Banner getBannerByIdLoadAffinity(Long id) {
+        LOGGER.info("Getting Banners by id: {}", id);
         return bannerDao.findByIdAndFetchAffinities(id);
     }
 
     @Override
     public Set<Banner> getAllByLootInfoDropTag(String dropTag) {
-        return bannerDao.findAllByLootInfoId(dropTag);
+        LOGGER.info("Getting Banners by drop tag: {}", dropTag);
+        return bannerDao.findAllByLootInfoTag(dropTag);
     }
 }

@@ -18,8 +18,6 @@ public interface LifeStoneDao extends JpaRepository<LifeStone, Long> {
     @Query(value = "SELECT a from LifeStone a LEFT join fetch a.affinities where a.id = :id")
     LifeStone findByIdAndFetchAffinities(@Param("id") Long id);
 
-    Set<LifeStone> findAllByLootInfoId(Long lootInfoId);
-
-    @Query(value = "SELECT * from LifeStone w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
-    Set<LifeStone> findAllByLootInfoId(@Param("tag") String lootInfoTag);
+    @Query(value = "SELECT * from Life_Stone w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
+    Set<LifeStone> findAllByLootInfoTag(@Param("tag") String lootInfoTag);
 }

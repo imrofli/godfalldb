@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -57,12 +55,14 @@ public class TrinketServiceImpl implements TrinketService {
 
     @Override
     public Trinket getTrinketByIdLoadAffinity(Long id) {
+        LOGGER.info("Getting Trinkets by id: {}", id);
         return trinketDao.findByIdAndFetchAffinities(id);
     }
 
     @Override
     public Set<Trinket> getAllByLootInfoDropTag(String dropTag) {
-        return trinketDao.findAllByLootInfoId(dropTag);
+        LOGGER.info("Getting Trinkets by drop tag: {}", dropTag);
+        return trinketDao.findAllByLootInfoTag(dropTag);
     }
 
 

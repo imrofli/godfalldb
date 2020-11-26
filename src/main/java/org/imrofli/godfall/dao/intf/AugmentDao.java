@@ -18,8 +18,7 @@ public interface AugmentDao extends JpaRepository<Augment, Long> {
     Augment findByIdAndFetchTraits(@Param("id") Long id);
     @Query(value = "SELECT a from Augment a LEFT join fetch a.affinities where a.id = :id")
     Augment findByIdAndFetchAffinities(@Param("id") Long id);
-    Set<Augment> findAllByLootInfoId(Long lootInfoId);
     @Query(value = "SELECT * from Augment w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
-    Set<Augment> findAllByLootInfoId(@Param("tag") String lootInfoTag);
+    Set<Augment> findAllByLootInfoTag(@Param("tag") String lootInfoTag);
 
 }

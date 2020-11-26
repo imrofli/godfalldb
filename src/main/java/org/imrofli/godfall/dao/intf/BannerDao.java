@@ -14,7 +14,6 @@ public interface BannerDao extends JpaRepository<Banner, Long> {
     Banner findByIdAndFetchTraits(@Param("id") Long id);
     @Query(value = "SELECT b from Banner b LEFT join fetch b.affinities where b.id = :id")
     Banner findByIdAndFetchAffinities(@Param("id") Long id);
-    Set<Banner> findAllByLootInfoId(Long lootInfoId);
     @Query(value = "SELECT * from Banner w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)
-    Set<Banner> findAllByLootInfoId(@Param("tag") String lootInfoTag);
+    Set<Banner> findAllByLootInfoTag(@Param("tag") String lootInfoTag);
 }

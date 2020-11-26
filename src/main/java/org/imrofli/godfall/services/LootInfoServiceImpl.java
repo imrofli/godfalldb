@@ -30,11 +30,13 @@ public class LootInfoServiceImpl implements LootInfoService {
 
     @Override
     public Set<LootInfo> getAllLootInfo() {
+        LOGGER.info("Getting all");
         return lootInfoDao.findAllAndFetch();
     }
 
     @Override
     public Set<String> getAllDropTags() {
+        LOGGER.info("Getting all Drop_tags");
         return lootInfoDao.findAllDropTags();
     }
 }

@@ -31,6 +31,7 @@ public class BannerView extends HorizontalLayout {
     private BannerDetailView bannerDetailView;
 
     public BannerView() {
+        LOGGER.info("Loading Banner Page");
         bannerGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         bannerGrid.setVerticalScrollingEnabled(true);
         bannerGrid.addColumn(Banner::getName).setResizable(true).setHeader("Name");

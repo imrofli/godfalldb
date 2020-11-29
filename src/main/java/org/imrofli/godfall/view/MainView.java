@@ -8,8 +8,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainView extends AppLayout {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainView.class);
 
     public MainView() {
         createHeader();
@@ -17,6 +20,7 @@ public class MainView extends AppLayout {
     }
 
     private void createHeader() {
+        LOGGER.info("Loading Main Page");
         H1 logo = new H1("GodfallDB");
         logo.addClassName("logo");
 
@@ -45,11 +49,12 @@ public class MainView extends AppLayout {
         RouterLink listLink_7 = new RouterLink("Charms", CharmView.class);
         RouterLink listLink_8 = new RouterLink("Traits", TraitView.class);
         RouterLink listLink_9 = new RouterLink("Loot info", LootInfoOverviewView.class);
+        RouterLink listLink_10 = new RouterLink("Skills", SkillView.class);
 
 
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
-        addToDrawer(new VerticalLayout(listLink, listLink_2, listLink_3, listLink_4, listLink_5, listLink_6, listLink_7, listLink_8, listLink_9));
+        addToDrawer(new VerticalLayout(listLink, listLink_2, listLink_3, listLink_4, listLink_5, listLink_6, listLink_7, listLink_8, listLink_9, listLink_10));
 
 
 

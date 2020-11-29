@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class ItemHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemHelper.class);
+
+    private static final Map<String, SkillGridHelperModel> skillGridMap = new HashMap<>(24);
 
     public static final String getLocation(List<String> tags) {
         if (tags != null && !tags.isEmpty()) {
@@ -211,6 +211,47 @@ public final class ItemHelper {
             if(effect.getLootEffectType() == LootEffectType.CONDITIONAL){
                 for(ConditionalLootEffectsCollection effectsCollection : conditionalLootEffects.getCollection()){
                     if(effectsCollection.getName().equals(effect.getName())) {
+                        effect.setApplyForEach(effectsCollection.getApplyForEach());
+                        effect.setApplyToConnected(effectsCollection.getApplyToConnected());
+                        effect.setApplyToSelf(effectsCollection.getApplyToSelf());
+                        effect.setConditionParamScalar(effectsCollection.getConditionParamScalar());
+                        effect.setConditionName(effectsCollection.getConditionName().toValue());
+                        effect.setGrantedEffectDescription(effectsCollection.getGrantedEffectDescription());
+                        if(effectsCollection.getConditionParamCategory() !=null && effectsCollection.getConditionParamCategory().enumValue != null) {
+                            effect.setConditionParamCategory(effectsCollection.getConditionParamCategory().enumValue.toValue());
+                        }
+                        if(effectsCollection.getConditionParamType() !=null) {
+                            switch (effectsCollection.getConditionParamType()){
+                                case NO_VARIANCE_CORE_ATTRIBUTE_PERCENT:
+                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_CORE_ATTRIBUTE_PERCENT);
+                                    break;
+                                case NO_VARIANCE_DEFENSE_PERCENT:
+                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_DEFENSE_PERCENT);
+                                    break;
+                                case NO_VARIANCE_PLAYER_POWER:
+                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_PLAYER_POWER);
+                                    break;
+                                case CORE_ATTRIBUTE_PERCENT:
+                                    effect.setConditionParamType(ParameterType.CORE_ATTRIBUTE_PERCENT);
+                                    break;
+                                case ATTRIBUTE_NO_VARIANCE:
+                                    effect.setConditionParamType(ParameterType.ATTRIBUTE_NO_VARIANCE);
+                                    break;
+                                case DEFENSE_PERCENT:
+                                    effect.setConditionParamType(ParameterType.DEFENSE_PERCENT);
+                                    break;
+                                case NON_SCALING:
+                                    effect.setConditionParamType(ParameterType.NON_SCALING);
+                                    break;
+                                case PLAYER_POWER:
+                                    effect.setConditionParamType(ParameterType.PLAYER_POWER);
+                                    break;
+                                case CORE_ATTRIBUTE:
+                                    effect.setConditionParamType(ParameterType.CORE_ATTRIBUTE);
+                                    break;
+                            }
+                        }
+
                         if (effectsCollection.getNamedLootEffects() != null) {
                             for (PurpleNamedLootEffect purpleNamedLootEffect : effectsCollection.getNamedLootEffects()) {
                                 if (purpleNamedLootEffect.getMagnitudes() != null) {
@@ -408,5 +449,80 @@ public final class ItemHelper {
                 }
         }
         return Affinity.NA;
+    }
+
+    public static void updateSkillgridData(Trait trait, List<MasteryEntitlementsCollection> masteryEntitlementsCollections, Map<String, Localization> localization){
+
+        for(MasteryEntitlementsCollection m : masteryEntitlementsCollections){
+            if(trait.getName().equals(m.getTraitName())){
+                trait.setMasteryEntitlements(m.getID());
+                trait.setTraitGroupBulk(m.getMasteryID());
+                trait.setTraitGroupBulkId(m.getMinPoints());
+            }
+        }
+        Localization loc = localization.get(trait.getMasteryEntitlements());
+        if(loc!=null){
+            StringBuilder sb = new StringBuilder();
+            sb.append(loc.getDescription().stringValue);
+            sb.append(" ");
+            if(loc.getDescription()!= null && loc.getDescription().stringArrayValue!=null){
+                for(String s : loc.getDescription().stringArrayValue){
+                    sb.append(s);
+                    sb.append(" ");
+                }
+            }
+            trait.setGridDesc(sb.toString().trim());
+            sb = new StringBuilder();
+            sb.append(loc.getName().stringValue);
+            sb.append(" ");
+            if(loc.getName()!= null && loc.getName().stringArrayValue!=null){
+                for(String s : loc.getName().stringArrayValue){
+                    sb.append(s);
+                    sb.append(" ");
+                }
+            }
+            trait.setGridName(sb.toString().trim());
+            SkillGridHelperModel skillGridHelperModel = getSkillGridMap().get(trait.getTraitGroupBulk());
+            if(skillGridHelperModel!=null){
+                trait.setGridX(skillGridHelperModel.getGridX());
+                trait.setGridY(skillGridHelperModel.getGridY());
+            }
+        }
+    }
+
+    public static Map<String, SkillGridHelperModel> getSkillGridMap(){
+        if(skillGridMap.isEmpty()){
+            skillGridMap.put("Mastery.Player.Combat.WeaponArt", new SkillGridHelperModel(1, 1));
+            skillGridMap.put("Mastery.Player.Combat.WeaponTiming", new SkillGridHelperModel(2, 1));
+            skillGridMap.put("Mastery.Player.Combat.Might", new SkillGridHelperModel(3, 1));
+            skillGridMap.put("Mastery.Player.Combat.ComboCounter", new SkillGridHelperModel(4, 1));
+            skillGridMap.put("Mastery.Player.Combat.WeaponPolarity", new SkillGridHelperModel(5, 1));
+
+            skillGridMap.put("Mastery.Player.Combat.Soulshatter", new SkillGridHelperModel(1, 2));
+            skillGridMap.put("Mastery.Player.Combat.Anvil", new SkillGridHelperModel(2, 2));
+            skillGridMap.put("Mastery.Player.Combat.CritDamage", new SkillGridHelperModel(3, 2));
+            skillGridMap.put("Mastery.Player.Combat.Drain", new SkillGridHelperModel(4, 2));
+            skillGridMap.put("Mastery.Player.Combat.HeavyAttacks", new SkillGridHelperModel(5, 2));
+
+            skillGridMap.put("Mastery.Player.Combat.Vitality", new SkillGridHelperModel(1, 3));
+            skillGridMap.put("Mastery.Player.Combat.CritChance", new SkillGridHelperModel(2, 3));
+            skillGridMap.put("Mastery.Player.Combat.ArchonPower", new SkillGridHelperModel(3, 3));
+            skillGridMap.put("Mastery.Player.Combat.Ailments", new SkillGridHelperModel(4, 3));
+            skillGridMap.put("Mastery.Player.Combat.AllStats", new SkillGridHelperModel(5, 3));
+
+            skillGridMap.put("Mastery.Player.Combat.ShieldAttacks", new SkillGridHelperModel(1, 4));
+            skillGridMap.put("Mastery.Player.Combat.ShieldPrime", new SkillGridHelperModel(2, 4));
+            skillGridMap.put("Mastery.Player.Combat.Resistance", new SkillGridHelperModel(3, 4));
+            skillGridMap.put("Mastery.Player.Combat.Recovery", new SkillGridHelperModel(4, 4));
+            skillGridMap.put("Mastery.Player.Combat.Takedowns", new SkillGridHelperModel(5, 4));
+
+            skillGridMap.put("Mastery.Player.Combat.ShieldTechniques", new SkillGridHelperModel(1, 5));
+            skillGridMap.put("Mastery.Player.Combat.Banners", new SkillGridHelperModel(2, 5));
+            skillGridMap.put("Mastery.Player.Combat.Spirit", new SkillGridHelperModel(3, 5));
+            skillGridMap.put("Mastery.Player.Combat.Weakpoints", new SkillGridHelperModel(4, 5));
+            skillGridMap.put("Mastery.Player.Combat.Finesse", new SkillGridHelperModel(5, 5));
+
+        }
+        return skillGridMap;
     }
 }

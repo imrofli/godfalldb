@@ -36,6 +36,7 @@ public class WeaponView extends HorizontalLayout {
     private WeaponDetailView weaponDetailView;
 
     public WeaponView() {
+        LOGGER.info("Loading Weapon Page");
         weaponGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         weaponGrid.setVerticalScrollingEnabled(true);
         weaponGrid.addColumn(Weapon::getName).setResizable(true).setHeader("Name");

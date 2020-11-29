@@ -34,6 +34,7 @@ public class LifeStoneView extends HorizontalLayout {
     private LifeStoneDetailView lifeStoneDetailView;
 
     public LifeStoneView() {
+        LOGGER.info("Loading Lifestone Page");
         lifeStoneGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         lifeStoneGrid.setVerticalScrollingEnabled(true);
         lifeStoneGrid.addColumn(LifeStone::getName).setResizable(true).setHeader("Name");

@@ -34,6 +34,7 @@ public class CharmView extends HorizontalLayout {
     private RingDetailView trinketDetailView;
 
     public CharmView() {
+        LOGGER.info("Loading Charm Page");
         trinketGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         trinketGrid.setVerticalScrollingEnabled(true);
         trinketGrid.addColumn(Trinket::getName).setResizable(true).setHeader("Name");

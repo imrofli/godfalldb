@@ -34,6 +34,7 @@ public class AmuletView extends HorizontalLayout {
     private RingDetailView trinketDetailView;
 
     public AmuletView() {
+        LOGGER.info("Loading Amulet Page");
         trinketGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         trinketGrid.setVerticalScrollingEnabled(true);
         trinketGrid.addColumn(Trinket::getName).setResizable(true).setHeader("Name");

@@ -18,6 +18,22 @@ public class LootEffect extends AbstractEntity{
     @Enumerated(EnumType.STRING)
     private LootEffectType lootEffectType;
 
+    private Boolean applyToSelf;
+
+    private Boolean applyToConnected;
+
+    private Boolean applyForEach;
+
+    private Long conditionParamScalar;
+
+    private ParameterType conditionParamType;
+
+    private String conditionParamCategory;
+
+    private String conditionName;
+
+    private String grantedEffectDescription;
+
     public String getName() {
         return name;
     }
@@ -40,6 +56,70 @@ public class LootEffect extends AbstractEntity{
 
     public void setLootEffectType(LootEffectType lootEffectType) {
         this.lootEffectType = lootEffectType;
+    }
+
+    public Boolean getApplyToSelf() {
+        return applyToSelf;
+    }
+
+    public void setApplyToSelf(Boolean applyToSelf) {
+        this.applyToSelf = applyToSelf;
+    }
+
+    public Boolean getApplyToConnected() {
+        return applyToConnected;
+    }
+
+    public void setApplyToConnected(Boolean applyToConnected) {
+        this.applyToConnected = applyToConnected;
+    }
+
+    public Boolean getApplyForEach() {
+        return applyForEach;
+    }
+
+    public void setApplyForEach(Boolean applyForEach) {
+        this.applyForEach = applyForEach;
+    }
+
+    public Long getConditionParamScalar() {
+        return conditionParamScalar;
+    }
+
+    public void setConditionParamScalar(Long conditionParamScalar) {
+        this.conditionParamScalar = conditionParamScalar;
+    }
+
+    public ParameterType getConditionParamType() {
+        return conditionParamType;
+    }
+
+    public void setConditionParamType(ParameterType conditionParamType) {
+        this.conditionParamType = conditionParamType;
+    }
+
+    public String getConditionParamCategory() {
+        return conditionParamCategory;
+    }
+
+    public void setConditionParamCategory(String conditionParamCategory) {
+        this.conditionParamCategory = conditionParamCategory;
+    }
+
+    public String getConditionName() {
+        return conditionName;
+    }
+
+    public void setConditionName(String conditionName) {
+        this.conditionName = conditionName;
+    }
+
+    public String getGrantedEffectDescription() {
+        return grantedEffectDescription;
+    }
+
+    public void setGrantedEffectDescription(String grantedEffectDescription) {
+        this.grantedEffectDescription = grantedEffectDescription;
     }
 
     @Override

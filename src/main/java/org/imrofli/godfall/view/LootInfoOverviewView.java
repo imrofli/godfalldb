@@ -8,6 +8,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.services.intf.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +18,7 @@ import java.util.Set;
 
 @Route(value = "lootinfo", layout = MainView.class)
 public class LootInfoOverviewView extends VerticalLayout {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LootInfo.class);
     private ComboBox<String> lootInfoComboBox = new ComboBox<>();
     private Grid<Weapon> weaponGrid = new Grid<>();
     private Grid<Augment> augmentGrid = new Grid<>();
@@ -42,6 +45,7 @@ public class LootInfoOverviewView extends VerticalLayout {
 
 
     public LootInfoOverviewView() {
+        LOGGER.info("Loading LootInfo Page");
         this.add(lootInfoComboBox);
         lootInfoComboBox.setLabel("Select Drop Tag");
         lootInfoComboBox.addValueChangeListener(this::valueChangeListener);

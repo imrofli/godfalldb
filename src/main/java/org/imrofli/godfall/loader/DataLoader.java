@@ -61,6 +61,7 @@ public class DataLoader implements ApplicationRunner {
         loadTierInfo();
         loadAllowedTags();
         loadTraits();
+        loadRestOfSkills();
         loadLootInfo();
         loadWeapons();
         loadBanners();
@@ -205,6 +206,7 @@ public class DataLoader implements ApplicationRunner {
                 Trait trait = new Trait();
                 trait.setName(tagsCollection.getTraitName());
                 trait.setTraitGroup(tagsCollection.getGroupName());
+
                 trait.setDescription(tagsCollection.getDescription().replaceAll("\"", ""));
                 trait.setMinimumTier(tagsCollection.getMinTier());
                 trait.setMaximumTier(tagsCollection.getMaxTier());
@@ -212,6 +214,13 @@ public class DataLoader implements ApplicationRunner {
                 trait.setMinimumRarity(ItemHelper.getRarity(tagsCollection.getMinRarity()));
                 trait.setMaximumRarity(ItemHelper.getRarity(tagsCollection.getMaxRarity()));
                 trait.setTraitType(ItemHelper.getTraitTypeFromGroup(tagsCollection.getGroupName()));
+                if(trait.getTraitType()!=TraitType.SKILLGRID && trait.getTraitGroupBulkId()==null){
+                    if (trait.getTraitGroupBulk()==null) {
+                        trait.setTraitGroupBulk("");
+                    }
+                    trait.setTraitGroupBulkId(-1L);
+                }
+
                 Set<String> keywords = new HashSet<>();
                 if (tagsCollection.getKeywords() != null) {
                     keywords.addAll(tagsCollection.getKeywords());
@@ -221,9 +230,59 @@ public class DataLoader implements ApplicationRunner {
 
                 trait.setLootEffects(ItemHelper.getLootEffects(tagsCollection.getNamedLootEffects(), tagsCollection.getConditionalLootEffects()));
                 ItemHelper.updateConditionalEffects(trait.getLootEffects(), dataDao.getMainData().getConditionalLootEffects());
+                ItemHelper.updateSkillgridData(trait, dataDao.getMainData().getMasteryEntitlements().getCollection(), dataDao.getMainData().getLocalization());
                 Set<AllowedTraitTags> allowedTraitTags = allowedTagDao.findAllByTraitGroup(trait.getTraitGroup());
                 trait.setAllowedTraitTags(allowedTraitTags);
                 traitDao.save(trait);
+            }
+        }
+        traitDao.flush();
+    }
+
+    private void loadRestOfSkills(){
+        LOGGER.info("Loading Rest of Traits");
+        for (MasteryEntitlementsCollection tagsCollection : dataDao.getMainData().getMasteryEntitlements().getCollection()) {
+            Trait traitSet = traitDao.findByMasteryEntitlements(tagsCollection.getID());
+
+            if(traitSet==null){
+                Trait trait = new Trait();
+                trait.setName(tagsCollection.getTraitName());
+                trait.setTraitGroup(tagsCollection.getMasteryID());
+                trait.setWeight(1000L);
+                trait.setTraitType(TraitType.SKILLGRID);
+                trait.setMasteryEntitlements(tagsCollection.getID());
+                trait.setTraitGroupBulk(tagsCollection.getMasteryID());
+                trait.setTraitGroupBulkId(tagsCollection.getMinPoints());
+
+                Localization loc = dataDao.getMainData().getLocalization().get(trait.getMasteryEntitlements());
+                if(loc!=null) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(loc.getDescription().stringValue);
+                    sb.append(" ");
+                    if (loc.getDescription() != null && loc.getDescription().stringArrayValue != null) {
+                        for (String s : loc.getDescription().stringArrayValue) {
+                            sb.append(s);
+                            sb.append(" ");
+                        }
+                    }
+                    trait.setGridDesc(sb.toString().trim());
+                    trait.setDescription(sb.toString().trim());
+                    sb = new StringBuilder();
+                    sb.append(loc.getName().stringValue);
+                    sb.append(" ");
+                    if (loc.getName() != null && loc.getName().stringArrayValue != null) {
+                        for (String s : loc.getName().stringArrayValue) {
+                            sb.append(s);
+                            sb.append(" ");
+                        }
+                    }
+                    trait.setName(sb.toString().trim());
+                    trait.setGridName(trait.getName());
+                    ItemHelper.updateSkillgridData(trait, dataDao.getMainData().getMasteryEntitlements().getCollection(), dataDao.getMainData().getLocalization());
+                    traitDao.save(trait);
+
+                }
+
             }
         }
         traitDao.flush();
@@ -345,6 +404,15 @@ public class DataLoader implements ApplicationRunner {
         for(TrinketsCollection entry : dataDao.getMainData().getTrinkets().getCollection()){
             Trinket trinket = new Trinket();
             trinket.setName(entry.getName());
+            if(entry.getName().equals("Witherbone Amulet")){
+                trinket.setName("Amulet of the Betrayer");
+            }
+            else if(entry.getName().equals("Amulet of the Betrayer")){
+                trinket.setName("Empyrean Crest");
+            }
+            else if(entry.getName().equals("Empyrean Amulet")){
+                trinket.setName("Whitherbone Pendant");
+            }
             trinket.setElements(ItemHelper.getElements(entry.getElementTraitTagGroups()));
             trinket.setMinimumRarity(ItemHelper.getRarityByIndex(entry.getRarityIdentifier()));
             trinket.setGameplayTag(entry.getGameplayTag());

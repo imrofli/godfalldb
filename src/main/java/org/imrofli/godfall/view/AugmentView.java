@@ -32,6 +32,7 @@ public class AugmentView extends HorizontalLayout {
     private AugmentDetailView augmentDetailView;
 
     public AugmentView() {
+        LOGGER.info("Loading Augment Page");
         augmentGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         augmentGrid.setVerticalScrollingEnabled(true);
         augmentGrid.addColumn(Augment::getName).setResizable(true).setHeader("Name");

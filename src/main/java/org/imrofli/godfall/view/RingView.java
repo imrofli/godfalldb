@@ -34,6 +34,7 @@ public class RingView extends HorizontalLayout {
     private RingDetailView trinketDetailView;
 
     public RingView() {
+        LOGGER.info("Loading Ring Page");
         trinketGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         trinketGrid.setVerticalScrollingEnabled(true);
         trinketGrid.addColumn(Trinket::getName).setResizable(true).setHeader("Name");

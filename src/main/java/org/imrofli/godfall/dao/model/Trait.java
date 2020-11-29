@@ -16,12 +16,18 @@ public class Trait extends AbstractEntity{
     @NotEmpty
     private String traitGroup = "";
 
+    private String traitGroupBulk = "";
+
+    private Long traitGroupBulkId;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private TraitType traitType;
 
     @NotNull
     @NotEmpty
+    @Lob
+    @Column( length = 100000 )
     private String description = "";
 
     private Long minimumTier = 1L;
@@ -35,6 +41,18 @@ public class Trait extends AbstractEntity{
     private Rarity maximumRarity;
 
     private Long weight = 1L;
+
+    private Integer gridX;
+
+    private Integer gridY;
+
+    @Lob
+    @Column( length = 100000 )
+    private String gridDesc;
+
+    private String gridName;
+
+    private String masteryEntitlements;
 
     @ElementCollection
     private Set<String> keywords;
@@ -230,6 +248,62 @@ public class Trait extends AbstractEntity{
 
     public void setTagExclusionGroups(Set<String> tagExclusionGroups) {
         this.tagExclusionGroups = tagExclusionGroups;
+    }
+
+    public String getTraitGroupBulk() {
+        return traitGroupBulk;
+    }
+
+    public void setTraitGroupBulk(String traitGroupBulk) {
+        this.traitGroupBulk = traitGroupBulk;
+    }
+
+    public Long getTraitGroupBulkId() {
+        return traitGroupBulkId;
+    }
+
+    public void setTraitGroupBulkId(Long traitGroupBulkId) {
+        this.traitGroupBulkId = traitGroupBulkId;
+    }
+
+    public Integer getGridX() {
+        return gridX;
+    }
+
+    public void setGridX(Integer gridX) {
+        this.gridX = gridX;
+    }
+
+    public Integer getGridY() {
+        return gridY;
+    }
+
+    public void setGridY(Integer gridY) {
+        this.gridY = gridY;
+    }
+
+    public String getGridDesc() {
+        return gridDesc;
+    }
+
+    public void setGridDesc(String gridDesc) {
+        this.gridDesc = gridDesc;
+    }
+
+    public String getGridName() {
+        return gridName;
+    }
+
+    public void setGridName(String gridName) {
+        this.gridName = gridName;
+    }
+
+    public String getMasteryEntitlements() {
+        return masteryEntitlements;
+    }
+
+    public void setMasteryEntitlements(String masteryEntitlements) {
+        this.masteryEntitlements = masteryEntitlements;
     }
 
     @Override

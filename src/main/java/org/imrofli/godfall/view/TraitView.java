@@ -4,16 +4,13 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import org.imrofli.godfall.dao.model.Trait;
-import org.imrofli.godfall.dao.model.TraitType;
 import org.imrofli.godfall.services.intf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.util.HashSet;
 import java.util.Set;
 
 @Route(value = "traits", layout = MainView.class)
@@ -37,6 +34,7 @@ public class TraitView extends HorizontalLayout {
     private TraitDetailView traitDetailView;
 
     public TraitView() {
+        LOGGER.info("Loading Trait Page");
         traitGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         traitGrid.setVerticalScrollingEnabled(true);
         traitGrid.addColumn(Trait::getDescription).setResizable(true).setHeader("Description");
@@ -62,7 +60,7 @@ public class TraitView extends HorizontalLayout {
 
     @PostConstruct
     public void init() {
-        Set<Trait> traitSet = traitService.getTrait();
+        Set<Trait> traitSet = traitService.getTraits();
         traitGrid.setItems(traitSet);
         traitGrid.setSizeFull();
         traitDetailView = new TraitDetailView(traitService, weaponService, trinketService,  augmentService,  bannerService, lifeStoneService);

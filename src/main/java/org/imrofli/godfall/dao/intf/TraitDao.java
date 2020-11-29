@@ -35,4 +35,11 @@ public interface TraitDao extends JpaRepository<Trait,Long> {
     @Query(value = "SELECT t from Trait t JOIN FETCH t.lootEffects where t.id = :id")
     Trait findByIdAndFetchLootEffects(@Param("id") Long id);
     Set<Trait> findAllByAllowedTraitTagsIn(Set<AllowedTraitTags> allowedTraitTags);
+    @Query(value = "SELECT t from Trait t LEFT JOIN FETCH t.lootEffects where t.traitGroupBulk = :blk")
+    Set<Trait> findAllByTraitGroupBulkAndFetchLootEffects(@Param("blk") String traitGroupBulk);
+    @Query(value = "SELECT t from Trait t JOIN FETCH t.lootEffects where t.traitGroupBulkId = :id")
+    Set<Trait> findAllByTraitGroupBulkIdAndFetchLootEffects(@Param("id") int BulkId);
+    @Query(value = "SELECT t from Trait t where t.gridY = :id and t.traitType = 'SKILLGRID' order by t.gridX asc")
+    Set<Trait> findAllByGridYAndFetchLootEffects(@Param("id") Integer gridY);
+    Trait findByMasteryEntitlements(String masteryEntitlements);
 }

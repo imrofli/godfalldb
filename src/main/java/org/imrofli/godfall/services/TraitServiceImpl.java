@@ -3,11 +3,6 @@ package org.imrofli.godfall.services;
 import org.imrofli.godfall.dao.intf.TraitDao;
 import org.imrofli.godfall.dao.model.Trait;
 import org.imrofli.godfall.dao.model.TraitType;
-import org.imrofli.godfall.data.*;
-import org.imrofli.godfall.models.NamedLootEffect;
-import org.imrofli.godfall.models.TraitInfo;
-import org.imrofli.godfall.models.WeaponClass;
-import org.imrofli.godfall.dao.intf.DataDao;
 import org.imrofli.godfall.services.intf.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +22,7 @@ public class TraitServiceImpl implements TraitService {
 
 
     @Override
-    public Set<Trait> getTrait() {
+    public Set<Trait> getTraits() {
         LOGGER.info("Getting all Traits");
         Set<TraitType> traitTypes = new HashSet<TraitType>();
         traitTypes.add(TraitType.BOON);
@@ -36,7 +31,7 @@ public class TraitServiceImpl implements TraitService {
     }
 
     @Override
-    public Trait getTrait(Long traitId) {
+    public Trait getTraits(Long traitId) {
         LOGGER.info("Getting Trait by id: {}", traitId);
         return traitDao.findByIdAndFetchWeapons(traitId);
     }
@@ -45,5 +40,23 @@ public class TraitServiceImpl implements TraitService {
     public Trait getTraitAndFetch(Long traitId) {
         LOGGER.info("Getting Trait and Fetch by id: {}", traitId);
         return traitDao.findByIdAndFetchAll(traitId);
+    }
+
+    @Override
+    public Set<Trait> getTraitsByTraitGrpBulk(String traitGroupBlk) {
+        LOGGER.info("Getting Trait by traitGroupBlk: {}", traitGroupBlk);
+        return traitDao.findAllByTraitGroupBulkAndFetchLootEffects(traitGroupBlk);
+    }
+
+    @Override
+    public Set<Trait> getTraitsByGridY(Integer gridY) {
+        LOGGER.info("Getting Trait by gridY: {}", gridY);
+        return traitDao.findAllByGridYAndFetchLootEffects(gridY);
+    }
+
+    @Override
+    public Trait getTraitsByMastery(String mastery) {
+        LOGGER.info("Getting Trait by mastery: {}", mastery);
+        return traitDao.findByMasteryEntitlements(mastery);
     }
 }

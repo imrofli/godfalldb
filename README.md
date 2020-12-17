@@ -22,3 +22,4 @@ file loader (watcher) to automatically load new datafiles
 stuff to look at:
 graphQL
 better Json-java generator
+swagger & openApi codegen

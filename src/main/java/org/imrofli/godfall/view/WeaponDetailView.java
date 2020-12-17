@@ -6,10 +6,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import org.imrofli.godfall.dao.model.LootInfo;
-import org.imrofli.godfall.dao.model.Trait;
-import org.imrofli.godfall.dao.model.TraitType;
-import org.imrofli.godfall.dao.model.Weapon;
+import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.services.intf.ItemScalingService;
 import org.imrofli.godfall.services.intf.LootInfoService;
 import org.imrofli.godfall.services.intf.TraitService;
@@ -72,6 +69,19 @@ public class WeaponDetailView extends VerticalLayout {
         }
     }
 
+    public Weapon getWeapon(){
+        return weapon;
+    }
+
+    public Long getItemTier(){
+        if(tierComboBox.getOptionalValue().isPresent()){
+            return tierComboBox.getValue().longValue();
+        }
+        else{
+            return 1L;
+        }
+    }
+
     public void setWeapon(Long weaponId) {
         this.weapon = weaponService.getWeapon(weaponId);
         Optional<Integer> tiervalue = tierComboBox.getOptionalValue();
@@ -83,50 +93,133 @@ public class WeaponDetailView extends VerticalLayout {
         }
     }
 
-    private void updateData(Long itemTier){
-        weaponName.setText(weapon.getName());
-        weaponDps.setText("Todo:DPS");
-        weaponRarity.setText(weapon.getMinimumRarity().toString());
-        weaponDamageType.setText(weapon.getElements().toString());
-        LootInfo lootInfo = lootInfoService.getLootInfo(weapon.getLootInfo().getId());
-        lootInfoDetails.setContent(new LootInfoView(lootInfo));
-        List<String> primaries = new ArrayList<>();
-        List<String> secondaries = new ArrayList<>();
-        for(Trait t : weapon.getTraits()){
-            String calcDesc = itemScalingService.getScaledDescription(t, weapon.getMinimumRarity(), itemTier);
-            if(t.getTraitType()== TraitType.PRIMARY) {
-                primaries.add(calcDesc);
-            }
-            if(t.getTraitType()== TraitType.SECONDARY || t.getTraitType()== TraitType.MASTERWORK) {
-                if(t.getTraitType()==TraitType.MASTERWORK){
+    public void setFixedData(BuildWeapon buildWeapon){
+        if (buildWeapon != null) {
+            weapon=buildWeapon.getSelectedWeapon();
+            weaponName.setText(weapon.getName());
+            weaponDps.setText("Todo:DPS");
+            weaponRarity.setText(weapon.getMinimumRarity().toString());
+            weaponDamageType.setText(weapon.getElements().toString());
+            LootInfo lootInfo = lootInfoService.getLootInfo(weapon.getLootInfo().getId());
+            lootInfoDetails.setContent(new LootInfoView(lootInfo));
+
+            if(buildWeapon.getPrimaryTraitOne()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getPrimaryTraitOne(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getPrimaryTraitOne().getTraitType() == TraitType.MASTERWORK) {
                     calcDesc = "Masterwork - " + calcDesc;
                 }
-                secondaries.add(calcDesc);
+                weaponPrimaryOne.setItems(calcDesc);
             }
-        }
-        weaponPrimaryOne.setItems(primaries);
-        weaponPrimaryOne.setWidthFull();
-        if(primaries!=null && !primaries.isEmpty()) {
-            weaponPrimaryOne.setValue(primaries.get(0));
-        }
-        weaponPrimaryTwo.setItems(primaries);
-        weaponPrimaryTwo.setWidthFull();
-        weaponSecondaryOne.setItems(secondaries);
-        weaponSecondaryOne.setWidthFull();
-        weaponSecondaryTwo.setItems(secondaries);
-        weaponSecondaryTwo.setWidthFull();
-        weaponSecondaryThree.setItems(secondaries);
-        weaponSecondaryThree.setWidthFull();
-        weaponSecondaryFour.setItems(secondaries);
-        weaponSecondaryFour.setWidthFull();
-        if(primaries.size()<=1){
-            weaponPrimaryOne.setEnabled(false);
-            weaponPrimaryTwo.setVisible(false);
-        }
-        else{
-            weaponPrimaryOne.setEnabled(true);
-            weaponPrimaryTwo.setVisible(true);
-        }
 
+            if(buildWeapon.getPrimaryTraitTwo()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getPrimaryTraitTwo(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getPrimaryTraitTwo().getTraitType() == TraitType.MASTERWORK) {
+                    calcDesc = "Masterwork - " + calcDesc;
+                }
+                weaponPrimaryTwo.setItems(calcDesc);
+            }
+
+            if(buildWeapon.getSecondaryTraitOne()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getSecondaryTraitOne(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getSecondaryTraitOne().getTraitType() == TraitType.MASTERWORK) {
+                    calcDesc = "Masterwork - " + calcDesc;
+                }
+                weaponSecondaryOne.setItems(calcDesc);
+            }
+
+            if(buildWeapon.getSecondaryTraitTwo()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getSecondaryTraitTwo(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getSecondaryTraitTwo().getTraitType() == TraitType.MASTERWORK) {
+                    calcDesc = "Masterwork - " + calcDesc;
+                }
+                weaponSecondaryTwo.setItems(calcDesc);
+            }
+
+            if(buildWeapon.getSecondaryTraitThree()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getSecondaryTraitThree(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getSecondaryTraitThree().getTraitType() == TraitType.MASTERWORK) {
+                    calcDesc = "Masterwork - " + calcDesc;
+                }
+                weaponSecondaryThree.setItems(calcDesc);
+            }
+
+            if(buildWeapon.getSecondaryTraitFour()!=null && buildWeapon.getItemLevel()!=null){
+                String calcDesc = itemScalingService.getScaledDescription(buildWeapon.getSecondaryTraitFour(), weapon.getMinimumRarity(), buildWeapon.getItemLevel());
+                if (buildWeapon.getSecondaryTraitFour().getTraitType() == TraitType.MASTERWORK) {
+                    calcDesc = "Masterwork - " + calcDesc;
+                }
+                weaponPrimaryTwo.setItems(calcDesc);
+            }
+
+
+
+            weaponPrimaryOne.setWidthFull();
+            weaponPrimaryTwo.setWidthFull();
+            weaponSecondaryOne.setWidthFull();
+            weaponSecondaryTwo.setWidthFull();
+            weaponSecondaryThree.setWidthFull();
+            weaponSecondaryFour.setWidthFull();
+            if (weaponPrimaryTwo.getValue() !=null) {
+                weaponPrimaryTwo.setVisible(false);
+            } else {
+                weaponPrimaryTwo.setVisible(true);
+            }
+
+            weaponPrimaryOne.setEnabled(false);
+            weaponPrimaryTwo.setEnabled(false);
+            weaponSecondaryOne.setEnabled(false);
+            weaponSecondaryThree.setEnabled(false);
+            weaponSecondaryTwo.setEnabled(false);
+            weaponSecondaryFour.setEnabled(false);
+
+        }
+    }
+
+    private void updateData(Long itemTier) {
+        if (weapon != null) {
+            weaponName.setText(weapon.getName());
+            weaponDps.setText("Todo:DPS");
+            weaponRarity.setText(weapon.getMinimumRarity().toString());
+            weaponDamageType.setText(weapon.getElements().toString());
+            LootInfo lootInfo = lootInfoService.getLootInfo(weapon.getLootInfo().getId());
+            lootInfoDetails.setContent(new LootInfoView(lootInfo));
+            List<String> primaries = new ArrayList<>();
+            List<String> secondaries = new ArrayList<>();
+            for (Trait t : weapon.getTraits()) {
+                String calcDesc = itemScalingService.getScaledDescription(t, weapon.getMinimumRarity(), itemTier);
+                if (t.getTraitType() == TraitType.PRIMARY) {
+                    primaries.add(calcDesc);
+                }
+                if (t.getTraitType() == TraitType.SECONDARY || t.getTraitType() == TraitType.MASTERWORK) {
+                    if (t.getTraitType() == TraitType.MASTERWORK) {
+                        calcDesc = "Masterwork - " + calcDesc;
+                    }
+                    secondaries.add(calcDesc);
+                }
+            }
+            weaponPrimaryOne.setItems(primaries);
+            weaponPrimaryOne.setWidthFull();
+            if (primaries != null && !primaries.isEmpty()) {
+                weaponPrimaryOne.setValue(primaries.get(0));
+            }
+            weaponPrimaryTwo.setItems(primaries);
+            weaponPrimaryTwo.setWidthFull();
+            weaponSecondaryOne.setItems(secondaries);
+            weaponSecondaryOne.setWidthFull();
+            weaponSecondaryTwo.setItems(secondaries);
+            weaponSecondaryTwo.setWidthFull();
+            weaponSecondaryThree.setItems(secondaries);
+            weaponSecondaryThree.setWidthFull();
+            weaponSecondaryFour.setItems(secondaries);
+            weaponSecondaryFour.setWidthFull();
+            if (primaries.size() <= 1) {
+                weaponPrimaryOne.setEnabled(false);
+                weaponPrimaryTwo.setVisible(false);
+            } else {
+                weaponPrimaryOne.setEnabled(true);
+                weaponPrimaryTwo.setVisible(true);
+            }
+
+        }
     }
 }

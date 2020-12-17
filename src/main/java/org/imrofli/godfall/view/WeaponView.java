@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.Set;
 
 @Route(value = "weapons", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
@@ -42,8 +43,24 @@ public class WeaponView extends HorizontalLayout {
         weaponGrid.addColumn(Weapon::getName).setResizable(true).setHeader("Name");
         weaponGrid.addColumn(Weapon::getWeaponType).setResizable(true).setHeader("Type");
         weaponGrid.addColumn(Weapon::getElements).setResizable(true).setHeader("Elements");
-        this.addAndExpand(weaponGrid);
-        this.setHeightFull();
+
+
+
+        weaponGrid.addSelectionListener(this::handleRowSelectAugment);
+    }
+
+    public WeaponView(WeaponService weaponService, TraitService traitService, LootInfoService lootInfoService, ItemScalingService itemScalingService) {
+        this.weaponService = weaponService;
+        this.traitService = traitService;
+        this.lootInfoService = lootInfoService;
+        this.itemScalingService = itemScalingService;
+        LOGGER.info("Loading Weapon Page");
+        weaponGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        weaponGrid.setVerticalScrollingEnabled(true);
+        weaponGrid.addColumn(Weapon::getName).setResizable(true).setHeader("Name");
+        weaponGrid.addColumn(Weapon::getWeaponType).setResizable(true).setHeader("Type");
+        weaponGrid.addColumn(Weapon::getElements).setResizable(true).setHeader("Elements");
+        //weaponGrid.setSizeFull();
 
         weaponGrid.addSelectionListener(this::handleRowSelectAugment);
     }
@@ -58,12 +75,25 @@ public class WeaponView extends HorizontalLayout {
         }
     }
 
+    public Weapon getSelectedWeapon(){
+        return weaponDetailView.getWeapon();
+    }
+
+    public Long getItemTier(){
+        return weaponDetailView.getItemTier();
+    }
+
 
     @PostConstruct
     public void init() {
-        weaponGrid.setItems(weaponService.getWeapons());
-        weaponGrid.setSizeFull();
+        Set<Weapon> weaponSet = weaponService.getWeapons();
+        weaponGrid.setItems(weaponSet);
+
+        this.addAndExpand(weaponGrid);
         weaponDetailView = new WeaponDetailView(weaponService, lootInfoService, itemScalingService);
         this.addAndExpand(weaponDetailView);
+        weaponGrid.setMinHeight("100%");
+        weaponGrid.setWidthFull();
+        this.setHeightFull();
     }
 }

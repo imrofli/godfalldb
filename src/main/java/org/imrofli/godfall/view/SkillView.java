@@ -37,6 +37,9 @@ public class SkillView extends VerticalLayout {
 
     }
 
+    public SkillView(TraitService traitService) {
+        this.traitService = traitService;
+    }
 
     @PostConstruct
     public void init() {

@@ -1,0 +1,1 @@
+UnrealPak "G:\Games\Epic\Godfall\Aperion\Content\Paks\Aperion-WindowsNoEditor.pak" -extract "S:\unreal"

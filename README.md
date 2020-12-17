@@ -3,6 +3,9 @@ Godfalldb:
 args to start:
 --datasetPath path-to\source_data.json
 
+mvn cmd to build for prod:
+mvn clean install -Pproduction
+
 unpack data files:
 get UnrealPak tool
 https://github.com/somethingcoolmustbehere/UnrealPakTool

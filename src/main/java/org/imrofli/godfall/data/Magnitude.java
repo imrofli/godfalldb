@@ -21,13 +21,4 @@ public class Magnitude {
     public Double getScalar() { return scalar; }
     @JsonProperty("scalar")
     public void setScalar(Double value) { this.scalar = value; }
-
-    @Override
-    public String toString() {
-        return "Magnitude{" +
-                "magnitudeName=" + magnitudeName +
-                ", paramType=" + paramType +
-                ", scalar=" + scalar +
-                '}';
-    }
 }

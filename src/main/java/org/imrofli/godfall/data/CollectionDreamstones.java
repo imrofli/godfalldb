@@ -6,7 +6,7 @@ import java.util.List;
 public class CollectionDreamstones {
     private List<String> validTags;
     private List<String> exclusionGroups;
-    private long weight;
+    private Long weight;
     private List<AllowedTags> effectsTags;
 
     @JsonProperty("validTags")
@@ -20,9 +20,9 @@ public class CollectionDreamstones {
     public void setExclusionGroups(List<String> value) { this.exclusionGroups = value; }
 
     @JsonProperty("weight")
-    public long getWeight() { return weight; }
+    public Long getWeight() { return weight; }
     @JsonProperty("weight")
-    public void setWeight(long value) { this.weight = value; }
+    public void setWeight(Long value) { this.weight = value; }
 
     @JsonProperty("effectsTags")
     public List<AllowedTags> getEffectsTags() { return effectsTags; }

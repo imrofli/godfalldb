@@ -14,20 +14,22 @@ public class LootInfoView extends VerticalLayout {
 
     public LootInfoView(LootInfo lootInfo) {
         this.lootInfo = lootInfo;
-        if(lootInfo.getPreorderDrop()){
-            Button preorder = new Button("Preorder/Deluxe");
-            preorder.setIcon(VaadinIcon.DOLLAR.create());
-            this.addAndExpand(preorder);
-        }
-        if(lootInfo.getTowerDrop()){
-            Button preorder = new Button("Tower");
-            preorder.setIcon(VaadinIcon.BUILDING.create());
-            this.addAndExpand(preorder);
-        }
-        for (String s : lootInfo.getDropTags()) {
-            Button entry = new Button(s);
-            this.addAndExpand(entry);
-            this.setSpacing(false);
+        if(lootInfo != null) {
+            if (lootInfo.getPreorderDrop()) {
+                Button preorder = new Button("Preorder/Deluxe");
+                preorder.setIcon(VaadinIcon.DOLLAR.create());
+                this.addAndExpand(preorder);
+            }
+            if (lootInfo.getTowerDrop()) {
+                Button preorder = new Button("Tower");
+                preorder.setIcon(VaadinIcon.BUILDING.create());
+                this.addAndExpand(preorder);
+            }
+            for (String s : lootInfo.getDropTags()) {
+                Button entry = new Button(s);
+                this.addAndExpand(entry);
+                this.setSpacing(false);
+            }
         }
     }
 }

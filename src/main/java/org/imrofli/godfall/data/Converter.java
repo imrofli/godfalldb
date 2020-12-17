@@ -10,7 +10,7 @@
 //
 // Then you can deserialize a JSON string with
 //
-//     Welcome data = Converter.fromJsonString(jsonString);
+//     SourceData data = Converter.fromJsonString(jsonString);
 
 package org.imrofli.godfall.data;
 
@@ -60,11 +60,11 @@ public class Converter {
     }
     // Serialize/deserialize helpers
 
-    public static Welcome fromJsonString(String json) throws IOException {
+    public static SourceData fromJsonString(String json) throws IOException {
         return getObjectReader().readValue(json);
     }
 
-    public static String toJsonString(Welcome obj) throws JsonProcessingException {
+    public static String toJsonString(SourceData obj) throws JsonProcessingException {
         return getObjectWriter().writeValueAsString(obj);
     }
 
@@ -84,8 +84,8 @@ public class Converter {
             }
         });
         mapper.registerModule(module);
-        reader = mapper.readerFor(Welcome.class);
-        writer = mapper.writerFor(Welcome.class);
+        reader = mapper.readerFor(SourceData.class);
+        writer = mapper.writerFor(SourceData.class);
     }
 
     private static ObjectReader getObjectReader() {

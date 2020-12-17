@@ -27,7 +27,7 @@ public enum MagnitudeName {
     }
 
     @JsonCreator
-    public static MagnitudeName forValue(String value) {
+    public static MagnitudeName forValue(String value) throws IOException {
         if (value.equals("Magnitude.A")) return MAGNITUDE_A;
         if (value.equals("Magnitude.AilmentType")) return MAGNITUDE_AILMENT_TYPE;
         if (value.equals("Magnitude.B")) return MAGNITUDE_B;
@@ -41,6 +41,6 @@ public enum MagnitudeName {
         if (value.equals("Magnitude.X")) return MAGNITUDE_X;
         if (value.equals("Magnitude.Y")) return MAGNITUDE_Y;
         if (value.equals("Magnitude.Z")) return MAGNITUDE_Z;
-        return MAGNITUDE_Z;
+        throw new IOException("Cannot deserialize MagnitudeName");
     }
 }

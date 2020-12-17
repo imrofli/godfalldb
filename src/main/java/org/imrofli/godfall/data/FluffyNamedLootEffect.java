@@ -22,13 +22,4 @@ public class FluffyNamedLootEffect {
     public List<OngoingTagRequirement> getOngoingTagRequirements() { return ongoingTagRequirements; }
     @JsonProperty("ongoingTagRequirements")
     public void setOngoingTagRequirements(List<OngoingTagRequirement> value) { this.ongoingTagRequirements = value; }
-
-    @Override
-    public String toString() {
-        return "FluffyNamedLootEffect{" +
-                "name='" + name + '\'' +
-                ", magnitudes=" + magnitudes +
-                ", ongoingTagRequirements=" + ongoingTagRequirements +
-                '}';
-    }
 }

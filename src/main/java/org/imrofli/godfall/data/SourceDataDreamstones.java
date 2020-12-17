@@ -3,7 +3,7 @@ package org.imrofli.godfall.data;
 import com.fasterxml.jackson.annotation.*;
 import java.util.List;
 
-public class WelcomeDreamstones {
+public class SourceDataDreamstones {
     private List<DreamstonesCollection> collection;
 
     @JsonProperty("collection")

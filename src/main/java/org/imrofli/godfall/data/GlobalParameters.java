@@ -93,6 +93,10 @@ public class GlobalParameters {
     private long ascendedItemMinRarityIdentifier;
     private long maxCoopAdjustedLootTier;
     private List<String> credits;
+    private String currentBoonPrefixTextStringID;
+    private String currentBoonPrefixTextColor;
+    private String upgradeBoonPrefixTextStringID;
+    private String upgradeBoonPrefixTextColor;
 
     @JsonProperty("lootTierBonusScalar")
     public double getLootTierBonusScalar() { return lootTierBonusScalar; }
@@ -538,4 +542,24 @@ public class GlobalParameters {
     public List<String> getCredits() { return credits; }
     @JsonProperty("credits")
     public void setCredits(List<String> value) { this.credits = value; }
+
+    @JsonProperty("currentBoonPrefixTextStringId")
+    public String getCurrentBoonPrefixTextStringID() { return currentBoonPrefixTextStringID; }
+    @JsonProperty("currentBoonPrefixTextStringId")
+    public void setCurrentBoonPrefixTextStringID(String value) { this.currentBoonPrefixTextStringID = value; }
+
+    @JsonProperty("currentBoonPrefixTextColor")
+    public String getCurrentBoonPrefixTextColor() { return currentBoonPrefixTextColor; }
+    @JsonProperty("currentBoonPrefixTextColor")
+    public void setCurrentBoonPrefixTextColor(String value) { this.currentBoonPrefixTextColor = value; }
+
+    @JsonProperty("upgradeBoonPrefixTextStringId")
+    public String getUpgradeBoonPrefixTextStringID() { return upgradeBoonPrefixTextStringID; }
+    @JsonProperty("upgradeBoonPrefixTextStringId")
+    public void setUpgradeBoonPrefixTextStringID(String value) { this.upgradeBoonPrefixTextStringID = value; }
+
+    @JsonProperty("upgradeBoonPrefixTextColor")
+    public String getUpgradeBoonPrefixTextColor() { return upgradeBoonPrefixTextColor; }
+    @JsonProperty("upgradeBoonPrefixTextColor")
+    public void setUpgradeBoonPrefixTextColor(String value) { this.upgradeBoonPrefixTextColor = value; }
 }

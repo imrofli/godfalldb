@@ -14,6 +14,7 @@ split ui and api
 create api
 cleanup
 make db persistent (postgres or keep h2)
+frontload a webserver so app needs not to be on Root & easy domain name switching like test.godfallbd.ch
 
 stuff to look at:
 graphQL

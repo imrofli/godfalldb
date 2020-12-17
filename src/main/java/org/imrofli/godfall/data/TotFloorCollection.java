@@ -43,6 +43,9 @@ public class TotFloorCollection {
     private long legendaryRoomRewardComplexityMin;
     private long legendaryRoomRewardComplexityMax;
     private String name;
+    private Long numBaneInteractions;
+    private List<BoonWhitelistTag> boonWhitelistTags;
+    private List<NameElement> boonWhitelistRarities;
     private Long roomEncounterTimerSeconds;
     private List<Double> roomEncounterAwardKeyThresholds;
     private Long bossFightTimerSeconds;
@@ -243,6 +246,21 @@ public class TotFloorCollection {
     public String getName() { return name; }
     @JsonProperty("name")
     public void setName(String value) { this.name = value; }
+
+    @JsonProperty("numBaneInteractions")
+    public Long getNumBaneInteractions() { return numBaneInteractions; }
+    @JsonProperty("numBaneInteractions")
+    public void setNumBaneInteractions(Long value) { this.numBaneInteractions = value; }
+
+    @JsonProperty("boonWhitelistTags")
+    public List<BoonWhitelistTag> getBoonWhitelistTags() { return boonWhitelistTags; }
+    @JsonProperty("boonWhitelistTags")
+    public void setBoonWhitelistTags(List<BoonWhitelistTag> value) { this.boonWhitelistTags = value; }
+
+    @JsonProperty("boonWhitelistRarities")
+    public List<NameElement> getBoonWhitelistRarities() { return boonWhitelistRarities; }
+    @JsonProperty("boonWhitelistRarities")
+    public void setBoonWhitelistRarities(List<NameElement> value) { this.boonWhitelistRarities = value; }
 
     @JsonProperty("roomEncounterTimerSeconds")
     public Long getRoomEncounterTimerSeconds() { return roomEncounterTimerSeconds; }

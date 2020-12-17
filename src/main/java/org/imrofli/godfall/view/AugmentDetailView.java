@@ -15,6 +15,7 @@ import org.imrofli.godfall.services.intf.ItemScalingService;
 import org.imrofli.godfall.services.intf.LootInfoService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,7 +84,10 @@ public class AugmentDetailView extends VerticalLayout {
         augmentName.setText(augment.getName());
         augmentRarity.setText(augment.getMinimumRarity().toString());
         augmentDamageType.setText(augment.getElements().toString());
-        LootInfo lootInfo = lootInfoService.getLootInfo(augment.getLootInfo().getId());
+        LootInfo lootInfo = null;
+        if(augment.getLootInfo() != null){
+        lootInfo = lootInfoService.getLootInfo(augment.getLootInfo().getId());
+        }
         lootInfoDetails.setContent(new LootInfoView(lootInfo));
         List<String> primaries = new ArrayList<>();
         List<String> secondaries = new ArrayList<>();

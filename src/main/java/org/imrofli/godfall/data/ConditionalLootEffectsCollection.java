@@ -9,12 +9,12 @@ public class ConditionalLootEffectsCollection {
     private boolean applyToSelf;
     private boolean applyToConnected;
     private boolean applyForEach;
-    private String grantedEffectDescription;
     private List<PurpleNamedLootEffect> namedLootEffects;
     private ConditionName conditionName;
     private ConditionParamCategory conditionParamCategory;
     private ParamType conditionParamType;
     private Long conditionParamScalar;
+    private String grantedEffectDescription;
     private CollectionTraitModifiers traitModifiers;
 
     @JsonProperty("name")
@@ -42,11 +42,6 @@ public class ConditionalLootEffectsCollection {
     @JsonProperty("applyForEach")
     public void setApplyForEach(boolean value) { this.applyForEach = value; }
 
-    @JsonProperty("grantedEffectDescription")
-    public String getGrantedEffectDescription() { return grantedEffectDescription; }
-    @JsonProperty("grantedEffectDescription")
-    public void setGrantedEffectDescription(String value) { this.grantedEffectDescription = value; }
-
     @JsonProperty("namedLootEffects")
     public List<PurpleNamedLootEffect> getNamedLootEffects() { return namedLootEffects; }
     @JsonProperty("namedLootEffects")
@@ -71,6 +66,11 @@ public class ConditionalLootEffectsCollection {
     public Long getConditionParamScalar() { return conditionParamScalar; }
     @JsonProperty("conditionParamScalar")
     public void setConditionParamScalar(Long value) { this.conditionParamScalar = value; }
+
+    @JsonProperty("grantedEffectDescription")
+    public String getGrantedEffectDescription() { return grantedEffectDescription; }
+    @JsonProperty("grantedEffectDescription")
+    public void setGrantedEffectDescription(String value) { this.grantedEffectDescription = value; }
 
     @JsonProperty("traitModifiers")
     public CollectionTraitModifiers getTraitModifiers() { return traitModifiers; }

@@ -3,7 +3,7 @@ package org.imrofli.godfall.data;
 import com.fasterxml.jackson.annotation.*;
 import java.util.Map;
 
-public class Welcome {
+public class SourceData {
     private Activities activities;
     private Map<String, Ailment> ailments;
     private ArchonModes archonModes;
@@ -24,7 +24,7 @@ public class Welcome {
     private Currencies currencies;
     private Map<String, SummonedAllies> damageTypes;
     private Difficulties difficulties;
-    private WelcomeDreamstones dreamstones;
+    private SourceDataDreamstones dreamstones;
     private DreamstoneEffects dreamstoneEffects;
     private Encounters encounters;
     private Enemies enemies;
@@ -78,9 +78,9 @@ public class Welcome {
     private TotRoomRewards totRoomRewards;
     private TotRoomRewardThemes totRoomRewardThemes;
     private TotStartingFloor totStartingFloor;
-    private WelcomeTrait trait;
+    private SourceDataTrait trait;
     private TraitCategory traitCategory;
-    private WelcomeTraitModifiers traitModifiers;
+    private SourceDataTraitModifiers traitModifiers;
     private TraitSlot traitSlot;
     private TraitTags traitTags;
     private Trinkets trinkets;
@@ -192,9 +192,9 @@ public class Welcome {
     public void setDifficulties(Difficulties value) { this.difficulties = value; }
 
     @JsonProperty("dreamstones")
-    public WelcomeDreamstones getDreamstones() { return dreamstones; }
+    public SourceDataDreamstones getDreamstones() { return dreamstones; }
     @JsonProperty("dreamstones")
-    public void setDreamstones(WelcomeDreamstones value) { this.dreamstones = value; }
+    public void setDreamstones(SourceDataDreamstones value) { this.dreamstones = value; }
 
     @JsonProperty("dreamstoneEffects")
     public DreamstoneEffects getDreamstoneEffects() { return dreamstoneEffects; }
@@ -462,9 +462,9 @@ public class Welcome {
     public void setTotStartingFloor(TotStartingFloor value) { this.totStartingFloor = value; }
 
     @JsonProperty("trait")
-    public WelcomeTrait getTrait() { return trait; }
+    public SourceDataTrait getTrait() { return trait; }
     @JsonProperty("trait")
-    public void setTrait(WelcomeTrait value) { this.trait = value; }
+    public void setTrait(SourceDataTrait value) { this.trait = value; }
 
     @JsonProperty("traitCategory")
     public TraitCategory getTraitCategory() { return traitCategory; }
@@ -472,9 +472,9 @@ public class Welcome {
     public void setTraitCategory(TraitCategory value) { this.traitCategory = value; }
 
     @JsonProperty("traitModifiers")
-    public WelcomeTraitModifiers getTraitModifiers() { return traitModifiers; }
+    public SourceDataTraitModifiers getTraitModifiers() { return traitModifiers; }
     @JsonProperty("traitModifiers")
-    public void setTraitModifiers(WelcomeTraitModifiers value) { this.traitModifiers = value; }
+    public void setTraitModifiers(SourceDataTraitModifiers value) { this.traitModifiers = value; }
 
     @JsonProperty("traitSlot")
     public TraitSlot getTraitSlot() { return traitSlot; }

@@ -3,7 +3,7 @@ package org.imrofli.godfall.data;
 import com.fasterxml.jackson.annotation.*;
 import java.util.List;
 
-public class WelcomeTraitModifiers {
+public class SourceDataTraitModifiers {
     private List<TraitModifiersCollection> collection;
 
     @JsonProperty("collection")

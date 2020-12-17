@@ -4,7 +4,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.annotation.*;
 
 public enum BoonWhitelistTagElement {
-    AILMENT, AIR, CRIT, DEFENSIVE, EARTH, FIRE, GENERIC, MIGHT, OFFENSIVE, PHYSICAL, RECOVERY, SOULSHATTER, SPIRIT, VITALITY, VOID, WATER, WEAKPOINT, WEAPON;
+    AILMENT, AIR, CRIT, DEFENSIVE, EARTH, FIRE, GENERIC, MIGHT, OFFENSIVE, PHYSICAL, RECOVERY, SOULSHATTER, SPIRIT, UPGRADE, VITALITY, VOID, WATER, WEAKPOINT, WEAPON;
 
     @JsonValue
     public String toValue() {
@@ -22,6 +22,7 @@ public enum BoonWhitelistTagElement {
             case RECOVERY: return "Recovery";
             case SOULSHATTER: return "Soulshatter";
             case SPIRIT: return "Spirit";
+            case UPGRADE: return "Upgrade";
             case VITALITY: return "Vitality";
             case VOID: return "Void";
             case WATER: return "Water";
@@ -46,6 +47,7 @@ public enum BoonWhitelistTagElement {
         if (value.equals("Recovery")) return RECOVERY;
         if (value.equals("Soulshatter")) return SOULSHATTER;
         if (value.equals("Spirit")) return SPIRIT;
+        if (value.equals("Upgrade")) return UPGRADE;
         if (value.equals("Vitality")) return VITALITY;
         if (value.equals("Void")) return VOID;
         if (value.equals("Water")) return WATER;

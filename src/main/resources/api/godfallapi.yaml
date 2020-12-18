@@ -1,0 +1,88 @@
+openapi: 3.0.2
+info:
+  title: GodfallDB Api
+  description: "GodfallDB API"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    url: https://discord.gg/WPmq4NDfJK
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: https://godfalldb.ch/api
+    description: Production Server
+tags:
+  - name: weapon
+    description: Operations about weapons
+paths:
+  /weapon:
+    get:
+      tags:
+        - weapon
+      summary: Get all weapons. not all metadata loaded
+      operationId: getAllWeapons
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/ListOfWeapons'
+  /weapon/{id}:
+    get:
+      tags:
+        - weapon
+      summary: Get weapon by id
+      operationId: getWeaponById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a weapon'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weapon'
+        404:
+          description: Weapon not found
+          content: { }
+
+components:
+  schemas:
+    Weapon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        weaponclass:
+          type: string
+          enum:
+            - LONGSWORD
+            - GREATSWORD
+            - POLEARM
+            - DUALBLADES
+            - WARHAMMER
+        weaponelements:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeaponElement'
+    WeaponElement:
+      type: string
+      enum:
+        - VOID
+        - AIR
+        - FIRE
+        - WATER
+        - EARTH
+        - PHYSICAL

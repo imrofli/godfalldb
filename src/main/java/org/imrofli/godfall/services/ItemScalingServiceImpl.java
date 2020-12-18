@@ -1,13 +1,10 @@
 package org.imrofli.godfall.services;
 
-import com.helger.commons.math.RoundHelper;
 import org.imrofli.godfall.dao.intf.ItemScalingDao;
 import org.imrofli.godfall.dao.intf.LootEffectDao;
 import org.imrofli.godfall.dao.intf.TraitDao;
 import org.imrofli.godfall.dao.model.*;
-import org.imrofli.godfall.data.MagnitudeName;
 import org.imrofli.godfall.services.intf.ItemScalingService;
-import org.imrofli.godfall.view.WeaponView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,9 +90,9 @@ public class ItemScalingServiceImpl implements ItemScalingService {
                         !magnitude.getName().equals("Magnitude.Seconds.B") ) {
                     if (isDecimal) {
                         min *= 100;
-                        min = RoundHelper.getRoundedUpFix(min, 0);
+                        min = Math.ceil(min);
                         max *= 100;
-                        max = RoundHelper.getRoundedUpFix(max, 0);
+                        max = Math.ceil(max);
                     }
                 }
 

@@ -15,47 +15,6 @@ servers:
 tags:
   - name: weapon
     description: Operations about weapons
-paths:
-  /weapon:
-    get:
-      tags:
-        - weapon
-      summary: Get all weapons. not all metadata loaded
-      operationId: getAllWeapons
-      responses:
-        200:
-          description: success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#components/schemas/ListOfWeapons'
-  /weapon/{id}:
-    get:
-      tags:
-        - weapon
-      summary: Get weapon by id
-      operationId: getWeaponById
-      parameters:
-        - name: id
-          in: path
-          description: 'The id needed to fetch info about a weapon'
-          required: true
-          schema:
-            type: integer
-            format: int64
-
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Weapon'
-        404:
-          description: Weapon not found
-          content: { }
 
 components:
   schemas:
@@ -86,3 +45,48 @@ components:
         - WATER
         - EARTH
         - PHYSICAL
+
+
+paths:
+  /weapon:
+    get:
+      tags:
+        - weapon
+      summary: Get all weapons. not all metadata loaded
+      operationId: getAllWeapons
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Weapon'
+  /weapon/{id}:
+    get:
+      tags:
+        - weapon
+      summary: Get weapon by id
+      operationId: getWeaponById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a weapon'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weapon'
+        404:
+          description: Weapon not found
+          content: { }
+
+

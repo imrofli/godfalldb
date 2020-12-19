@@ -46,3 +46,4 @@ webpack.generated.js
 HELP.md
 /node_modules/
 /.mvn/wrapper/
+/src/main/resources/static/godfallapi.yaml

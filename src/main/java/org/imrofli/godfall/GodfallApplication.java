@@ -22,5 +22,6 @@ public class GodfallApplication implements ApplicationRunner {
 			for(String s : args.getNonOptionArgs()){
 				DataHelper.setDatasetPath(s);
 			}
+
 		}
-}
+	}

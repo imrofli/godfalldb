@@ -453,7 +453,6 @@ public class DataLoader implements ApplicationRunner {
             augment.setGameplayTag(entry.getGameplayTag());
             augment.setAffinities(ItemHelper.getAffinities(entry.getTraitTagGroups()));
             augment.setItemType(ItemType.AUGMENT);
-            augment.setWeaponTypes(ItemHelper.getWeaponTypeSet(entry.getTraitTagGroups()));
             augment.setLootInfo(lootInfoDao.findByGameplayTag(augment.getGameplayTag()));
             String group = ItemHelper.getTraitName(entry.getTraitTagGroups());
             Set<Affinity> affinitySet = augment.getAffinities();

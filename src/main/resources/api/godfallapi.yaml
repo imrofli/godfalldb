@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.0.0
 info:
   title: GodfallDB Api
   description: "GodfallDB API"
@@ -14,16 +14,56 @@ servers:
     description: Production Server
 tags:
   - name: weapon
-    description: Operations about weapons
+    description: "Operations about weapons"
+  - name: augment
+    description: "Operations about augments"
+  - name: lifestone
+    description: "Operations about augments"
+  - name: banner
+    description: "Operations about banners"
+  - name: charm
+    description: "Operations about charms"
+  - name: ring
+    description: "Operations about rings"
+  - name: amulet
+    description: "Operations about amulets"
+  - name: lootinfo
+    description: "Operations about loot info"
 
 components:
   schemas:
+    ItemElement:
+      type: string
+      enum:
+        - VOID
+        - AIR
+        - FIRE
+        - WATER
+        - EARTH
+        - PHYSICAL
+    MinimumRarity:
+      type: string
+      enum:
+        - COMMON
+        - UNCOMMON
+        - RARE
+        - EPIC
+        - LEGENDARY
+        - EXOTIC
+    Affinity:
+      type: string
+      enum:
+        - MIGHT
+        - SPIRIT
+        - VITALITY
     Weapon:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        gameplayTag:
+          type: string
         weaponclass:
           type: string
           enum:
@@ -35,16 +75,186 @@ components:
         weaponelements:
           type: array
           items:
-            $ref: '#/components/schemas/WeaponElement'
-    WeaponElement:
-      type: string
-      enum:
-        - VOID
-        - AIR
-        - FIRE
-        - WATER
-        - EARTH
-        - PHYSICAL
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+    Augment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+    Banner:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        overshieldScalar:
+          type: integer
+          format: int64
+        radiusScalar:
+          type: integer
+          format: int64
+        cooldownScalar:
+          type: integer
+          format: int64
+    LifeStone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+        healamount:
+          type: integer
+          format: int64
+        charges:
+          type: integer
+          format: int64
+        healDuration:
+          type: integer
+          format: int64
+        secondaryTraitDuration:
+          type: integer
+          format: int64
+    Ring:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+    Amulet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+    Charm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+    LootInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+        maximumrarity:
+          type: string
+          items:
+            $ref: '#/components/schemas/MinimumRarity'
+        minimumTier:
+          type: integer
+          format: int64
+        maximumTier:
+          type: integer
+          format: int64
+        TowerDrop:
+          type: boolean
+        PreorderDrop:
+          type: boolean
+        DropTags:
+          type: array
+          items:
+            type: string
 
 
 paths:
@@ -52,7 +262,7 @@ paths:
     get:
       tags:
         - weapon
-      summary: Get all weapons. not all metadata loaded
+      summary: Get all weapons
       operationId: getAllWeapons
       responses:
         200:
@@ -87,6 +297,246 @@ paths:
                 $ref: '#/components/schemas/Weapon'
         404:
           description: Weapon not found
+          content: { }
+  /augment:
+    get:
+      tags:
+        - augment
+      summary: Get all weapons
+      operationId: getAllAugments
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Augment'
+  /augment/{id}:
+    get:
+      tags:
+        - augment
+      summary: Get augment by id
+      operationId: getAugmentById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a augment'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Augment'
+        404:
+          description: Augment not found
+          content: { }
+  /banner:
+    get:
+      tags:
+        - banner
+      summary: Get all banners
+      operationId: getAllBanners
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Banner'
+  /banner/{id}:
+    get:
+      tags:
+        - banner
+      summary: Get banner by id
+      operationId: getBannerById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Banner'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Banner'
+        404:
+          description: Banner not found
+          content: { }
+  /amulet:
+    get:
+      tags:
+        - amulet
+      summary: Get all amulets
+      operationId: getAllAmulets
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Amulet'
+  /amulet/{id}:
+    get:
+      tags:
+        - amulet
+      summary: Get amulet by id
+      operationId: getAmuletById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Amulet'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amulet'
+        404:
+          description: Amulet not found
+          content: { }
+  /charm:
+    get:
+      tags:
+        - charm
+      summary: Get all charms
+      operationId: getAllCharms
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Charm'
+  /charm/{id}:
+    get:
+      tags:
+        - charm
+      summary: Get charm by id
+      operationId: getCharmById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Charm'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charm'
+        404:
+          description: Charm not found
+          content: { }
+  /ring:
+    get:
+      tags:
+        - ring
+      summary: Get all rings
+      operationId: getAllRings
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ring'
+  /ring/{id}:
+    get:
+      tags:
+        - ring
+      summary: Get ring by id
+      operationId: getRingById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Ring'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ring'
+        404:
+          description: Ring not found
+          content: { }
+  /lootinfo:
+    get:
+      tags:
+        - lootinfo
+      summary: Get all lootinfos
+      operationId: getAllLootInfos
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LootInfo'
+  /lootinfo/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by id
+      operationId: getLootInfoById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
           content: { }
 
 

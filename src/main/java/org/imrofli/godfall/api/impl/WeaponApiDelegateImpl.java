@@ -1,7 +1,7 @@
 package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.WeaponApiDelegate;
-import org.imrofli.godfall.api.model.WeaponElement;
+import org.imrofli.godfall.api.model.ItemElement;
 import org.imrofli.godfall.dao.model.Element;
 import org.imrofli.godfall.dao.model.Weapon;
 import org.imrofli.godfall.services.intf.WeaponService;
@@ -44,34 +44,34 @@ public class WeaponApiDelegateImpl implements WeaponApiDelegate {
                 default:
                     wOut.setWeaponclass(org.imrofli.godfall.api.model.Weapon.WeaponclassEnum.LONGSWORD);
             }
-            List<WeaponElement> elementList = new ArrayList<>();
+            List<ItemElement> elementList = new ArrayList<>();
             for(Element ele : w.getElements()){
                 switch (ele){
                     case PHYSICAL:
-                        elementList.add(WeaponElement.PHYSICAL);
+                        elementList.add(ItemElement.PHYSICAL);
                         break;
                     case AIR:
-                        elementList.add(WeaponElement.AIR);
+                        elementList.add(ItemElement.AIR);
                         break;
                     case EARTH:
-                        elementList.add(WeaponElement.EARTH);
+                        elementList.add(ItemElement.EARTH);
                         break;
                     case VOID:
-                        elementList.add(WeaponElement.VOID);
+                        elementList.add(ItemElement.VOID);
                         break;
                     case WATER:
-                        elementList.add(WeaponElement.WATER);
+                        elementList.add(ItemElement.WATER);
                         break;
                     case FIRE:
-                        elementList.add(WeaponElement.FIRE);
+                        elementList.add(ItemElement.FIRE);
                         break;
                     default:
-                        elementList.add(WeaponElement.PHYSICAL);
-                        elementList.add(WeaponElement.AIR);
-                        elementList.add(WeaponElement.EARTH);
-                        elementList.add(WeaponElement.VOID);
-                        elementList.add(WeaponElement.WATER);
-                        elementList.add(WeaponElement.FIRE);
+                        elementList.add(ItemElement.PHYSICAL);
+                        elementList.add(ItemElement.AIR);
+                        elementList.add(ItemElement.EARTH);
+                        elementList.add(ItemElement.VOID);
+                        elementList.add(ItemElement.WATER);
+                        elementList.add(ItemElement.FIRE);
                 }
             }
             wOut.setWeaponelements(elementList);

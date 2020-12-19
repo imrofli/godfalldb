@@ -21,6 +21,9 @@ public class Augment extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Rarity minimumRarity;
 
+    @ElementCollection(targetClass = WeaponType.class)
+    private Set<WeaponType> weaponTypes;
+
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
@@ -94,6 +97,14 @@ public class Augment extends AbstractEntity {
         this.affinities = affinities;
     }
 
+    public Set<WeaponType> getWeaponTypes() {
+        return weaponTypes;
+    }
+
+    public void setWeaponTypes(Set<WeaponType> weaponTypes) {
+        this.weaponTypes = weaponTypes;
+    }
+
     public LootInfo getLootInfo() {
         return lootInfo;
     }
@@ -109,6 +120,7 @@ public class Augment extends AbstractEntity {
                 ", elements=" + elements +
                 ", gameplayTag='" + gameplayTag + '\'' +
                 ", minimumRarity=" + minimumRarity +
+                ", weaponTypes=" + weaponTypes +
                 ", itemType=" + itemType +
                 ", affinities=" + affinities +
                 ", lootInfo=" + lootInfo +

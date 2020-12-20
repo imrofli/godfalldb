@@ -9,4 +9,4 @@ build:
   script: mvn package
   artifacts:
     paths:
-      - target/godfallapi-0.0.1-SNAPSHOT.jar
+      - target/godfallapi-$CI_COMMIT_BRANCH.jar

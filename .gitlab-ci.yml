@@ -1,4 +1,13 @@
 image: maven:latest
+
+variables:
+  MAVEN_CLI_OPTS: "--batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
     
 stages:
   - build
@@ -6,7 +15,7 @@ stages:
 
 build:
   stage: build
-  script: mvn package
+  script: mvn $MAVEN_CLI_OPTS package
   artifacts:
     paths:
       - target/godfallapi-$CI_COMMIT_BRANCH.jar

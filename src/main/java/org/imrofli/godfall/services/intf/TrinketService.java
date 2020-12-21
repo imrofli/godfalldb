@@ -1,21 +1,23 @@
 package org.imrofli.godfall.services.intf;
 
-import org.imrofli.godfall.dao.model.LifeStone;
+
+
+import org.imrofli.godfall.api.model.Amulet;
+import org.imrofli.godfall.api.model.Charm;
+import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.dao.model.Trinket;
+import org.imrofli.godfall.exception.ServiceCallException;
 
 import java.util.List;
-import java.util.Set;
 
 public interface TrinketService {
 
-    public Set<Trinket> getTrinkets();
-    public Set<Trinket> getAmulets();
-    public Set<Trinket> getRings();
-    public Set<Trinket> getCharms();
-    Trinket getTrinketById(Long id);
-    Trinket getTrinketByIdLoadAffinity(Long id);
-    Set<Trinket> getAllByLootInfoDropTag(String dropTag);
-
-
+    List<Amulet> getAllAmulets() throws ServiceCallException;
+    List<Ring> getAllRings() throws ServiceCallException;
+    List<Charm> getAllCharms() throws ServiceCallException;
+    Trinket getTrinketById(Long id) throws ServiceCallException;
+    Ring getRingById(Long id) throws ServiceCallException;
+    Charm getCharmById(Long id) throws ServiceCallException;
+    Amulet getAmuletById(Long id) throws ServiceCallException;
 
 }

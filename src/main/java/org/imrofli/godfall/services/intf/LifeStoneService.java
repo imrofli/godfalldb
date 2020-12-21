@@ -1,14 +1,13 @@
 package org.imrofli.godfall.services.intf;
 
-import org.imrofli.godfall.dao.model.LifeStone;
+
+import org.imrofli.godfall.api.model.LifeStone;
+import org.imrofli.godfall.exception.ServiceCallException;
 
 import java.util.List;
-import java.util.Set;
 
 public interface LifeStoneService {
 
-    public Set<LifeStone> getLifeStones();
-    public LifeStone getLifeStoneById(Long id);
-    LifeStone getLifeStoneByIdLoadAffinity(Long id);
-    Set<LifeStone> getAllByLootInfoDropTag(String dropTag);
+    List<LifeStone> getAllLifeStones() throws ServiceCallException;
+    LifeStone getLifeStoneById(Long id) throws ServiceCallException;
 }

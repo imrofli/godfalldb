@@ -1,14 +1,14 @@
 package org.imrofli.godfall.helpers;
 
 import org.imrofli.godfall.dao.model.*;
+import org.imrofli.godfall.dao.model.ConditionParamCategory;
 import org.imrofli.godfall.dao.model.ItemType;
-import org.imrofli.godfall.dao.model.Magnitude;
+import org.imrofli.godfall.dao.model.EffectMagnitude;
+import org.imrofli.godfall.dao.model.TraitCategory;
 import org.imrofli.godfall.data.*;
-import org.imrofli.godfall.services.ItemScalingServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 public final class ItemHelper {
@@ -152,162 +152,155 @@ public final class ItemHelper {
         if (traitGroup != null) {
             if (traitGroup.contains("secondary") || traitGroup.contains("Secondary")) {
                 return TraitType.SECONDARY;
-            } else if (traitGroup.contains("boon") || traitGroup.contains("Boon")) {
-                return TraitType.BOON;
             } else if (traitGroup.contains("masterwork") || traitGroup.contains("Masterwork")) {
                 return TraitType.MASTERWORK;
-            } else if (traitGroup.contains("SkillGrid") || traitGroup.contains("Skillgrid")) {
-                return TraitType.SKILLGRID;
             } else {
                 return TraitType.PRIMARY;
             }
-        } else {
-            return TraitType.NA;
         }
+        return null;
     }
 
-    public static Set<LootEffect> getLootEffects(List<FluffyNamedLootEffect> namedLootEffects, List<String> conditionalLootEffects) {
+    public static Set<LootEffect> getLootEffects(List<FluffyNamedLootEffect> namedLootEffects) {
         Set<LootEffect> lootEffectSet = new HashSet<>();
-        if (conditionalLootEffects != null) {
-            for (String cond : conditionalLootEffects) {
-                LootEffect lootEffect = new LootEffect();
-                lootEffect.setName(cond);
-                lootEffect.setMagnitudes(null);
-                lootEffect.setLootEffectType(LootEffectType.CONDITIONAL);
-                lootEffectSet.add(lootEffect);
-            }
-        }
         if (namedLootEffects != null) {
             for (FluffyNamedLootEffect named : namedLootEffects) {
                 LootEffect lootEffect = new LootEffect();
                 lootEffect.setName(named.getName());
-                if("ConnectedMightCritOvershield".equals(named.getName())){
-                    LOGGER.info("Magnitude {}", named.getMagnitudes());
-                }
-                Set<org.imrofli.godfall.dao.model.Magnitude> magnitudeSet = new HashSet<>();
-                if (named.getMagnitudes() != null) {
-                    for (org.imrofli.godfall.data.Magnitude magn : named.getMagnitudes()) {
-                        org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
-                        entry.setName(magn.getMagnitudeName().toValue());
-                        entry.setParameterType(getParamType(magn.getParamType()));
-                        entry.setScalar(magn.getScalar());
-                        magnitudeSet.add(entry);
-                    }
-                }
-                lootEffect.setMagnitudes(magnitudeSet);
-                lootEffect.setLootEffectType(LootEffectType.NAMED);
+                Set<EffectMagnitude> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
+                lootEffect.setMagnitudes(effectMagnitudeSet);
                 lootEffectSet.add(lootEffect);
             }
         }
-
         return lootEffectSet;
     }
 
-    public static void updateConditionalEffects(Set<LootEffect> lootEffects, ConditionalLootEffects conditionalLootEffects){
-        for(LootEffect effect : lootEffects){
-            if(effect.getMagnitudes()==null){
-                effect.setMagnitudes(new HashSet<>());
+    public static Set<LootEffect> getLootEffectsForConditional(List<PurpleNamedLootEffect> namedLootEffects) {
+        Set<LootEffect> lootEffectSet = new HashSet<>();
+        if (namedLootEffects != null) {
+            for (PurpleNamedLootEffect named : namedLootEffects) {
+                LootEffect lootEffect = new LootEffect();
+                lootEffect.setName(named.getName());
+                Set<EffectMagnitude> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
+                lootEffect.setMagnitudes(effectMagnitudeSet);
+                lootEffectSet.add(lootEffect);
             }
-            if(effect.getLootEffectType() == LootEffectType.CONDITIONAL){
-                for(ConditionalLootEffectsCollection effectsCollection : conditionalLootEffects.getCollection()){
-                    if(effectsCollection.getName().equals(effect.getName())) {
-                        effect.setApplyForEach(effectsCollection.getApplyForEach());
-                        effect.setApplyToConnected(effectsCollection.getApplyToConnected());
-                        effect.setApplyToSelf(effectsCollection.getApplyToSelf());
-                        effect.setConditionParamScalar(effectsCollection.getConditionParamScalar());
-                        effect.setConditionName(effectsCollection.getConditionName().toValue());
-                        effect.setGrantedEffectDescription(effectsCollection.getGrantedEffectDescription());
-                        if(effectsCollection.getConditionParamCategory() !=null && effectsCollection.getConditionParamCategory().enumValue != null) {
-                            effect.setConditionParamCategory(effectsCollection.getConditionParamCategory().enumValue.toValue());
-                        }
-                        if(effectsCollection.getConditionParamType() !=null) {
-                            switch (effectsCollection.getConditionParamType()){
-                                case NO_VARIANCE_CORE_ATTRIBUTE_PERCENT:
-                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_CORE_ATTRIBUTE_PERCENT);
-                                    break;
-                                case NO_VARIANCE_DEFENSE_PERCENT:
-                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_DEFENSE_PERCENT);
-                                    break;
-                                case NO_VARIANCE_PLAYER_POWER:
-                                    effect.setConditionParamType(ParameterType.NO_VARIANCE_PLAYER_POWER);
-                                    break;
-                                case CORE_ATTRIBUTE_PERCENT:
-                                    effect.setConditionParamType(ParameterType.CORE_ATTRIBUTE_PERCENT);
-                                    break;
-                                case ATTRIBUTE_NO_VARIANCE:
-                                    effect.setConditionParamType(ParameterType.ATTRIBUTE_NO_VARIANCE);
-                                    break;
-                                case DEFENSE_PERCENT:
-                                    effect.setConditionParamType(ParameterType.DEFENSE_PERCENT);
-                                    break;
-                                case NON_SCALING:
-                                    effect.setConditionParamType(ParameterType.NON_SCALING);
-                                    break;
-                                case PLAYER_POWER:
-                                    effect.setConditionParamType(ParameterType.PLAYER_POWER);
-                                    break;
-                                case CORE_ATTRIBUTE:
-                                    effect.setConditionParamType(ParameterType.CORE_ATTRIBUTE);
-                                    break;
-                            }
-                        }
+        }
+        return lootEffectSet;
+    }
 
-                        if (effectsCollection.getNamedLootEffects() != null) {
-                            for (PurpleNamedLootEffect purpleNamedLootEffect : effectsCollection.getNamedLootEffects()) {
-                                if (purpleNamedLootEffect.getMagnitudes() != null) {
-                                    for (org.imrofli.godfall.data.Magnitude magn : purpleNamedLootEffect.getMagnitudes()) {
-                                        boolean wasAlreadyIn = false;
-                                        for (Magnitude lootMagnitude : effect.getMagnitudes()) {
-                                            if (lootMagnitude.getName().equals(magn.getMagnitudeName().toValue())) {
-                                                lootMagnitude.setScalar(magn.getScalar());
-                                                wasAlreadyIn = true;
-                                            }
-                                        }
-                                        if (!wasAlreadyIn) {
-                                            org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
-                                            entry.setName(magn.getMagnitudeName().toValue());
-                                            entry.setParameterType(getParamType(magn.getParamType()));
-                                            entry.setScalar(magn.getScalar());
+    public static ConditionParamCategory getConditionParamCategory(org.imrofli.godfall.data.ConditionParamCategory conditionParamCategory) {
+        ConditionParamCategory category = new ConditionParamCategory();
+        if(conditionParamCategory != null){
+            if (BoonWhitelistTagElement.MIGHT.equals(conditionParamCategory.enumValue)) {
+                category.setAffinity(Affinity.MIGHT);
+                return category;
+            } else if (BoonWhitelistTagElement.SPIRIT.equals(conditionParamCategory.enumValue)) {
+                category.setAffinity(Affinity.SPIRIT);
+                return category;
+            } else if (BoonWhitelistTagElement.VITALITY.equals(conditionParamCategory.enumValue)) {
+                category.setAffinity(Affinity.VITALITY);
+                return category;
+            } else if (1L == conditionParamCategory.integerValue) {
+                category.setColor(Color.RED);
+                return category;
+            } else if (2L == conditionParamCategory.integerValue) {
+                category.setColor(Color.GREEN);
+                return category;
+            }
+            else if (3L == conditionParamCategory.integerValue) {
+                category.setColor(Color.BLUE);
+                return category;
+            }
+        }
+        return category;
 
-                                            effect.getMagnitudes().add(entry);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else if(effectsCollection.getTraitModifiers()!=null){
-                                if (effectsCollection.getTraitModifiers() != null) {
-                                        boolean wasAlreadyIn = false;
-                                        for (Magnitude lootMagnitude : effect.getMagnitudes()) {
-                                            for(String s : effectsCollection.getTraitModifiers().getModifierNames()){
-                                                if (lootMagnitude.getName().equals("s")) {
-                                                    lootMagnitude.setScalar((double) effectsCollection.getTraitModifiers().getScalar());
-                                                    wasAlreadyIn = true;
-                                                }
-                                            }
+    }
 
-                                        }
-                                        if (!wasAlreadyIn) {
-                                            org.imrofli.godfall.dao.model.Magnitude entry = new org.imrofli.godfall.dao.model.Magnitude();
-                                            for(String s : effectsCollection.getTraitModifiers().getModifierNames()){
-                                                entry.setName(s);
-                                                entry.setParameterType(getParamType(effectsCollection.getConditionParamType()));
-                                                entry.setScalar((double) effectsCollection.getTraitModifiers().getScalar());
-
-                                                effect.getMagnitudes().add(entry);
-                                            }
-
-                                        }
-
-                                }
-
-                        }
+    public static Set<ConditionalLootEffect> getConditionalLootEffects(List<String> conditionalLootEffects, List<ConditionalLootEffectsCollection> conditionalLootEffectsCollections) {
+        Set<ConditionalLootEffect> lootEffectSet = new HashSet<>();
+        if (conditionalLootEffects != null && conditionalLootEffectsCollections != null) {
+            for (String searchEntry : conditionalLootEffects) {
+                for (ConditionalLootEffectsCollection condEffect : conditionalLootEffectsCollections) {
+                    if (searchEntry.equals(condEffect.getName())) {
+                        ConditionalLootEffect effect = new ConditionalLootEffect();
+                        effect.setName(condEffect.getName());
+                        effect.setDescription(condEffect.getDescription());
+                        effect.setApplyToSelf(condEffect.getApplyToSelf());
+                        effect.setApplyToConnected(condEffect.getApplyToConnected());
+                        effect.setApplyForEach(condEffect.getApplyForEach());
+                        Set<LootEffect> namedLootEffects = getLootEffectsForConditional(condEffect.getNamedLootEffects());
+                        effect.setLootEffects(namedLootEffects);
+                        effect.setConditionName(condEffect.getConditionName().toValue());
+                        effect.setConditionParamCategory(getConditionParamCategory(condEffect.getConditionParamCategory()));
+                        effect.setConditionParameterType(getParamType(condEffect.getConditionParamType()));
+                        effect.setConditionParamScalar(condEffect.getConditionParamScalar());
+                        lootEffectSet.add(effect);
                     }
-
                 }
             }
         }
+        return lootEffectSet;
     }
+
+    public static TraitCategory getTraitCategory(String name, List<TraitCategoryCollection> traitCategoryCollections) {
+        for (TraitCategoryCollection collection : traitCategoryCollections) {
+            if (name.equals(collection.getName())) {
+                TraitCategory traitCategory = new TraitCategory();
+                traitCategory.setName(collection.getName());
+                traitCategory.setGroupname(collection.getGroupName().toString());
+                traitCategory.setTraitType(getTraitType(collection.getGroupName()));
+                traitCategory.setTraitGroup(collection.getTraitGroup());
+                Set<String> allowedTraitTags = new HashSet<>();
+                if (collection.getAllowedTraitTags() != null) {
+                    allowedTraitTags.addAll(collection.getAllowedTraitTags());
+                }
+                traitCategory.setAllowedTraitTags(allowedTraitTags);
+                Set<String> exclusionGroups = new HashSet<>();
+                if (collection.getExclusionGroups() != null) {
+                    exclusionGroups.addAll(collection.getExclusionGroups());
+                }
+                traitCategory.setExclusionGroups(exclusionGroups);
+                traitCategory.setMinimumTier(collection.getMinTier());
+                traitCategory.setMaximumTier(collection.getMaxTier());
+                traitCategory.setWeight(collection.getWeight());
+                traitCategory.setMinimumRarity(getRarity(collection.getMinRarity()));
+                traitCategory.setMaximumRarity(getRarity(collection.getMaxRarity()));
+
+
+                return traitCategory;
+            }
+        }
+        return null;
+    }
+
+    public static TraitType getTraitType(GroupName groupName) {
+        switch (groupName) {
+            case PRIMARY_TRAIT:
+                return TraitType.PRIMARY;
+            case PRIMARY_ATTRIBUTE:
+                return TraitType.PRIMARY;
+            case MASTERWORK_TRAIT:
+                return TraitType.MASTERWORK;
+            default:
+                return TraitType.SECONDARY;
+        }
+    }
+
+    public static Set<EffectMagnitude> getMagnitudes(List<Magnitude> magnitudeList) {
+        Set<EffectMagnitude> effectMagnitudeSet = new HashSet<>();
+        if (magnitudeList != null && !magnitudeList.isEmpty()) {
+            for (Magnitude magn : magnitudeList) {
+                EffectMagnitude entry = new EffectMagnitude();
+                entry.setName(magn.getMagnitudeName().toValue());
+                entry.setParameterType(getParamType(magn.getParamType()));
+                entry.setScalar(magn.getScalar());
+                effectMagnitudeSet.add(entry);
+            }
+        }
+        return effectMagnitudeSet;
+    }
+
 
     public static ParameterType getParamType(ParamType type) {
         switch (type) {
@@ -388,17 +381,17 @@ public final class ItemHelper {
 
     public static WeaponType getWeaponTypeFromString(String tag) {
         if (tag != null) {
-                if (tag.equals("Polearm")) {
-                    return WeaponType.POLEARM;
-                } else if (tag.equals("Dual Blades")) {
-                    return WeaponType.DUALBLADES;
-                } else if (tag.equals("Greatsword")) {
-                    return WeaponType.GREATSWORD;
-                } else if (tag.equals("Longsword")) {
-                    return WeaponType.LONGSWORD;
-                } else if (tag.equals("Warhammer")) {
-                    return WeaponType.WARHAMMER;
-                }
+            if (tag.equals("Polearm")) {
+                return WeaponType.POLEARM;
+            } else if (tag.equals("Dual Blades")) {
+                return WeaponType.DUALBLADES;
+            } else if (tag.equals("Greatsword")) {
+                return WeaponType.GREATSWORD;
+            } else if (tag.equals("Longsword")) {
+                return WeaponType.LONGSWORD;
+            } else if (tag.equals("Warhammer")) {
+                return WeaponType.WARHAMMER;
+            }
         }
         return WeaponType.NA;
     }
@@ -440,89 +433,28 @@ public final class ItemHelper {
 
         if (tag != null && !tag.isEmpty()) {
 
-                if (tag.contains("Might")) {
-                    return Affinity.MIGHT;
-                } else if (tag.contains("Spirit")) {
-                    return Affinity.SPIRIT;
-                } else if (tag.contains("Vitality")) {
-                    return Affinity.VITALITY;
-                }
+            if (tag.contains("Might")) {
+                return Affinity.MIGHT;
+            } else if (tag.contains("Spirit")) {
+                return Affinity.SPIRIT;
+            } else if (tag.contains("Vitality")) {
+                return Affinity.VITALITY;
+            }
         }
-        return Affinity.NA;
+        return null;
     }
 
-    public static void updateSkillgridData(Trait trait, List<MasteryEntitlementsCollection> masteryEntitlementsCollections, Map<String, Localization> localization){
-
-        for(MasteryEntitlementsCollection m : masteryEntitlementsCollections){
-            if(trait.getName().equals(m.getTraitName())){
-                trait.setMasteryEntitlements(m.getID());
-                trait.setTraitGroupBulk(m.getMasteryID());
-                trait.setTraitGroupBulkId(m.getMinPoints());
+    public static Set<TagRequirement> getTagRequirements(List<OngoingTagRequirement> ongoingTagRequirements) {
+        Set<TagRequirement> out = new HashSet<>();
+        if(ongoingTagRequirements!=null){
+            for(OngoingTagRequirement tagRequirement : ongoingTagRequirements){
+                TagRequirement entry = new TagRequirement();
+                entry.setName(tagRequirement.getGameplayTag());
+                entry.setActorType(tagRequirement.getActorType().toString());
+                entry.setRequireOrIgnore(tagRequirement.getRequireOrIgnore().toString());
+                out.add(entry);
             }
         }
-        Localization loc = localization.get(trait.getMasteryEntitlements());
-        if(loc!=null){
-            StringBuilder sb = new StringBuilder();
-            sb.append(loc.getDescription().stringValue);
-            sb.append(" ");
-            if(loc.getDescription()!= null && loc.getDescription().stringArrayValue!=null){
-                for(String s : loc.getDescription().stringArrayValue){
-                    sb.append(s);
-                    sb.append(" ");
-                }
-            }
-            trait.setGridDesc(sb.toString().trim());
-            sb = new StringBuilder();
-            sb.append(loc.getName().stringValue);
-            sb.append(" ");
-            if(loc.getName()!= null && loc.getName().stringArrayValue!=null){
-                for(String s : loc.getName().stringArrayValue){
-                    sb.append(s);
-                    sb.append(" ");
-                }
-            }
-            trait.setGridName(sb.toString().trim());
-            SkillGridHelperModel skillGridHelperModel = getSkillGridMap().get(trait.getTraitGroupBulk());
-            if(skillGridHelperModel!=null){
-                trait.setGridX(skillGridHelperModel.getGridX());
-                trait.setGridY(skillGridHelperModel.getGridY());
-            }
-        }
-    }
-
-    public static Map<String, SkillGridHelperModel> getSkillGridMap(){
-        if(skillGridMap.isEmpty()){
-            skillGridMap.put("Mastery.Player.Combat.WeaponArt", new SkillGridHelperModel(1, 1));
-            skillGridMap.put("Mastery.Player.Combat.WeaponTiming", new SkillGridHelperModel(2, 1));
-            skillGridMap.put("Mastery.Player.Combat.Might", new SkillGridHelperModel(3, 1));
-            skillGridMap.put("Mastery.Player.Combat.ComboCounter", new SkillGridHelperModel(4, 1));
-            skillGridMap.put("Mastery.Player.Combat.WeaponPolarity", new SkillGridHelperModel(5, 1));
-
-            skillGridMap.put("Mastery.Player.Combat.Soulshatter", new SkillGridHelperModel(1, 2));
-            skillGridMap.put("Mastery.Player.Combat.Anvil", new SkillGridHelperModel(2, 2));
-            skillGridMap.put("Mastery.Player.Combat.CritDamage", new SkillGridHelperModel(3, 2));
-            skillGridMap.put("Mastery.Player.Combat.Drain", new SkillGridHelperModel(4, 2));
-            skillGridMap.put("Mastery.Player.Combat.HeavyAttacks", new SkillGridHelperModel(5, 2));
-
-            skillGridMap.put("Mastery.Player.Combat.Vitality", new SkillGridHelperModel(1, 3));
-            skillGridMap.put("Mastery.Player.Combat.CritChance", new SkillGridHelperModel(2, 3));
-            skillGridMap.put("Mastery.Player.Combat.ArchonPower", new SkillGridHelperModel(3, 3));
-            skillGridMap.put("Mastery.Player.Combat.Ailments", new SkillGridHelperModel(4, 3));
-            skillGridMap.put("Mastery.Player.Combat.AllStats", new SkillGridHelperModel(5, 3));
-
-            skillGridMap.put("Mastery.Player.Combat.ShieldAttacks", new SkillGridHelperModel(1, 4));
-            skillGridMap.put("Mastery.Player.Combat.ShieldPrime", new SkillGridHelperModel(2, 4));
-            skillGridMap.put("Mastery.Player.Combat.Resistance", new SkillGridHelperModel(3, 4));
-            skillGridMap.put("Mastery.Player.Combat.Recovery", new SkillGridHelperModel(4, 4));
-            skillGridMap.put("Mastery.Player.Combat.Takedowns", new SkillGridHelperModel(5, 4));
-
-            skillGridMap.put("Mastery.Player.Combat.ShieldTechniques", new SkillGridHelperModel(1, 5));
-            skillGridMap.put("Mastery.Player.Combat.Banners", new SkillGridHelperModel(2, 5));
-            skillGridMap.put("Mastery.Player.Combat.Spirit", new SkillGridHelperModel(3, 5));
-            skillGridMap.put("Mastery.Player.Combat.Weakpoints", new SkillGridHelperModel(4, 5));
-            skillGridMap.put("Mastery.Player.Combat.Finesse", new SkillGridHelperModel(5, 5));
-
-        }
-        return skillGridMap;
+        return out;
     }
 }

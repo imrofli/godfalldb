@@ -16,13 +16,7 @@ public class Trait extends AbstractEntity{
     @NotEmpty
     private String traitGroup = "";
 
-    private String traitGroupBulk = "";
 
-    private Long traitGroupBulkId;
-
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private TraitType traitType;
 
     @NotNull
     @NotEmpty
@@ -30,9 +24,14 @@ public class Trait extends AbstractEntity{
     @Column( length = 100000 )
     private String description = "";
 
-    private Long minimumTier = 1L;
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<TagRequirement> tagRequirements;
 
-    private Long maximumTier = 1L;
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<LootEffect> lootEffects;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<ConditionalLootEffect> conditionalLootEffects;
 
     @Enumerated(EnumType.STRING)
     private Rarity minimumRarity;
@@ -40,30 +39,19 @@ public class Trait extends AbstractEntity{
     @Enumerated(EnumType.STRING)
     private Rarity maximumRarity;
 
+    private Long minimumTier = 1L;
+
+    private Long maximumTier = 1L;
+
+    private Boolean matchModifierMagnitudes;
+
     private Long weight = 1L;
 
-    private Integer gridX;
-
-    private Integer gridY;
-
-    @Lob
-    @Column( length = 100000 )
-    private String gridDesc;
-
-    private String gridName;
-
-    private String masteryEntitlements;
+    @OneToOne(cascade = {CascadeType.ALL})
+    private TraitCategory traitCategory;
 
     @ElementCollection
     private Set<String> keywords;
-
-    @OneToMany(cascade = {CascadeType.ALL})
-    private Set<LootEffect> lootEffects;
-
-    @OneToMany(cascade = {CascadeType.ALL})
-    private Set<TagRequirement> tagRequirements;
-
-    private Boolean matchModifierMagnitudes = false;
 
     @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
     private Set<Weapon> weapons;
@@ -79,16 +67,6 @@ public class Trait extends AbstractEntity{
 
     @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
     private Set<Augment> augments;
-
-    @ManyToMany
-    @JoinTable(
-            name = "trait_tags",
-            joinColumns = @JoinColumn(name = "trait_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<AllowedTraitTags> allowedTraitTags;
-
-    @ElementCollection
-    private Set<String> tagExclusionGroups;
 
     public String getName() {
         return name;
@@ -106,13 +84,6 @@ public class Trait extends AbstractEntity{
         this.traitGroup = traitGroup;
     }
 
-    public TraitType getTraitType() {
-        return traitType;
-    }
-
-    public void setTraitType(TraitType traitType) {
-        this.traitType = traitType;
-    }
 
     public String getDescription() {
         return description;
@@ -186,20 +157,20 @@ public class Trait extends AbstractEntity{
         this.matchModifierMagnitudes = matchModifierMagnitudes;
     }
 
-    public Set<LootEffect> getLootEffects() {
-        return lootEffects;
-    }
-
-    public void setLootEffects(Set<LootEffect> lootEffects) {
-        this.lootEffects = lootEffects;
-    }
-
     public Set<TagRequirement> getTagRequirements() {
         return tagRequirements;
     }
 
     public void setTagRequirements(Set<TagRequirement> tagRequirements) {
         this.tagRequirements = tagRequirements;
+    }
+
+    public Set<LootEffect> getLootEffects() {
+        return lootEffects;
+    }
+
+    public void setLootEffects(Set<LootEffect> lootEffects) {
+        this.lootEffects = lootEffects;
     }
 
     public Set<Banner> getBanners() {
@@ -234,76 +205,20 @@ public class Trait extends AbstractEntity{
         this.augments = augments;
     }
 
-    public Set<AllowedTraitTags> getAllowedTraitTags() {
-        return allowedTraitTags;
+    public Set<ConditionalLootEffect> getConditionalLootEffects() {
+        return conditionalLootEffects;
     }
 
-    public void setAllowedTraitTags(Set<AllowedTraitTags> allowedTraitTags) {
-        this.allowedTraitTags = allowedTraitTags;
+    public void setConditionalLootEffects(Set<ConditionalLootEffect> conditionalLootEffects) {
+        this.conditionalLootEffects = conditionalLootEffects;
     }
 
-    public Set<String> getTagExclusionGroups() {
-        return tagExclusionGroups;
+    public TraitCategory getTraitCategory() {
+        return traitCategory;
     }
 
-    public void setTagExclusionGroups(Set<String> tagExclusionGroups) {
-        this.tagExclusionGroups = tagExclusionGroups;
-    }
-
-    public String getTraitGroupBulk() {
-        return traitGroupBulk;
-    }
-
-    public void setTraitGroupBulk(String traitGroupBulk) {
-        this.traitGroupBulk = traitGroupBulk;
-    }
-
-    public Long getTraitGroupBulkId() {
-        return traitGroupBulkId;
-    }
-
-    public void setTraitGroupBulkId(Long traitGroupBulkId) {
-        this.traitGroupBulkId = traitGroupBulkId;
-    }
-
-    public Integer getGridX() {
-        return gridX;
-    }
-
-    public void setGridX(Integer gridX) {
-        this.gridX = gridX;
-    }
-
-    public Integer getGridY() {
-        return gridY;
-    }
-
-    public void setGridY(Integer gridY) {
-        this.gridY = gridY;
-    }
-
-    public String getGridDesc() {
-        return gridDesc;
-    }
-
-    public void setGridDesc(String gridDesc) {
-        this.gridDesc = gridDesc;
-    }
-
-    public String getGridName() {
-        return gridName;
-    }
-
-    public void setGridName(String gridName) {
-        this.gridName = gridName;
-    }
-
-    public String getMasteryEntitlements() {
-        return masteryEntitlements;
-    }
-
-    public void setMasteryEntitlements(String masteryEntitlements) {
-        this.masteryEntitlements = masteryEntitlements;
+    public void setTraitCategory(TraitCategory traitCategory) {
+        this.traitCategory = traitCategory;
     }
 
     @Override

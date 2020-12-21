@@ -10,15 +10,17 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: https://godfalldb.ch/api
+  - url: http://godfalldb.ch/api
     description: Production Server
+  - url: http://localhost/api
+    description: Dev Environment
 tags:
   - name: weapon
     description: "Operations about weapons"
   - name: augment
     description: "Operations about augments"
   - name: lifestone
-    description: "Operations about augments"
+    description: "Operations about lifestones"
   - name: banner
     description: "Operations about banners"
   - name: charm
@@ -41,7 +43,8 @@ components:
         - WATER
         - EARTH
         - PHYSICAL
-    MinimumRarity:
+        - NONE
+    Rarity:
       type: string
       enum:
         - COMMON
@@ -56,12 +59,133 @@ components:
         - MIGHT
         - SPIRIT
         - VITALITY
+    Color:
+      type: string
+      enum:
+        - RED
+        - GREEN
+        - BLUE
+    ParamType:
+      type: string
+      enum:
+        - ATTRIBUTE_NO_VARIANCE
+        - CORE_ATTRIBUTE
+        - CORE_ATTRIBUTE_PERCENT
+        - DEFENSE_PERCENT
+        - NON_SCALING
+        - NO_VARIANCE_CORE_ATTRIBUTE_PERCENT
+        - NO_VARIANCE_DEFENSE_PERCENT
+        - NO_VARIANCE_PLAYER_POWER
+        - PLAYER_POWER
+    EffectMagnitude:
+      type: object
+      properties:
+        name:
+          type: string
+        conditionparamtype:
+          $ref: '#/components/schemas/ParamType'
+        scalar:
+          type: number
+          format: double
+    ConditionParamCategory:
+      type: object
+      properties:
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        color:
+          $ref: '#/components/schemas/Color'
+    LootEffect:
+      type: object
+      properties:
+        name:
+          type: string
+        magnitudes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EffectMagnitude'
+    TraitType:
+      type: string
+      enum:
+        - PRIMARY
+        - SECONDARY
+        - MASTERWORK
+    ConditionalLootEffect:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        applytoself:
+          type: boolean
+        applytoconnected:
+          type: boolean
+        applyforeach:
+          type: boolean
+        looteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/LootEffect'
+        conditionname:
+          type: string
+        conditionparamcategory:
+          $ref: '#/components/schemas/ConditionParamCategory'
+        conditionparamtype:
+          $ref: '#/components/schemas/ParamType'
+        conditionparamscalar:
+          type: integer
+          format: int64
+    TraitCategory:
+      type: object
+      properties:
+        name:
+          type: string
+        groupname:
+          type: string
+        traittype:
+          $ref: '#/components/schemas/TraitType'
+        allowedtraittags:
+          type: array
+          items:
+            type: string
+        traitgroup:
+          type: string
+        exclusiongroups:
+          type: array
+          items:
+            type: string
+        minimumtier:
+          type: integer
+          format: int64
+        maximumtier:
+          type: integer
+          format: int64
+        weight:
+          type: integer
+          format: int64
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+
+
+    TraitRequirement:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        required:
+          type: boolean
+        actorType:
+          type: string
     Weapon:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         weaponclass:
@@ -72,20 +196,20 @@ components:
             - POLEARM
             - DUALBLADES
             - WARHAMMER
-        weaponelements:
+        elements:
           type: array
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
     Augment:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         affinities:
@@ -97,15 +221,15 @@ components:
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
     Banner:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         affinities:
@@ -131,20 +255,16 @@ components:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
-        affinities:
-          type: array
-          items:
-            $ref: '#/components/schemas/Affinity'
         elements:
           type: array
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
         healamount:
           type: integer
           format: int64
@@ -163,6 +283,8 @@ components:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         affinities:
@@ -174,15 +296,15 @@ components:
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
     Amulet:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         affinities:
@@ -194,15 +316,15 @@ components:
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
     Charm:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
         affinities:
@@ -214,33 +336,21 @@ components:
           items:
             $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
     LootInfo:
       type: object
       properties:
         id:
           type: integer
           format: int64
+        name:
+          type: string
         gameplayTag:
           type: string
-        affinities:
-          type: array
-          items:
-            $ref: '#/components/schemas/Affinity'
-        elements:
-          type: array
-          items:
-            $ref: '#/components/schemas/ItemElement'
         minimumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
         maximumrarity:
-          type: string
-          items:
-            $ref: '#/components/schemas/MinimumRarity'
+          $ref: '#/components/schemas/Rarity'
         minimumTier:
           type: integer
           format: int64
@@ -252,6 +362,51 @@ components:
         PreorderDrop:
           type: boolean
         DropTags:
+          type: array
+          items:
+            type: string
+    Trait:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        group:
+          type: string
+        description:
+          type: string
+        traitrequirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitRequirement'
+        looteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/LootEffect'
+        conditionallooteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConditionalLootEffect'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+        minimumTier:
+          type: integer
+          format: int64
+        maximumTier:
+          type: integer
+          format: int64
+        matchModifierMagnitudes:
+          type: boolean
+        weight:
+          type: integer
+          format: int64
+        traitcategory:
+          $ref: '#/components/schemas/TraitCategory'
+        keywords:
           type: array
           items:
             type: string
@@ -302,7 +457,7 @@ paths:
     get:
       tags:
         - augment
-      summary: Get all weapons
+      summary: Get all Augments
       operationId: getAllAugments
       responses:
         200:
@@ -337,6 +492,45 @@ paths:
                 $ref: '#/components/schemas/Augment'
         404:
           description: Augment not found
+          content: { }
+  /lifestone:
+    get:
+      tags:
+        - lifestone
+      summary: Get all lifestones
+      operationId: getAllLifestones
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LifeStone'
+  /lifestone/{id}:
+    get:
+      tags:
+        - lifestone
+      summary: Get lifestone by id
+      operationId: getLifestoneById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Lifestone'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifeStone'
+        404:
+          description: Lifestone not found
           content: { }
   /banner:
     get:
@@ -513,12 +707,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LootInfo'
-  /lootinfo/{id}:
+  /lootinfo/amulet/{id}:
     get:
       tags:
         - lootinfo
-      summary: Get lootinfo by id
-      operationId: getLootInfoById
+      summary: Get lootinfo by amulet id
+      operationId: getLootInfoByAmuletId
       parameters:
         - name: id
           in: path
@@ -527,7 +721,6 @@ paths:
           schema:
             type: integer
             format: int64
-
       responses:
         200:
           description: successful operation
@@ -537,6 +730,165 @@ paths:
                 $ref: '#/components/schemas/LootInfo'
         404:
           description: LootInfo not found
+          content: { }
+  /lootinfo/augment/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by augment id
+      operationId: getLootInfoByAugmentId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/banner/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by banner id
+      operationId: getLootInfoByBannerId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/charm/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by charm id
+      operationId: getLootInfoByCharmId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/lifestone/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by lifestone id
+      operationId: getLootInfoByLifeStoneId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/ring/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by ring id
+      operationId: getLootInfoByRingId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /trait:
+    get:
+      tags:
+        - trait
+      summary: Get all Traits
+      operationId: getAllTraits
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+  /trait/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get Trait by id
+      operationId: getTraitById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Trait'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trait'
+        404:
+          description: Trait not found
           content: { }
 
 

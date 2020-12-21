@@ -49,9 +49,6 @@ public class DataLoader implements ApplicationRunner {
     private LootInfoDao lootInfoDao;
 
     @Autowired
-    private AllowedTagDao allowedTagDao;
-
-    @Autowired
     private ItemScalingDao itemScalingDao;
 
 
@@ -59,9 +56,7 @@ public class DataLoader implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         LOGGER.info("Starting data Ingestion");
         loadTierInfo();
-        loadAllowedTags();
         loadTraits();
-        loadRestOfSkills();
         loadLootInfo();
         loadWeapons();
         loadBanners();
@@ -160,44 +155,6 @@ public class DataLoader implements ApplicationRunner {
         lootInfoDao.flush();
     }
 
-    private void loadAllowedTags(){
-        LOGGER.info("Loading Allowed Tags");
-        for (TraitCategoryCollection tagsCollection : dataDao.getMainData().getTraitCategory().getCollection()) {
-            if(tagsCollection.getName() != null && !tagsCollection.getName().endsWith("Testing") && tagsCollection.getGroupName()!= null && tagsCollection.getTraitGroup() != null) {
-                if(tagsCollection.getAllowedTraitTags()!=null){
-                    for(String entry : tagsCollection.getAllowedTraitTags()) {
-                        AllowedTraitTags traitTags = new AllowedTraitTags();
-                        traitTags.setName(tagsCollection.getName());
-                        traitTags.setTraitGroup(tagsCollection.getTraitGroup());
-                        traitTags.setGroupName(tagsCollection.getGroupName().toValue());
-                        Set<String> exclusionSet = new HashSet<>();
-                        if (tagsCollection.getExclusionGroups() != null) {
-                            for (String exclusion : tagsCollection.getExclusionGroups()) {
-                                exclusionSet.add(exclusion);
-                            }
-                        }
-                        traitTags.setExclusionGroups(exclusionSet);
-                        String[] splits = entry.split("\\.");
-                        if (splits.length > 1) {
-                            traitTags.setElement(ItemHelper.getElementsIgnoreRandom(splits[splits.length - 1].trim()));
-                            traitTags.setAffinity(ItemHelper.getAffinity(splits[splits.length - 1].trim()));
-                            traitTags.setItemType(ItemHelper.getItemType(splits[splits.length - 2].trim()));
-                            traitTags.setWeaponType(ItemHelper.getWeaponTypeFromString(splits[splits.length - 2].trim()));
-                        } else {
-                            traitTags.setElement(Element.NA);
-                            traitTags.setAffinity(Affinity.NA);
-                            traitTags.setItemType(ItemType.NA);
-                            traitTags.setWeaponType(WeaponType.NA);
-                        }
-                        allowedTagDao.save(traitTags);
-                    }
-                }
-
-            }
-        }
-        allowedTagDao.flush();
-    }
-
 
     private void loadTraits(){
         LOGGER.info("Loading Traits");
@@ -206,87 +163,37 @@ public class DataLoader implements ApplicationRunner {
                 Trait trait = new Trait();
                 trait.setName(tagsCollection.getTraitName());
                 trait.setTraitGroup(tagsCollection.getGroupName());
-
                 trait.setDescription(tagsCollection.getDescription().replaceAll("\"", ""));
-                trait.setMinimumTier(tagsCollection.getMinTier());
-                trait.setMaximumTier(tagsCollection.getMaxTier());
-                trait.setWeight(tagsCollection.getWeight());
+                trait.setTagRequirements(ItemHelper.getTagRequirements(tagsCollection.getOngoingTagRequirements()));
+                trait.setLootEffects(ItemHelper.getLootEffects(tagsCollection.getNamedLootEffects()));
+                trait.setConditionalLootEffects(ItemHelper.getConditionalLootEffects(tagsCollection.getConditionalLootEffects(), dataDao.getMainData().getConditionalLootEffects().getCollection()));
                 trait.setMinimumRarity(ItemHelper.getRarity(tagsCollection.getMinRarity()));
                 trait.setMaximumRarity(ItemHelper.getRarity(tagsCollection.getMaxRarity()));
-                trait.setTraitType(ItemHelper.getTraitTypeFromGroup(tagsCollection.getGroupName()));
-                if(trait.getTraitType()!=TraitType.SKILLGRID && trait.getTraitGroupBulkId()==null){
-                    if (trait.getTraitGroupBulk()==null) {
-                        trait.setTraitGroupBulk("");
-                    }
-                    trait.setTraitGroupBulkId(-1L);
-                }
+                trait.setMinimumTier(tagsCollection.getMinTier());
+                trait.setMaximumTier(tagsCollection.getMaxTier());
+                trait.setMatchModifierMagnitudes(tagsCollection.getMatchModifierMagnitudes());
+                trait.setWeight(tagsCollection.getWeight());
+                trait.setTraitCategory(ItemHelper.getTraitCategory(tagsCollection.getTraitName(), dataDao.getMainData().getTraitCategory().getCollection()));
 
                 Set<String> keywords = new HashSet<>();
                 if (tagsCollection.getKeywords() != null) {
-                    keywords.addAll(tagsCollection.getKeywords());
+                    for(String s : tagsCollection.getKeywords()){
+                        if(s.startsWith("Keyword.")){
+                            String sub = s.substring("Keyword.".length());
+                            keywords.add(sub);
+                        }
+                        else{
+                            keywords.add(s);
+                        }
+                    }
                 }
                 trait.setKeywords(keywords);
-                trait.setMatchModifierMagnitudes(tagsCollection.getMatchModifierMagnitudes());
-
-                trait.setLootEffects(ItemHelper.getLootEffects(tagsCollection.getNamedLootEffects(), tagsCollection.getConditionalLootEffects()));
-                ItemHelper.updateConditionalEffects(trait.getLootEffects(), dataDao.getMainData().getConditionalLootEffects());
-                ItemHelper.updateSkillgridData(trait, dataDao.getMainData().getMasteryEntitlements().getCollection(), dataDao.getMainData().getLocalization());
-                Set<AllowedTraitTags> allowedTraitTags = allowedTagDao.findAllByTraitGroup(trait.getTraitGroup());
-                trait.setAllowedTraitTags(allowedTraitTags);
                 traitDao.save(trait);
             }
         }
         traitDao.flush();
     }
 
-    private void loadRestOfSkills(){
-        LOGGER.info("Loading Rest of Traits");
-        for (MasteryEntitlementsCollection tagsCollection : dataDao.getMainData().getMasteryEntitlements().getCollection()) {
-            Trait traitSet = traitDao.findByMasteryEntitlements(tagsCollection.getID());
-
-            if(traitSet==null){
-                Trait trait = new Trait();
-                trait.setName(tagsCollection.getTraitName());
-                trait.setTraitGroup(tagsCollection.getMasteryID());
-                trait.setWeight(1000L);
-                trait.setTraitType(TraitType.SKILLGRID);
-                trait.setMasteryEntitlements(tagsCollection.getID());
-                trait.setTraitGroupBulk(tagsCollection.getMasteryID());
-                trait.setTraitGroupBulkId(tagsCollection.getMinPoints());
-
-                Localization loc = dataDao.getMainData().getLocalization().get(trait.getMasteryEntitlements());
-                if(loc!=null) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(loc.getDescription().stringValue);
-                    sb.append(" ");
-                    if (loc.getDescription() != null && loc.getDescription().stringArrayValue != null) {
-                        for (String s : loc.getDescription().stringArrayValue) {
-                            sb.append(s);
-                            sb.append(" ");
-                        }
-                    }
-                    trait.setGridDesc(sb.toString().trim());
-                    trait.setDescription(sb.toString().trim());
-                    sb = new StringBuilder();
-                    sb.append(loc.getName().stringValue);
-                    sb.append(" ");
-                    if (loc.getName() != null && loc.getName().stringArrayValue != null) {
-                        for (String s : loc.getName().stringArrayValue) {
-                            sb.append(s);
-                            sb.append(" ");
-                        }
-                    }
-                    trait.setName(sb.toString().trim());
-                    trait.setGridName(trait.getName());
-                    ItemHelper.updateSkillgridData(trait, dataDao.getMainData().getMasteryEntitlements().getCollection(), dataDao.getMainData().getLocalization());
-                    traitDao.save(trait);
-
-                }
-
-            }
-        }
-        traitDao.flush();
-    }
 
     private void loadWeapons(){
         LOGGER.info("Loading Weapons");
@@ -302,17 +209,13 @@ public class DataLoader implements ApplicationRunner {
             weaponSave.setLootInfo(lootInfoDao.findByGameplayTag(weaponSave.getGameplayTag()));
             String group = ItemHelper.getTraitName(entry.getTraitTagGroups());
             Set<Affinity> affinitySet = weaponSave.getAffinities();
-            affinitySet.add(Affinity.NA);
             Set<Element> elementSet = weaponSave.getElements();
-            elementSet.add(Element.NA);
             Set<ItemType> itemTypeSet = new HashSet<>();
             itemTypeSet.add(weaponSave.getItemType());
-            itemTypeSet.add(ItemType.NA);
             Set<WeaponType> weaponTypeSet = new HashSet<>();
             weaponTypeSet.add(weaponSave.getWeaponType());
-            weaponTypeSet.add(WeaponType.NA);
-            Set<Trait> traitSet = getAdditionalTraits(group, weaponSave.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
-            weaponSave.setTraits(traitSet);
+           // Set<Trait> traitSet = getAdditionalTraits(group, weaponSave.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
+           // weaponSave.setTraits(traitSet);
             weaponDao.save(weaponSave);
 
         }
@@ -334,22 +237,18 @@ public class DataLoader implements ApplicationRunner {
             bannerSave.setLootInfo(lootInfoDao.findByGameplayTag(bannerSave.getGameplayTag()));
             String group = ItemHelper.getTraitName(entry.getDefaultTraitTagGroups());
             Set<Affinity> affinitySet = bannerSave.getAffinities();
-            affinitySet.add(Affinity.NA);
             Set<Element> elementSet = bannerSave.getElements();
-            elementSet.add(Element.NA);
             Set<ItemType> itemTypeSet = new HashSet<>();
             itemTypeSet.add(bannerSave.getItemType());
-            itemTypeSet.add(ItemType.NA);
             Set<WeaponType> weaponTypeSet = new HashSet<>();
-            weaponTypeSet.add(WeaponType.NA);
             /*if(!group.equals("Nothing")){
                 Set<Trait> traits = traitDao.findAllByTraitGroup(group);
                 if(traits!=null){
                     bannerSave.setTraits(traits);
                 }
             }*/
-            Set<Trait> traitSet = getAdditionalTraits(group, Rarity.COMMON, affinitySet, elementSet, itemTypeSet, weaponTypeSet);
-            bannerSave.setTraits(traitSet);
+           // Set<Trait> traitSet = getAdditionalTraits(group, Rarity.COMMON, affinitySet, elementSet, itemTypeSet, weaponTypeSet);
+           // bannerSave.setTraits(traitSet);
             bannerDao.save(bannerSave);
         }
         bannerDao.flush();
@@ -378,22 +277,18 @@ public class DataLoader implements ApplicationRunner {
             }
             String group = ItemHelper.getTraitName(entry.getTraitTagGroups());
             Set<Affinity> affinitySet = lifeStone.getAffinities();
-            affinitySet.add(Affinity.NA);
             Set<Element> elementSet = lifeStone.getElements();
-            elementSet.add(Element.NA);
             Set<ItemType> itemTypeSet = new HashSet<>();
             itemTypeSet.add(lifeStone.getItemType());
-            itemTypeSet.add(ItemType.NA);
             Set<WeaponType> weaponTypeSet = new HashSet<>();
-            weaponTypeSet.add(WeaponType.NA);
             /*if(!group.equals("Nothing")){
                 Set<Trait> traits = traitDao.findAllByTraitGroup(group);
                 if(traits!=null){
                     lifeStone.setTraits(traits);
                 }
             }*/
-            Set<Trait> traitSet = getAdditionalTraits(group, Rarity.COMMON, affinitySet, elementSet, itemTypeSet, weaponTypeSet);
-            lifeStone.setTraits(traitSet);
+           // Set<Trait> traitSet = getAdditionalTraits(group, Rarity.COMMON, affinitySet, elementSet, itemTypeSet, weaponTypeSet);
+           // lifeStone.setTraits(traitSet);
             lifeStoneDao.save(lifeStone);
         }
         lifeStoneDao.flush();
@@ -422,22 +317,18 @@ public class DataLoader implements ApplicationRunner {
             trinket.setLootInfo(lootInfoDao.findByGameplayTag(trinket.getGameplayTag()));
 
             Set<Affinity> affinitySet = trinket.getAffinities();
-            affinitySet.add(Affinity.NA);
             Set<Element> elementSet = trinket.getElements();
-            elementSet.add(Element.NA);
             Set<ItemType> itemTypeSet = new HashSet<>();
             itemTypeSet.add(trinket.getItemType());
-            itemTypeSet.add(ItemType.NA);
             Set<WeaponType> weaponTypeSet = new HashSet<>();
-            weaponTypeSet.add(WeaponType.NA);
             /*if(!group.equals("Nothing")){
                 Set<Trait> traits = traitDao.findAllByTraitGroup(group);
                 if(traits!=null){
                     trinket.setTraits(traits);
                 }
             }*/
-            Set<Trait> traitSet = getAdditionalTraits(group, trinket.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
-            trinket.setTraits(traitSet);
+           // Set<Trait> traitSet = getAdditionalTraits(group, trinket.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
+           // trinket.setTraits(traitSet);
             trinketDao.save(trinket);
         }
         trinketDao.flush();
@@ -456,29 +347,25 @@ public class DataLoader implements ApplicationRunner {
             augment.setLootInfo(lootInfoDao.findByGameplayTag(augment.getGameplayTag()));
             String group = ItemHelper.getTraitName(entry.getTraitTagGroups());
             Set<Affinity> affinitySet = augment.getAffinities();
-            affinitySet.add(Affinity.NA);
             Set<Element> elementSet = augment.getElements();
-            elementSet.add(Element.NA);
             Set<ItemType> itemTypeSet = new HashSet<>();
             itemTypeSet.add(augment.getItemType());
-            itemTypeSet.add(ItemType.NA);
             Set<WeaponType> weaponTypeSet = new HashSet<>();
-            weaponTypeSet.add(WeaponType.NA);
             /*if(!group.equals("Nothing")){
                 Set<Trait> traits = traitDao.findAllByTraitGroup(group);
                 if(traits!=null){
                     augment.setTraits(traits);
                 }
             }*/
-            Set<Trait> traitSet = getAdditionalTraits(group, augment.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
-            augment.setTraits(traitSet);
+           // Set<Trait> traitSet = getAdditionalTraits(group, augment.getMinimumRarity(), affinitySet, elementSet, itemTypeSet, weaponTypeSet);
+            //augment.setTraits(traitSet);
             augmentDao.save(augment);
         }
         augmentDao.flush();
     }
 
 
-    private Set<Trait> getAdditionalTraits(String traitGroup, Rarity rarity, Set<Affinity> affinitySet, Set<Element> elementSet, Set<ItemType> itemTypeSet, Set<WeaponType> weaponTypeSet){
+   /* private Set<Trait> getAdditionalTraits(String traitGroup, Rarity rarity, Set<Affinity> affinitySet, Set<Element> elementSet, Set<ItemType> itemTypeSet, Set<WeaponType> weaponTypeSet){
         Set<AllowedTraitTags> allowedTraitTags = allowedTagDao.findAllByAffinityInAndElementInAndItemTypeInAndWeaponTypeIn(affinitySet, elementSet, itemTypeSet, weaponTypeSet);
         Set<AllowedTraitTags> allowedTraitTagsTwo = new HashSet<>();
         for (AllowedTraitTags allowedTraitTags1 : allowedTraitTags){
@@ -511,4 +398,6 @@ public class DataLoader implements ApplicationRunner {
         }
         return traitSet;
     }
+
+    */
 }

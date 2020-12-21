@@ -1,8 +1,9 @@
 package org.imrofli.godfall.services;
 
+import org.imrofli.godfall.api.model.Trait;
 import org.imrofli.godfall.dao.intf.TraitDao;
-import org.imrofli.godfall.dao.model.Trait;
-import org.imrofli.godfall.dao.model.TraitType;
+import org.imrofli.godfall.exception.ServiceCallException;
+import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,41 +23,27 @@ public class TraitServiceImpl implements TraitService {
 
 
     @Override
-    public Set<Trait> getTraits() {
+    public List<Trait> getAllTraits() throws ServiceCallException {
         LOGGER.info("Getting all Traits");
-        Set<TraitType> traitTypes = new HashSet<TraitType>();
-        traitTypes.add(TraitType.BOON);
-        traitTypes.add(TraitType.SKILLGRID);
-        return traitDao.findAllThatHavEntryAndOrderByTraitType(traitTypes);
+        Set<org.imrofli.godfall.dao.model.Trait> traitSet = traitDao.findAllAndFetchAll();
+        if(traitSet == null || traitSet.isEmpty()){
+            throw new ServiceCallException("traitDao.findAllAndFetchAll() returned NULL");
+        }
+        List<Trait> out = DaoToViewInterpreter.convertTraitSetDao(traitSet);
+        LOGGER.info("Got {} Traits", out.size());
+        return out;
     }
 
     @Override
-    public Trait getTraits(Long traitId) {
+    public Trait getTraitById(Long traitId) throws ServiceCallException {
         LOGGER.info("Getting Trait by id: {}", traitId);
-        return traitDao.findByIdAndFetchWeapons(traitId);
+        org.imrofli.godfall.dao.model.Trait trait = traitDao.findByIdAndFetchAll(traitId);
+        if(trait == null){
+            throw new ServiceCallException("traitDao.findByIdAndFetchAll returned NULL");
+        }
+        Trait out = DaoToViewInterpreter.convertTraitDao(trait);
+
+        return out;
     }
 
-    @Override
-    public Trait getTraitAndFetch(Long traitId) {
-        LOGGER.info("Getting Trait and Fetch by id: {}", traitId);
-        return traitDao.findByIdAndFetchAll(traitId);
-    }
-
-    @Override
-    public Set<Trait> getTraitsByTraitGrpBulk(String traitGroupBlk) {
-        LOGGER.info("Getting Trait by traitGroupBlk: {}", traitGroupBlk);
-        return traitDao.findAllByTraitGroupBulkAndFetchLootEffects(traitGroupBlk);
-    }
-
-    @Override
-    public Set<Trait> getTraitsByGridY(Integer gridY) {
-        LOGGER.info("Getting Trait by gridY: {}", gridY);
-        return traitDao.findAllByGridYAndFetchLootEffects(gridY);
-    }
-
-    @Override
-    public Trait getTraitsByMastery(String mastery) {
-        LOGGER.info("Getting Trait by mastery: {}", mastery);
-        return traitDao.findByMasteryEntitlements(mastery);
-    }
 }

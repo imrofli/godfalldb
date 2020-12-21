@@ -11,9 +11,9 @@ import java.util.Set;
 public interface LootEffectDao extends JpaRepository<LootInfo,Long> {
 
     LootEffect findByName(String name);
-    @Query(value = "SELECT l from LootEffect l left JOIN FETCH l.magnitudes where l.name=:nam")
+    @Query(value = "SELECT l from LootEffect l left JOIN FETCH l.effectMagnitudes where l.name=:nam")
     Set<LootEffect> findByNameAndFetch(@Param("nam") String name);
-    @Query(value = "SELECT l from LootEffect l left JOIN FETCH l.magnitudes where l.id=:id")
+    @Query(value = "SELECT l from LootEffect l left JOIN FETCH l.effectMagnitudes where l.id=:id")
     LootEffect findByIdAndFetch(@Param("id") Long id);
 
 }

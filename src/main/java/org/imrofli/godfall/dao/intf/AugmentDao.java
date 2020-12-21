@@ -13,9 +13,9 @@ import java.util.Set;
 public interface AugmentDao extends JpaRepository<Augment, Long> {
 
     @Query(value = "SELECT a from Augment a LEFT join fetch a.elements LEFT join fetch a.affinities order by a.name")
-    Set<Augment> findAllAndFetchElementsAndAffinities();
+    Set<Augment> findAllAndFetchElementsAndAffinitiesOrderByName();
     @Query(value = "SELECT a from Augment a LEFT join fetch a.traits LEFT join fetch a.lootInfo LEFT join fetch a.elements LEFT join fetch a.affinities where a.id = :id")
-    Augment findByIdAndFetchTraits(@Param("id") Long id);
+    Augment findByIdAndFetchElementsAndAffinities(@Param("id") Long id);
     @Query(value = "SELECT a from Augment a LEFT join fetch a.affinities where a.id = :id")
     Augment findByIdAndFetchAffinities(@Param("id") Long id);
     @Query(value = "SELECT * from Augment w where w.loot_info_id in(SELECT l.LOOT_INFO_ID from LOOT_INFO_DROP_TAGS l where l.DROP_TAGS=:tag) ", nativeQuery = true)

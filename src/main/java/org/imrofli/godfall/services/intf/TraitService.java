@@ -1,16 +1,15 @@
 package org.imrofli.godfall.services.intf;
 
-import org.imrofli.godfall.dao.model.Trait;
 
-import java.util.Set;
+import org.imrofli.godfall.api.model.Trait;
+import org.imrofli.godfall.exception.ServiceCallException;
+
+import java.util.List;
 
 public interface TraitService {
 
-    Set<Trait> getTraits();
-    Trait getTraits(Long traitId);
-    Trait getTraitAndFetch(Long traitId);
-    Set<Trait> getTraitsByTraitGrpBulk(String traitGroupBlk);
-    Set<Trait> getTraitsByGridY(Integer gridY);
-    Trait getTraitsByMastery(String mastery);
+    List<Trait> getAllTraits() throws ServiceCallException;
+    Trait getTraitById(Long traitId) throws ServiceCallException;
+
 
 }

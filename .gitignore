@@ -8,6 +8,10 @@ target/
 !.node_modules/*
 !.node_modules
 !**/node_modules
+*.log
+/client_stubs/*.*
+/client_stubs/*
+
 ### STS ###
 .apt_generated
 .classpath

@@ -15,10 +15,10 @@ public interface TrinketDao extends JpaRepository<Trinket, Long> {
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities order by a.name")
     Set<Trinket> findAllAndFetchElementsAndAffinities();
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities where a.itemType=:typ order by a.name")
-    Set<Trinket> findAllAndFetchElementsAndAffinitiesWhereTrinketType(@Param("typ") ItemType type);
+    Set<Trinket> findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(@Param("typ") ItemType type);
 
-    @Query(value = "SELECT a from Trinket a LEFT join fetch a.traits LEFT join fetch a.lootInfo LEFT join fetch a.elements LEFT join fetch a.affinities where a.id = :id")
-    Trinket findByIdAndFetchTraits(@Param("id") Long id);
+    @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities where a.id = :id and a.itemType=:typ")
+    Trinket findByIdAndFetchElementsAndAffinitiesWhereTrinketType(@Param("id") Long id, @Param("typ") ItemType type);
 
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.affinities where a.id = :id")
     Trinket findByIdAndFetchAffinities(@Param("id") Long id);

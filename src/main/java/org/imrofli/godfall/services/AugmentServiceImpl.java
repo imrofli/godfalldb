@@ -1,50 +1,45 @@
 package org.imrofli.godfall.services;
 
+import org.imrofli.godfall.api.model.Augment;
 import org.imrofli.godfall.dao.intf.AugmentDao;
-import org.imrofli.godfall.dao.model.Augment;
+import org.imrofli.godfall.exception.ServiceCallException;
+import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.AugmentService;
-import org.imrofli.godfall.services.intf.LootInfoService;
-import org.imrofli.godfall.services.intf.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class AugmentServiceImpl implements AugmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AugmentServiceImpl.class);
-    @Autowired
-    private TraitService traitService;
-    @Autowired
-    private LootInfoService lootInfoService;
 
     @Autowired
     private AugmentDao augmentDao;
 
     @Override
-    public Set<Augment> getAugments() {
+    public List<Augment> getAllAugments() throws ServiceCallException {
         LOGGER.info("Getting all Augments");
-        return augmentDao.findAllAndFetchElementsAndAffinities();
+        Set<org.imrofli.godfall.dao.model.Augment> augmentSet = augmentDao.findAllAndFetchElementsAndAffinitiesOrderByName();
+        if(augmentSet == null || augmentSet.isEmpty()){
+            throw new ServiceCallException("augmentDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
+        }
+        List<Augment> out = DaoToViewInterpreter.convertAugmentDaoList(augmentSet);
+        LOGGER.info("Got {} Augments", out.size());
+        return out;
     }
 
     @Override
-    public Augment getAugmentById(Long id) {
+    public Augment getAugmentById(Long id) throws ServiceCallException {
         LOGGER.info("Getting augment id: {}", id);
-        return augmentDao.findByIdAndFetchTraits(id);
+        org.imrofli.godfall.dao.model.Augment augment = augmentDao.findByIdAndFetchElementsAndAffinities(id);
+        if(augment == null){
+            throw new ServiceCallException("augmentDao.findByIdAndFetchElementsAndAffinities returned NULL");
+        }
+        return DaoToViewInterpreter.convertAugmentDao(augment);
     }
 
-    @Override
-    public Augment getAugmentByIdLoadAffinity(Long id) {
-        LOGGER.info("Getting Augment by id and Fetch: {}", id);
-        return augmentDao.findByIdAndFetchAffinities(id);
-    }
-
-    @Override
-    public Set<Augment> getAllByLootInfoDropTag(String dropTag) {
-        LOGGER.info("Getting Augment by drop tag: {}", dropTag);
-        return augmentDao.findAllByLootInfoTag(dropTag);
-    }
 }

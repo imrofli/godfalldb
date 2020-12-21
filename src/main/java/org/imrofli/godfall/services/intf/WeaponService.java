@@ -1,15 +1,14 @@
 package org.imrofli.godfall.services.intf;
 
-import org.imrofli.godfall.dao.model.Weapon;
+import org.imrofli.godfall.api.model.Weapon;
+import org.imrofli.godfall.exception.ServiceCallException;
 
 import java.util.List;
-import java.util.Set;
 
 public interface WeaponService {
 
-    Set<Weapon> getWeapons();
-    Weapon getWeapon(Long weaponId);
-    Weapon getWeaponByIdLoadAffinity(Long id);
-    Set<Weapon> getAllByLootInfoDropTag(String dropTag);
+    List<Weapon> getAllWeapons() throws ServiceCallException;
+    Weapon getWeapon(Long weaponId) throws ServiceCallException;
+
 
 }

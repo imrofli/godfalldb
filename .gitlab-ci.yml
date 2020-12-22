@@ -2,6 +2,7 @@ image: maven:latest
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
+  RELEASEV: "Release_2_0"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
@@ -18,4 +19,4 @@ build:
   script: mvn $MAVEN_CLI_OPTS package
   artifacts:
     paths:
-      - target/godfallapi-$CI_COMMIT_BRANCH.jar
+      - target/godfallapi-$RELEASEV.jar

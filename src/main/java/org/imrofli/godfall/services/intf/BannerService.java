@@ -11,4 +11,5 @@ public interface BannerService {
     List<Banner> getAllBanners() throws ServiceCallException;
     Banner getBannerByID(Long bannerId) throws ServiceCallException;
 
+    Banner getBannerNoFetch(Long bannerId) throws ServiceCallException;
 }

@@ -10,4 +10,6 @@ public interface LifeStoneService {
 
     List<LifeStone> getAllLifeStones() throws ServiceCallException;
     LifeStone getLifeStoneById(Long id) throws ServiceCallException;
+
+    LifeStone getLifeStoneNoFetch(Long lifeStone) throws ServiceCallException;
 }

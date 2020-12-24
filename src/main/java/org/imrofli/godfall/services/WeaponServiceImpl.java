@@ -1,7 +1,6 @@
 package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.dao.intf.WeaponDao;
-
 import org.imrofli.godfall.dao.model.Weapon;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
@@ -12,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -41,11 +42,41 @@ public class WeaponServiceImpl implements WeaponService {
     public org.imrofli.godfall.api.model.Weapon getWeapon(Long weaponId) throws ServiceCallException {
         LOGGER.info("Getting Weapon id: {}", weaponId);
         Weapon weapon = weaponDao.findByIdAndFetchElementsAndAffinities(weaponId);
-        if(weapon == null){
+        if (weapon == null) {
             throw new ServiceCallException("weaponDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
         org.imrofli.godfall.api.model.Weapon out = DaoToViewInterpreter.convertWeaponDao(weapon);
         return out;
+    }
+
+    @Override
+    public org.imrofli.godfall.api.model.Weapon getWeaponNoFetch(Long weaponId) throws ServiceCallException {
+        LOGGER.info("Getting Weapon for id {}", weaponId);
+        Optional<Weapon> weapon = weaponDao.findById(weaponId);
+        if (weapon.isPresent()) {
+            org.imrofli.godfall.api.model.Weapon out = DaoToViewInterpreter.convertWeaponDao(weapon.get());
+            return out;
+        } else {
+            throw new ServiceCallException("weaponDao.findById returned NULL");
+        }
+    }
+
+    @Override
+    public List<String> getWeaponTags(Long weaponId) throws ServiceCallException {
+        LOGGER.info("Getting Weapon Tags for id {}", weaponId);
+        Optional<Weapon> weapon = weaponDao.findById(weaponId);
+        if (weapon.isPresent()) {
+            Set<String> tagSet = weapon.get().getTags();
+            if (tagSet == null || tagSet.isEmpty()) {
+                throw new ServiceCallException("weaponDao.findById returned NULL");
+            }
+            List<String> out = new ArrayList<>();
+            out.addAll(tagSet);
+            LOGGER.info("Got {} Weapon Tags", out.size());
+            return out;
+        } else {
+            throw new ServiceCallException("weaponDao.findById returned NULL");
+        }
     }
 
 }

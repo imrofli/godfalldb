@@ -1,10 +1,10 @@
 package org.imrofli.godfall.helpers;
 
-import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.dao.model.ConditionParamCategory;
 import org.imrofli.godfall.dao.model.ItemType;
-import org.imrofli.godfall.dao.model.EffectMagnitude;
 import org.imrofli.godfall.dao.model.TraitCategory;
+import org.imrofli.godfall.dao.model.TraitSlot;
+import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,7 +225,7 @@ public final class ItemHelper {
                     if (searchEntry.equals(condEffect.getName())) {
                         ConditionalLootEffect effect = new ConditionalLootEffect();
                         effect.setName(condEffect.getName());
-                        effect.setDescription(condEffect.getDescription());
+                        effect.setDescription(condEffect.getDescription().replace("\\", "").replace("\"", "").trim());
                         effect.setApplyToSelf(condEffect.getApplyToSelf());
                         effect.setApplyToConnected(condEffect.getApplyToConnected());
                         effect.setApplyForEach(condEffect.getApplyForEach());
@@ -326,7 +326,7 @@ public final class ItemHelper {
     }
 
 
-    public static String formatWeaponName(String name, List<String> nameList) {
+    public static String formatName(String name, List<String> nameList) {
         StringBuilder sb = new StringBuilder();
         if (nameList != null && !nameList.isEmpty()) {
             for (String entry : nameList) {
@@ -336,7 +336,7 @@ public final class ItemHelper {
         } else if (name != null && !name.isEmpty()) {
             sb.append(name);
         }
-        return sb.toString().trim();
+        return sb.toString().replace("\\", "").replace("\"", "").trim();
     }
 
     public static WeaponType getWeaponType(Long typeId) {
@@ -447,7 +447,7 @@ public final class ItemHelper {
     public static Set<TagRequirement> getTagRequirements(List<OngoingTagRequirement> ongoingTagRequirements) {
         Set<TagRequirement> out = new HashSet<>();
         if(ongoingTagRequirements!=null){
-            for(OngoingTagRequirement tagRequirement : ongoingTagRequirements){
+            for (OngoingTagRequirement tagRequirement : ongoingTagRequirements) {
                 TagRequirement entry = new TagRequirement();
                 entry.setName(tagRequirement.getGameplayTag());
                 entry.setActorType(tagRequirement.getActorType().toString());
@@ -456,5 +456,171 @@ public final class ItemHelper {
             }
         }
         return out;
+    }
+
+    public static Set<String> getItemTagsWithItemType(List<TraitTagsCollection> collection, List<org.imrofli.godfall.data.ItemType> tagGroups, List<String> defaultTraitTagGroups, List<String> elementTraitTagGroups) {
+        List<String> renamed = new ArrayList<>();
+        for (org.imrofli.godfall.data.ItemType entry : tagGroups) {
+            switch (entry) {
+                case RING:
+                    renamed.add("Ring");
+                    break;
+                case CHARM:
+                    renamed.add("Charm");
+                    break;
+                case AMULET:
+                    renamed.add("Amulet");
+                    break;
+                case BANNER:
+                    renamed.add("Banner");
+                    break;
+                case AUGMENT:
+                    renamed.add("Augment");
+                    break;
+                case WEAPON:
+                    renamed.add("Weapon");
+                    break;
+                case TRINKET:
+                    renamed.add("Trinket");
+                    break;
+                case BOMB:
+                    renamed.add("Bomb");
+                    break;
+                case POTION:
+                    renamed.add("Potion");
+                    break;
+                case TALISMAN:
+                    renamed.add("Talisman");
+                    break;
+                case CONSUMABLE:
+                    renamed.add("Consumable");
+                    break;
+            }
+        }
+        return getItemTags(collection, renamed, defaultTraitTagGroups, elementTraitTagGroups);
+    }
+
+    public static Set<String> getItemTagsElementTraitTag(List<TraitTagsCollection> collection, List<String> traitTagGroups, List<String> defaultTraitTagGroups, List<ElementTraitTagGroup> elementTraitTagGroups) {
+        List<String> renamed = new ArrayList<>();
+        for (ElementTraitTagGroup entry : elementTraitTagGroups) {
+            renamed.add(entry.toValue());
+        }
+        return getItemTags(collection, traitTagGroups, defaultTraitTagGroups, renamed);
+    }
+
+    public static Set<String> getItemTags(List<TraitTagsCollection> collection, List<String> tagGroups, List<String> defaultTraitTagGroups, List<String> elementTraitTagGroups) {
+        Set<String> out = new HashSet<>();
+        out = processItemTagStringlist(out, elementTraitTagGroups, collection);
+        out = processItemTagStringlist(out, defaultTraitTagGroups, collection);
+        out = processItemTagStringlist(out, tagGroups, collection);
+        for (String traitTag : defaultTraitTagGroups) {
+            Boolean found = false;
+            for (TraitTagsCollection entry : collection) {
+                if (traitTag.equals(entry.getName()) || traitTag.equals(entry.getGroupName())) {
+                    found = true;
+                    if (entry.getAddedTraitTags() != null) {
+                        for (String s : entry.getAddedTraitTags()) {
+                            if (!out.contains(s)) {
+                                out.add(s);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                out.add(traitTag);
+            }
+        }
+        return out;
+    }
+
+    public static Set<String> processItemTagStringlist(Set<String> tagSet, List<String> stringList, List<TraitTagsCollection> collection) {
+        if (tagSet == null) {
+            tagSet = new HashSet<>();
+        }
+        for (String traitTag : stringList) {
+            Boolean found = false;
+            for (TraitTagsCollection entry : collection) {
+                if (traitTag.equals(entry.getName()) || traitTag.equals(entry.getGroupName())) {
+                    found = true;
+                    if (entry.getAddedTraitTags() != null) {
+                        for (String s : entry.getAddedTraitTags()) {
+                            if (!tagSet.contains(s)) {
+                                tagSet.add(s);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found && !tagSet.contains(traitTag)) {
+                tagSet.add(traitTag);
+            }
+        }
+        return tagSet;
+    }
+
+    public static Set<String> getBlacklistSet(List<String> blacklist) {
+        Set<String> out = new HashSet<>();
+        if (blacklist != null) {
+            for (String entry : blacklist) {
+                out.add(entry);
+            }
+        }
+        return out;
+    }
+
+
+    public static Set<TraitSlot> getTraitSlotsSet(String traitSlotGroups, List<TraitSlotCollection> collection) {
+        Set<TraitSlot> out = new HashSet<>();
+        if (traitSlotGroups != null && collection != null) {
+            for (TraitSlotCollection entry : collection) {
+                if (traitSlotGroups.equals(entry.getGroupName())) {
+                    TraitSlot ts = new TraitSlot();
+                    ts.setName(entry.getName());
+                    ts.setSlotIndex(entry.getSlotIndex().toValue());
+                    ts.setGroupName(entry.getGroupName());
+                }
+            }
+        }
+
+        return out;
+    }
+
+    public static SlotType getSlotTypeFromIndex(SlotIndex slotType) {
+        switch (slotType) {
+            case PRIMARY_TRAIT:
+                return SlotType.PRIMARY_TRAIT;
+            case PRIMARY_ATTRIBUTE:
+                return SlotType.PRIMARY_ATTRIBUTE;
+            case MASTERWORK_TRAIT:
+                return SlotType.MASTERWORK_TRAIT;
+            default:
+                return SlotType.SECONDARY_TRAIT;
+        }
+    }
+
+    public static Set<EnemyClassLvl> getEnemyClassLevels(The2 the2, The2 the3) {
+        Set<EnemyClassLvl> enemyClassLvls = new HashSet<>();
+        if (the2 != null) {
+            EnemyClassLvl out = new EnemyClassLvl();
+            out.setBreachHealthScalar(the2.getBreachHealthScalar());
+            out.setExperienceScalar(the2.getExperienceScalar());
+            out.setBreachHealthRegenScalar(the2.getBreachHealthRegenScalar());
+            out.setHealthScalar(the2.getHealthScalar());
+            out.setQuantityScalar(the2.getQuantityScalar());
+            out.setBreachRechargeDurationScalar(the2.getBreachRechargeDurationScalar());
+            enemyClassLvls.add(out);
+        }
+        if (the3 != null) {
+            EnemyClassLvl out = new EnemyClassLvl();
+            out.setBreachHealthScalar(the3.getBreachHealthScalar());
+            out.setExperienceScalar(the3.getExperienceScalar());
+            out.setBreachHealthRegenScalar(the3.getBreachHealthRegenScalar());
+            out.setHealthScalar(the3.getHealthScalar());
+            out.setQuantityScalar(the3.getQuantityScalar());
+            out.setBreachRechargeDurationScalar(the3.getBreachRechargeDurationScalar());
+            enemyClassLvls.add(out);
+        }
+        return enemyClassLvls;
     }
 }

@@ -11,5 +11,7 @@ public interface TraitService {
     List<Trait> getAllTraits() throws ServiceCallException;
     Trait getTraitById(Long traitId) throws ServiceCallException;
 
+    List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags) throws ServiceCallException;
+
 
 }

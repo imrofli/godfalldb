@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -36,10 +37,22 @@ public class AugmentServiceImpl implements AugmentService {
     public Augment getAugmentById(Long id) throws ServiceCallException {
         LOGGER.info("Getting augment id: {}", id);
         org.imrofli.godfall.dao.model.Augment augment = augmentDao.findByIdAndFetchElementsAndAffinities(id);
-        if(augment == null){
+        if (augment == null) {
             throw new ServiceCallException("augmentDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
         return DaoToViewInterpreter.convertAugmentDao(augment);
+    }
+
+    @Override
+    public Augment getAugmentNoFetch(Long augmentId) throws ServiceCallException {
+        LOGGER.info("Getting Augment for id {}", augmentId);
+        Optional<org.imrofli.godfall.dao.model.Augment> augment = augmentDao.findById(augmentId);
+        if (augment.isPresent()) {
+            org.imrofli.godfall.api.model.Augment out = DaoToViewInterpreter.convertAugmentDao(augment.get());
+            return out;
+        } else {
+            throw new ServiceCallException("augmentDao.findById returned NULL");
+        }
     }
 
 }

@@ -21,7 +21,7 @@ public class Trait extends AbstractEntity{
     @NotNull
     @NotEmpty
     @Lob
-    @Column( length = 100000 )
+    @Column(length = 10000)
     private String description = "";
 
     @OneToMany(cascade = {CascadeType.ALL})
@@ -53,20 +53,6 @@ public class Trait extends AbstractEntity{
     @ElementCollection
     private Set<String> keywords;
 
-    @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
-    private Set<Weapon> weapons;
-
-    @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
-    private Set<Banner> banners;
-
-    @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
-    private Set<LifeStone> lifeStones;
-
-    @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
-    private Set<Trinket> trinkets;
-
-    @ManyToMany(mappedBy = "traits",cascade = {CascadeType.ALL})
-    private Set<Augment> augments;
 
     public String getName() {
         return name;
@@ -133,13 +119,6 @@ public class Trait extends AbstractEntity{
         this.weight = weight;
     }
 
-    public Set<Weapon> getWeapons() {
-        return weapons;
-    }
-
-    public void setWeapons(Set<Weapon> weapons) {
-        this.weapons = weapons;
-    }
 
     public Set<String> getKeywords() {
         return keywords;
@@ -173,37 +152,6 @@ public class Trait extends AbstractEntity{
         this.lootEffects = lootEffects;
     }
 
-    public Set<Banner> getBanners() {
-        return banners;
-    }
-
-    public void setBanners(Set<Banner> banners) {
-        this.banners = banners;
-    }
-
-    public Set<LifeStone> getLifeStones() {
-        return lifeStones;
-    }
-
-    public void setLifeStones(Set<LifeStone> lifeStones) {
-        this.lifeStones = lifeStones;
-    }
-
-    public Set<Trinket> getTrinkets() {
-        return trinkets;
-    }
-
-    public void setTrinkets(Set<Trinket> trinkets) {
-        this.trinkets = trinkets;
-    }
-
-    public Set<Augment> getAugments() {
-        return augments;
-    }
-
-    public void setAugments(Set<Augment> augments) {
-        this.augments = augments;
-    }
 
     public Set<ConditionalLootEffect> getConditionalLootEffects() {
         return conditionalLootEffects;
@@ -221,10 +169,4 @@ public class Trait extends AbstractEntity{
         this.traitCategory = traitCategory;
     }
 
-    @Override
-    public String toString() {
-        return "Trait{" +
-                "description='" + description + '\'' +
-                '}';
-    }
 }

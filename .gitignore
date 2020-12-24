@@ -8,7 +8,7 @@ target/
 !.node_modules/*
 !.node_modules
 !**/node_modules
-*.log
+*.log*
 /client_stubs/*.*
 /client_stubs/*
 

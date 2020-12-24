@@ -13,11 +13,22 @@ import java.util.List;
 public interface TrinketService {
 
     List<Amulet> getAllAmulets() throws ServiceCallException;
+
     List<Ring> getAllRings() throws ServiceCallException;
+
     List<Charm> getAllCharms() throws ServiceCallException;
+
     Trinket getTrinketById(Long id) throws ServiceCallException;
+
     Ring getRingById(Long id) throws ServiceCallException;
+
     Charm getCharmById(Long id) throws ServiceCallException;
+
     Amulet getAmuletById(Long id) throws ServiceCallException;
 
+    Amulet getAmuletNoFetch(Long trinketId) throws ServiceCallException;
+
+    Ring getRingNoFetch(Long trinketId) throws ServiceCallException;
+
+    Charm getCharmNoFetch(Long trinketId) throws ServiceCallException;
 }

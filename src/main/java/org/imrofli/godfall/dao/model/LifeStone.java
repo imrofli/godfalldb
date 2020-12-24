@@ -13,7 +13,11 @@ public class LifeStone extends AbstractEntity {
     @NotEmpty
     private String name = "";
 
-    private Boolean hasPrimary;
+    private String displayName;
+
+    @Lob
+    @Column(length = 10000)
+    private String displayDescription;
 
     private Long healScalar;
 
@@ -40,13 +44,18 @@ public class LifeStone extends AbstractEntity {
     @OneToOne
     private LootInfo lootInfo;
 
+    @ElementCollection
+    private Set<String> tags;
+
+    @ElementCollection
+    private Set<String> blacklistTags;
+
     @ManyToMany
     @JoinTable(
-            name = "lifestone_traits",
+            name = "lifestone_traitslot",
             joinColumns = @JoinColumn(name = "lifestone_id"),
-            inverseJoinColumns = @JoinColumn(name = "trait_id"))
-    private Set<Trait> traits;
-
+            inverseJoinColumns = @JoinColumn(name = "traitslot_id"))
+    private Set<TraitSlot> traitSlots;
 
     public String getName() {
         return name;
@@ -62,14 +71,6 @@ public class LifeStone extends AbstractEntity {
 
     public void setItemType(ItemType itemType) {
         this.itemType = itemType;
-    }
-
-    public Boolean getHasPrimary() {
-        return hasPrimary;
-    }
-
-    public void setHasPrimary(Boolean hasPrimary) {
-        this.hasPrimary = hasPrimary;
     }
 
     public Long getHealScalar() {
@@ -112,13 +113,6 @@ public class LifeStone extends AbstractEntity {
         this.elements = elements;
     }
 
-    public Set<Trait> getTraits() {
-        return traits;
-    }
-
-    public void setTraits(Set<Trait> traits) {
-        this.traits = traits;
-    }
 
     public Rarity getMinimumRarity() {
         return minimumRarity;
@@ -152,22 +146,43 @@ public class LifeStone extends AbstractEntity {
         this.lootInfo = lootInfo;
     }
 
-    @Override
-    public String toString() {
-        return "LifeStone{" +
-                "name='" + name + '\'' +
-                ", hasPrimary=" + hasPrimary +
-                ", healScalar=" + healScalar +
-                ", chargesScalar=" + chargesScalar +
-                ", healDurationScalar=" + healDurationScalar +
-                ", secondaryTraitDurationScalar=" + secondaryTraitDurationScalar +
-                ", elements=" + elements +
-                ", gameplayTag='" + gameplayTag + '\'' +
-                ", minimumRarity=" + minimumRarity +
-                ", itemType=" + itemType +
-                ", affinities=" + affinities +
-                ", lootInfo=" + lootInfo +
-                ", traits=" + traits +
-                '}';
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    public Set<String> getBlacklistTags() {
+        return blacklistTags;
+    }
+
+    public void setBlacklistTags(Set<String> blacklistTags) {
+        this.blacklistTags = blacklistTags;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayDescription() {
+        return displayDescription;
+    }
+
+    public void setDisplayDescription(String displayDescription) {
+        this.displayDescription = displayDescription;
+    }
+
+    public Set<TraitSlot> getTraitSlots() {
+        return traitSlots;
+    }
+
+    public void setTraitSlots(Set<TraitSlot> traitSlots) {
+        this.traitSlots = traitSlots;
     }
 }

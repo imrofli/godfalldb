@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -36,11 +37,23 @@ public class LifeStoneServiceImpl implements LifeStoneService {
     public LifeStone getLifeStoneById(Long id) throws ServiceCallException {
         LOGGER.info("Getting LifeStone id: {}", id);
         org.imrofli.godfall.dao.model.LifeStone lifeStone = lifeStoneDao.findByIdAndFetchElementsAndAffinities(id);
-        if(lifeStone == null ){
+        if (lifeStone == null) {
             throw new ServiceCallException("lifeStoneDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
         LifeStone out = DaoToViewInterpreter.convertLifeStoneDao(lifeStone);
         return out;
+    }
+
+    @Override
+    public LifeStone getLifeStoneNoFetch(Long lifeStone) throws ServiceCallException {
+        LOGGER.info("Getting LifeStone for id {}", lifeStone);
+        Optional<org.imrofli.godfall.dao.model.LifeStone> lifeStoneOptional = lifeStoneDao.findById(lifeStone);
+        if (lifeStoneOptional.isPresent()) {
+            org.imrofli.godfall.api.model.LifeStone out = DaoToViewInterpreter.convertLifeStoneDao(lifeStoneOptional.get());
+            return out;
+        } else {
+            throw new ServiceCallException("lifeStoneDao.findById returned NULL");
+        }
     }
 
 }

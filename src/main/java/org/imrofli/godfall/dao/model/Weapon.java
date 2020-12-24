@@ -13,6 +13,12 @@ public class Weapon extends AbstractEntity {
     @NotEmpty
     private String name = "";
 
+    private String displayName;
+
+    @Lob
+    @Column(length = 10000)
+    private String displayDescription;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private WeaponType weaponType;
@@ -25,21 +31,24 @@ public class Weapon extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Rarity minimumRarity;
 
-    @Enumerated(EnumType.STRING)
-    private ItemType itemType;
-
     @ElementCollection(targetClass = Affinity.class)
     private Set<Affinity> affinities;
 
-    @OneToOne
-    private LootInfo lootInfo;
+    @ElementCollection
+    private Set<String> tags;
+
+    @ElementCollection
+    private Set<String> blacklistTags;
 
     @ManyToMany
     @JoinTable(
-            name = "weapon_traits",
+            name = "weapon_traitslot",
             joinColumns = @JoinColumn(name = "weapon_id"),
-            inverseJoinColumns = @JoinColumn(name = "trait_id"))
-    private Set<Trait> traits;
+            inverseJoinColumns = @JoinColumn(name = "traitslot_id"))
+    private Set<TraitSlot> traitSlots;
+
+    @OneToOne
+    private LootInfo lootInfo;
 
 
     public String getName() {
@@ -66,14 +75,6 @@ public class Weapon extends AbstractEntity {
         this.elements = elements;
     }
 
-    public Set<Trait> getTraits() {
-        return traits;
-    }
-
-    public void setTraits(Set<Trait> traits) {
-        this.traits = traits;
-    }
-
     public Rarity getMinimumRarity() {
         return minimumRarity;
     }
@@ -98,13 +99,6 @@ public class Weapon extends AbstractEntity {
         this.affinities = affinities;
     }
 
-    public ItemType getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(ItemType itemType) {
-        this.itemType = itemType;
-    }
 
     public LootInfo getLootInfo() {
         return lootInfo;
@@ -114,17 +108,43 @@ public class Weapon extends AbstractEntity {
         this.lootInfo = lootInfo;
     }
 
-    @Override
-    public String toString() {
-        return "Weapon{" +
-                "name='" + name + '\'' +
-                ", weaponType=" + weaponType +
-                ", elements=" + elements +
-                ", gameplayTag='" + gameplayTag + '\'' +
-                ", minimumRarity=" + minimumRarity +
-                ", itemType=" + itemType +
-                ", affinities=" + affinities +
-                ", traits=" + traits +
-                '}';
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    public Set<String> getBlacklistTags() {
+        return blacklistTags;
+    }
+
+    public void setBlacklistTags(Set<String> blacklistTags) {
+        this.blacklistTags = blacklistTags;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayDescription() {
+        return displayDescription;
+    }
+
+    public void setDisplayDescription(String displayDescription) {
+        this.displayDescription = displayDescription;
+    }
+
+    public Set<TraitSlot> getTraitSlots() {
+        return traitSlots;
+    }
+
+    public void setTraitSlots(Set<TraitSlot> traitSlots) {
+        this.traitSlots = traitSlots;
     }
 }

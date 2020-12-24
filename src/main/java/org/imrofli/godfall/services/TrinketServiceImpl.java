@@ -6,7 +6,6 @@ import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.dao.intf.TrinketDao;
 import org.imrofli.godfall.dao.model.ItemType;
 import org.imrofli.godfall.dao.model.Trinket;
-import org.imrofli.godfall.dao.model.Weapon;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.TrinketService;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -96,10 +96,46 @@ public class TrinketServiceImpl implements TrinketService {
     public Amulet getAmuletById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Charm id: {}", id);
         Trinket trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemType.AMULET);
-        if(trinket == null){
+        if (trinket == null) {
             throw new ServiceCallException("trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType returned NULL");
         }
         Amulet out = DaoToViewInterpreter.convertAmuletDao(trinket);
         return out;
+    }
+
+    @Override
+    public Amulet getAmuletNoFetch(Long trinketId) throws ServiceCallException {
+        LOGGER.info("Getting Amulet for id {}", trinketId);
+        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.AMULET);
+        if (trinket.isPresent()) {
+            org.imrofli.godfall.api.model.Amulet out = DaoToViewInterpreter.convertAmuletDao(trinket.get());
+            return out;
+        } else {
+            throw new ServiceCallException("trinketDao.findByIdAndItemType returned NULL");
+        }
+    }
+
+    @Override
+    public Ring getRingNoFetch(Long trinketId) throws ServiceCallException {
+        LOGGER.info("Getting Ring for id {}", trinketId);
+        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.RING);
+        if (trinket.isPresent()) {
+            org.imrofli.godfall.api.model.Ring out = DaoToViewInterpreter.convertRingDao(trinket.get());
+            return out;
+        } else {
+            throw new ServiceCallException("trinketDao.findByIdAndItemType returned NULL");
+        }
+    }
+
+    @Override
+    public Charm getCharmNoFetch(Long trinketId) throws ServiceCallException {
+        LOGGER.info("Getting Charm for id {}", trinketId);
+        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.CHARM);
+        if (trinket.isPresent()) {
+            org.imrofli.godfall.api.model.Charm out = DaoToViewInterpreter.convertCharmDao(trinket.get());
+            return out;
+        } else {
+            throw new ServiceCallException("trinketDao.findByIdAndItemType returned NULL");
+        }
     }
 }

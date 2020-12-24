@@ -8,7 +8,12 @@ import java.util.List;
 public interface WeaponService {
 
     List<Weapon> getAllWeapons() throws ServiceCallException;
+
     Weapon getWeapon(Long weaponId) throws ServiceCallException;
+
+    Weapon getWeaponNoFetch(Long weaponId) throws ServiceCallException;
+
+    List<String> getWeaponTags(Long weaponId) throws ServiceCallException;
 
 
 }

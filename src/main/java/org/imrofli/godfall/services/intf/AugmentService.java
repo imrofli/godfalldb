@@ -11,4 +11,6 @@ public interface AugmentService {
 
     List<Augment> getAllAugments() throws ServiceCallException;
     Augment getAugmentById(Long id) throws ServiceCallException;
+
+    Augment getAugmentNoFetch(Long augmentId) throws ServiceCallException;
 }

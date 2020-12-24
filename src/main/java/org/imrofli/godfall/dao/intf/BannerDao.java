@@ -8,9 +8,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.Set;
 
 public interface BannerDao extends JpaRepository<Banner, Long> {
-    @Query(value = "SELECT b from Banner b LEFT join fetch b.elements LEFT join fetch b.affinities order by b.name")
+    @Query(value = "SELECT b from Banner b LEFT join fetch b.elements LEFT join fetch b.affinities left JOIN FETCH b.traitSlots order by b.name")
     Set<Banner> findAllAndFetchElementsAndAffinitiesOrderByName();
-    @Query(value = "SELECT b from Banner b  LEFT join fetch b.elements LEFT join fetch b.affinities where b.id = :id")
+
+    @Query(value = "SELECT b from Banner b  LEFT join fetch b.elements LEFT join fetch b.affinities left JOIN FETCH b.traitSlots where b.id = :id")
     Banner findByIdAndFetchElementsAndAffinities(@Param("id") Long id);
     @Query(value = "SELECT b from Banner b LEFT join fetch b.affinities where b.id = :id")
     Banner findByIdAndFetchAffinities(@Param("id") Long id);

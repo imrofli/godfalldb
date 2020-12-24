@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.imrofli</groupId>
-    <artifactId>godfall</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>godfallapi</artifactId>
+    <version>Release_2_0</version>
     <name>godfall</name>
     <description>Godfall-data-tool</description>
 

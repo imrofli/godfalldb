@@ -2,7 +2,6 @@ package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.LootinfoApiDelegate;
 import org.imrofli.godfall.api.model.LootInfo;
-import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.LootInfoService;
 import org.slf4j.Logger;
@@ -20,6 +19,7 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     @Autowired
     LootInfoService lootInfoService;
 
+
     @Override
     public ResponseEntity<List<LootInfo>> getAllLootInfos() {
         LOGGER.info("Call to getAllLootInfos");
@@ -30,7 +30,23 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        if(outLootInfo != null && !outLootInfo.isEmpty()){
+        if (outLootInfo != null && !outLootInfo.isEmpty()) {
+            return ResponseEntity.ok(outLootInfo);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<LootInfo> getLootInfoByWeaponId(Long id) {
+        LOGGER.info("Call to getLootInfoByWeaponId");
+        LootInfo outLootInfo = null;
+        try {
+            outLootInfo = lootInfoService.getLootInfoByWeaponId(id);
+        } catch (ServiceCallException e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+        if (outLootInfo != null) {
             return ResponseEntity.ok(outLootInfo);
         }
         return ResponseEntity.notFound().build();
@@ -46,7 +62,7 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        if(outLootInfo != null){
+        if (outLootInfo != null) {
             return ResponseEntity.ok(outLootInfo);
         }
         return ResponseEntity.notFound().build();

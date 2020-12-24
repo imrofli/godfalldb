@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,11 +36,23 @@ public class BannerServiceImpl implements BannerService {
     public Banner getBannerByID(Long bannerID) throws ServiceCallException {
         LOGGER.info("Getting banner id: {}", bannerID);
         org.imrofli.godfall.dao.model.Banner banner = bannerDao.findByIdAndFetchElementsAndAffinities(bannerID);
-        if(banner == null ){
+        if (banner == null) {
             throw new ServiceCallException("bannerDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
         Banner out = DaoToViewInterpreter.convertBannerDao(banner);
         return out;
+    }
+
+    @Override
+    public Banner getBannerNoFetch(Long bannerId) throws ServiceCallException {
+        LOGGER.info("Getting LifeStone for id {}", bannerId);
+        Optional<org.imrofli.godfall.dao.model.Banner> banner = bannerDao.findById(bannerId);
+        if (banner.isPresent()) {
+            org.imrofli.godfall.api.model.Banner out = DaoToViewInterpreter.convertBannerDao(banner.get());
+            return out;
+        } else {
+            throw new ServiceCallException("bannerDao.findById returned NULL");
+        }
     }
 
 

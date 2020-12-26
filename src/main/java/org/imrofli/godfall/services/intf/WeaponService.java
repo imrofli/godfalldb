@@ -9,6 +9,8 @@ public interface WeaponService {
 
     List<Weapon> getAllWeapons() throws ServiceCallException;
 
+    List<Weapon> getAllWeaponsByQuery(String name) throws ServiceCallException;
+
     Weapon getWeapon(Long weaponId) throws ServiceCallException;
 
     Weapon getWeaponNoFetch(Long weaponId) throws ServiceCallException;

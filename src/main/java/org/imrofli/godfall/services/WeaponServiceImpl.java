@@ -30,8 +30,20 @@ public class WeaponServiceImpl implements WeaponService {
     public List<org.imrofli.godfall.api.model.Weapon> getAllWeapons() throws ServiceCallException {
         LOGGER.info("Getting all Weapons");
         Set<Weapon> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesOrderByName();
-        if(weaponSet == null || weaponSet.isEmpty()){
+        if (weaponSet == null || weaponSet.isEmpty()) {
             throw new ServiceCallException("weaponDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
+        }
+        List<org.imrofli.godfall.api.model.Weapon> out = DaoToViewInterpreter.convertWeaponDaoList(weaponSet);
+        LOGGER.info("Got {} Weapons", out.size());
+        return out;
+    }
+
+    @Override
+    public List<org.imrofli.godfall.api.model.Weapon> getAllWeaponsByQuery(String name) throws ServiceCallException {
+        LOGGER.info("Getting all Weapons by query. Name {}", name);
+        Set<Weapon> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+        if (weaponSet == null || weaponSet.isEmpty()) {
+            throw new ServiceCallException("weaponDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
         List<org.imrofli.godfall.api.model.Weapon> out = DaoToViewInterpreter.convertWeaponDaoList(weaponSet);
         LOGGER.info("Got {} Weapons", out.size());

@@ -19,11 +19,15 @@ public class BannerApiDelegateImpl implements BannerApiDelegate {
     BannerService bannerService;
 
     @Override
-    public ResponseEntity<List<Banner>> getAllBanners() {
-        LOGGER.info("Call to getAllBanners");
+    public ResponseEntity<List<Banner>> getAllBanners(String name) {
+        LOGGER.info("Call to getAllBanners. Query: name {}", name);
         List<Banner> outBanner = null;
         try {
-            outBanner = bannerService.getAllBanners();
+            if (name != null && !name.isEmpty()) {
+                outBanner = bannerService.getAllBannersByQuery(name);
+            } else {
+                outBanner = bannerService.getAllBanners();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

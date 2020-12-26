@@ -24,8 +24,20 @@ public class BannerServiceImpl implements BannerService {
     public List<Banner> getAllBanners() throws ServiceCallException {
         LOGGER.info("Getting all Banners");
         Set<org.imrofli.godfall.dao.model.Banner> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesOrderByName();
-        if(bannerSet == null || bannerSet.isEmpty()){
+        if (bannerSet == null || bannerSet.isEmpty()) {
             throw new ServiceCallException("bannerDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
+        }
+        List<Banner> out = DaoToViewInterpreter.convertBannerDaoList(bannerSet);
+        LOGGER.info("Got {} Banners", out.size());
+        return out;
+    }
+
+    @Override
+    public List<Banner> getAllBannersByQuery(String name) throws ServiceCallException {
+        LOGGER.info("Getting all Banners by query. Name {}", name);
+        Set<org.imrofli.godfall.dao.model.Banner> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+        if (bannerSet == null || bannerSet.isEmpty()) {
+            throw new ServiceCallException("bannerDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
         List<Banner> out = DaoToViewInterpreter.convertBannerDaoList(bannerSet);
         LOGGER.info("Got {} Banners", out.size());

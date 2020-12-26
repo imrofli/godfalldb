@@ -25,8 +25,20 @@ public class LifeStoneServiceImpl implements LifeStoneService {
     public List<LifeStone> getAllLifeStones() throws ServiceCallException {
         LOGGER.info("Getting all LifeStones");
         Set<org.imrofli.godfall.dao.model.LifeStone> lifeStoneSet = lifeStoneDao.findAllAndFetchElementsAndAffinitiesOrderByName();
-        if(lifeStoneSet == null || lifeStoneSet.isEmpty()){
+        if (lifeStoneSet == null || lifeStoneSet.isEmpty()) {
             throw new ServiceCallException("lifeStoneDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
+        }
+        List<LifeStone> out = DaoToViewInterpreter.convertLifeStoneDaoList(lifeStoneSet);
+        LOGGER.info("Got {} LifeStones", out.size());
+        return out;
+    }
+
+    @Override
+    public List<LifeStone> getAllLifeStonesByQuery(String name) throws ServiceCallException {
+        LOGGER.info("Getting all LifeStones by query. Name {}", name);
+        Set<org.imrofli.godfall.dao.model.LifeStone> lifeStoneSet = lifeStoneDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+        if (lifeStoneSet == null || lifeStoneSet.isEmpty()) {
+            throw new ServiceCallException("lifeStoneDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
         List<LifeStone> out = DaoToViewInterpreter.convertLifeStoneDaoList(lifeStoneSet);
         LOGGER.info("Got {} LifeStones", out.size());

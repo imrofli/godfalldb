@@ -25,8 +25,20 @@ public class AugmentServiceImpl implements AugmentService {
     public List<Augment> getAllAugments() throws ServiceCallException {
         LOGGER.info("Getting all Augments");
         Set<org.imrofli.godfall.dao.model.Augment> augmentSet = augmentDao.findAllAndFetchElementsAndAffinitiesOrderByName();
-        if(augmentSet == null || augmentSet.isEmpty()){
+        if (augmentSet == null || augmentSet.isEmpty()) {
             throw new ServiceCallException("augmentDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
+        }
+        List<Augment> out = DaoToViewInterpreter.convertAugmentDaoList(augmentSet);
+        LOGGER.info("Got {} Augments", out.size());
+        return out;
+    }
+
+    @Override
+    public List<Augment> getAllAugmentsByQuery(String name) throws ServiceCallException {
+        LOGGER.info("Getting all Augments by query. Name {}", name);
+        Set<org.imrofli.godfall.dao.model.Augment> augmentSet = augmentDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+        if (augmentSet == null || augmentSet.isEmpty()) {
+            throw new ServiceCallException("augmentDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
         List<Augment> out = DaoToViewInterpreter.convertAugmentDaoList(augmentSet);
         LOGGER.info("Got {} Augments", out.size());

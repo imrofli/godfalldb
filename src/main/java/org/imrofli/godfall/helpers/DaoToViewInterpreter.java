@@ -206,7 +206,7 @@ public class DaoToViewInterpreter {
             out.setCoreAttributePercentMin(entry.getCoreAttributePercentMin());
             out.setCoreAttributePercentMax(entry.getCoreAttributePercentMax());
             out.setDefensePercentMin(entry.getDefensePercentMin());
-            out.setDefensePercentMin(entry.getDefensePercentMin());
+            out.setDefensePercentMax(entry.getDefensePercentMax());
             out.setReverseScalingMin(entry.getReverseScalingMin());
             out.setReverseScalingMax(entry.getReverseScalingMax());
             out.setNonScalingMin(entry.getNonScalingMin());
@@ -229,6 +229,8 @@ public class DaoToViewInterpreter {
             out.setNoVariancePlayerPowerMax(entry.getNoVariancePlayerPowerMax());
             out.setNoVarianceHealthToDamageMin(entry.getNoVarianceHealthToDamageMin());
             out.setNoVarianceHealthToDamageMax(entry.getNoVarianceHealthToDamageMax());
+            out.setNoVariancePlayerHealthMax(entry.getNoVariancePlayerHealthMax());
+            out.setNoVariancePlayerHealthMin(entry.getNoVariancePlayerHealthMin());
 
         }
         return out;
@@ -722,20 +724,42 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static EffectMagnitude convertMagnitude(org.imrofli.godfall.dao.model.EffectMagnitude magnitude){
+    public static EffectMagnitude convertMagnitude(org.imrofli.godfall.dao.model.EffectMagnitude magnitude) {
         EffectMagnitude out = new EffectMagnitude();
         out.setName(magnitude.getName());
         out.setScalar(magnitude.getScalar());
         out.setConditionparamtype(convertParameterType(magnitude.getParameterType()));
+        out.setCalculatedvalues(convertCalculatedValuesDaoSet(magnitude.getCalculatedMagnitudes()));
         return out;
     }
 
-    public static ConditionParamCategory convertParamCategory(org.imrofli.godfall.dao.model.ConditionParamCategory paramCategory){
+    private static List<CalculatedMagnitude> convertCalculatedValuesDaoSet(Set<org.imrofli.godfall.dao.model.CalculatedMagnitude> calculatedMagnitudes) {
+        List<CalculatedMagnitude> out = new ArrayList<>();
+        if (calculatedMagnitudes != null) {
+            for (org.imrofli.godfall.dao.model.CalculatedMagnitude entry : calculatedMagnitudes) {
+                out.add(convertCalculatedValuesDao(entry));
+            }
+        }
+        return out;
+    }
+
+    private static CalculatedMagnitude convertCalculatedValuesDao(org.imrofli.godfall.dao.model.CalculatedMagnitude calculatedMagnitude) {
+        CalculatedMagnitude out = new CalculatedMagnitude();
+        if (calculatedMagnitude != null) {
+            out.setLevel(calculatedMagnitude.getLevel());
+            out.setRarity(convertRarity(calculatedMagnitude.getRarity()));
+            out.setCalculatedmin(calculatedMagnitude.getMinimum());
+            out.setCalculatedmax(calculatedMagnitude.getMaximum());
+        }
+        return out;
+    }
+
+    public static ConditionParamCategory convertParamCategory(org.imrofli.godfall.dao.model.ConditionParamCategory paramCategory) {
         ConditionParamCategory out = new ConditionParamCategory();
-        if(paramCategory.getAffinity() != null){
+        if (paramCategory.getAffinity() != null) {
             out.setAffinity(convertAffinity(paramCategory.getAffinity()));
         }
-        if(paramCategory.getColor() != null){
+        if (paramCategory.getColor() != null) {
             out.setColor(convertColor(paramCategory.getColor()));
         }
         return out;

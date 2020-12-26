@@ -22,13 +22,11 @@ public class GlobalParameterServiceImpl implements GlobalParameterService {
 
     @Override
     public List<org.imrofli.godfall.api.model.GlobalParameters> getAllGlobalParameters() throws ServiceCallException {
-        LOGGER.info("Getting all Global Parameters");
         Set<org.imrofli.godfall.dao.model.GlobalParameters> globalParametersSet = globalParameterDao.getAllParameters();
         if (globalParametersSet == null || globalParametersSet.isEmpty()) {
             throw new ServiceCallException("globalParameterDao.getAllParameters() returned NULL");
         }
         List<org.imrofli.godfall.api.model.GlobalParameters> out = DaoToViewInterpreter.convertGlobalParameterSetDao(globalParametersSet);
-        LOGGER.info("Got {} Global Parameters", out.size());
         return out;
     }
 }

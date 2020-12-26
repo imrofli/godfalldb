@@ -21,11 +21,15 @@ public class WeaponApiDelegateImpl implements WeaponApiDelegate {
     WeaponService weaponService;
 
     @Override
-    public ResponseEntity<List<Weapon>> getAllWeapons(){
-        LOGGER.info("Call to getAllWeapons");
+    public ResponseEntity<List<Weapon>> getAllWeapons(String name) {
+        LOGGER.info("Call to getAllWeapons. Query: name {}", name);
         List<Weapon> outWeapons = null;
         try {
-            outWeapons = weaponService.getAllWeapons();
+            if (name != null && !name.isEmpty()) {
+                outWeapons = weaponService.getAllWeaponsByQuery(name);
+            } else {
+                outWeapons = weaponService.getAllWeapons();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

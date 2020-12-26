@@ -2,7 +2,6 @@ package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.AmuletApiDelegate;
 import org.imrofli.godfall.api.model.Amulet;
-import org.imrofli.godfall.api.model.Augment;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.TrinketService;
 import org.slf4j.Logger;
@@ -20,11 +19,15 @@ public class AmuletApiDelegateImpl implements AmuletApiDelegate {
     TrinketService trinketService;
 
     @Override
-    public ResponseEntity<List<Amulet>> getAllAmulets() {
-        LOGGER.info("Call to getAllAmulets");
+    public ResponseEntity<List<Amulet>> getAllAmulets(String name) {
+        LOGGER.info("Call to getAllAmulets. Query: name {}", name);
         List<Amulet> outAmulets = null;
         try {
-            outAmulets = trinketService.getAllAmulets();
+            if (name != null && !name.isEmpty()) {
+                outAmulets = trinketService.getAllAmuletsByQuery(name);
+            } else {
+                outAmulets = trinketService.getAllAmulets();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

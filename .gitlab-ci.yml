@@ -20,13 +20,3 @@ build:
   artifacts:
     paths:
       - target/godfallapi-$RELEASEV.jar
-
-deploy-test:
-  stage: deploy
-  dependencies: 
-    - build
-  script:
-    - sudo systemctl stop godfall.service
-    - sleep 10
-    - cp target/godfallapi-$RELEASEV.jar /games/godfall/
-    - sudo systemctl stop godfall.service

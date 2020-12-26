@@ -7,7 +7,9 @@ import org.imrofli.godfall.dao.model.TraitSlot;
 import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.data.EnemyTier;
 import org.imrofli.godfall.data.*;
+import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.ItemHelper;
+import org.imrofli.godfall.services.intf.CalculationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,9 @@ public class DataLoader implements ApplicationRunner {
 
     @Autowired
     private EnemyDao enemyDao;
+
+    @Autowired
+    private CalculationService calculationService;
 
 
     @Override
@@ -381,16 +386,20 @@ public class DataLoader implements ApplicationRunner {
                 Set<String> keywords = new HashSet<>();
                 if (tagsCollection.getKeywords() != null) {
                     for(String s : tagsCollection.getKeywords()){
-                        if(s.startsWith("Keyword.")){
+                        if (s.startsWith("Keyword.")) {
                             String sub = s.substring("Keyword.".length());
                             keywords.add(sub);
-                        }
-                        else{
+                        } else {
                             keywords.add(s);
                         }
                     }
                 }
                 trait.setKeywords(keywords);
+                try {
+                    calculationService.calculateTrait(trait);
+                } catch (ServiceCallException e) {
+                    e.printStackTrace();
+                }
                 traitDao.save(trait);
             }
         }

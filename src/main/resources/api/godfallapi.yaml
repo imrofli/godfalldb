@@ -10,6 +10,10 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
 servers:
+  - url: http://test.godfalldb.ch/api
+    description: Testserver url
+  - url: http://192.168.1.11:8155/api
+    description: Testserver Local IP
   - url: http://godfalldb.ch/api
     description: Production Server
   - url: http://localhost/api
@@ -125,6 +129,20 @@ components:
           format: int64
         displayname:
           type: string
+    CalculatedMagnitude:
+      type: object
+      properties:
+        level:
+          type: integer
+          format: int64
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        calculatedmin:
+          type: number
+          format: double
+        calculatedmax:
+          type: number
+          format: double
     EffectMagnitude:
       type: object
       properties:
@@ -135,6 +153,10 @@ components:
         scalar:
           type: number
           format: double
+        calculatedvalues:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalculatedMagnitude'
     ConditionParamCategory:
       type: object
       properties:
@@ -215,7 +237,6 @@ components:
           $ref: '#/components/schemas/Rarity'
         maximumrarity:
           $ref: '#/components/schemas/Rarity'
-
     TraitRequirement:
       type: object
       properties:
@@ -225,6 +246,7 @@ components:
           type: boolean
         actorType:
           type: string
+
     Weapon:
       type: object
       properties:
@@ -1109,6 +1131,7 @@ components:
         lootEventRulesType:
           type: string
 
+
 paths:
   /weapon:
     get:
@@ -1116,6 +1139,13 @@ paths:
         - weapon
       summary: Get all weapons
       operationId: getAllWeapons
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1156,6 +1186,13 @@ paths:
         - augment
       summary: Get all Augments
       operationId: getAllAugments
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1196,6 +1233,13 @@ paths:
         - lifestone
       summary: Get all lifestones
       operationId: getAllLifestones
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1235,6 +1279,13 @@ paths:
         - banner
       summary: Get all banners
       operationId: getAllBanners
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1275,6 +1326,13 @@ paths:
         - amulet
       summary: Get all amulets
       operationId: getAllAmulets
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1315,6 +1373,13 @@ paths:
         - charm
       summary: Get all charms
       operationId: getAllCharms
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1355,6 +1420,13 @@ paths:
         - ring
       summary: Get all rings
       operationId: getAllRings
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success

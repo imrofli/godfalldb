@@ -17,6 +17,9 @@ public interface TrinketDao extends JpaRepository<Trinket, Long> {
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities left JOIN FETCH a.traitSlots where a.itemType=:typ order by a.name")
     Set<Trinket> findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(@Param("typ") ItemType type);
 
+    @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities left JOIN FETCH a.traitSlots where a.itemType=:typ and a.displayName like :name order by a.name")
+    Set<Trinket> findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(@Param("typ") ItemType type, @Param("name") String name);
+
     @Query(value = "SELECT a from Trinket a LEFT join fetch a.elements LEFT join fetch a.affinities where a.id = :id and a.itemType=:typ")
     Trinket findByIdAndFetchElementsAndAffinitiesWhereTrinketType(@Param("id") Long id, @Param("typ") ItemType type);
 

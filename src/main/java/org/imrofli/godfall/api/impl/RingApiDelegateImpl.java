@@ -1,8 +1,6 @@
 package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.RingApiDelegate;
-import org.imrofli.godfall.api.model.Amulet;
-import org.imrofli.godfall.api.model.Charm;
 import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.TrinketService;
@@ -21,11 +19,15 @@ public class RingApiDelegateImpl implements RingApiDelegate {
     TrinketService trinketService;
 
     @Override
-    public ResponseEntity<List<Ring>> getAllRings() {
-        LOGGER.info("Call to getAllRings");
+    public ResponseEntity<List<Ring>> getAllRings(String name) {
+        LOGGER.info("Call to getAllRings. Query: name {}", name);
         List<Ring> outRing = null;
         try {
-            outRing = trinketService.getAllRings();
+            if (name != null && !name.isEmpty()) {
+                outRing = trinketService.getAllRingsByQuery(name);
+            } else {
+                outRing = trinketService.getAllRings();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

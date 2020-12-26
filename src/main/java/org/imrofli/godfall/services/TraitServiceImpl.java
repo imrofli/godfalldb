@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.model.Trait;
 import org.imrofli.godfall.dao.intf.TraitDao;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
+import org.imrofli.godfall.services.intf.CalculationService;
 import org.imrofli.godfall.services.intf.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ public class TraitServiceImpl implements TraitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraitServiceImpl.class);
     @Autowired
     private TraitDao traitDao;
+    @Autowired
+    private CalculationService calculationService;
 
     public TraitServiceImpl() {
     }
@@ -28,7 +31,7 @@ public class TraitServiceImpl implements TraitService {
     public List<Trait> getAllTraits() throws ServiceCallException {
         LOGGER.info("Getting all Traits");
         Set<org.imrofli.godfall.dao.model.Trait> traitSet = traitDao.findAllAndFetchAll();
-        if(traitSet == null || traitSet.isEmpty()){
+        if (traitSet == null || traitSet.isEmpty()) {
             throw new ServiceCallException("traitDao.findAllAndFetchAll() returned NULL");
         }
         List<Trait> out = DaoToViewInterpreter.convertTraitSetDao(traitSet);
@@ -44,7 +47,6 @@ public class TraitServiceImpl implements TraitService {
             throw new ServiceCallException("traitDao.findByIdAndFetchAll returned NULL");
         }
         Trait out = DaoToViewInterpreter.convertTraitDao(trait);
-
         return out;
     }
 

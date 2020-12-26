@@ -1,7 +1,6 @@
 package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.CharmApiDelegate;
-import org.imrofli.godfall.api.model.Amulet;
 import org.imrofli.godfall.api.model.Charm;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.TrinketService;
@@ -20,11 +19,15 @@ public class CharmApiDelegateImpl implements CharmApiDelegate {
     TrinketService trinketService;
 
     @Override
-    public ResponseEntity<List<Charm>> getAllCharms() {
-        LOGGER.info("Call to getAllCharms");
+    public ResponseEntity<List<Charm>> getAllCharms(String name) {
+        LOGGER.info("Call to getAllCharms. Query: name {}", name);
         List<Charm> outCharm = null;
         try {
-            outCharm = trinketService.getAllCharms();
+            if (name != null && !name.isEmpty()) {
+                outCharm = trinketService.getAllCharmsByQuery(name);
+            } else {
+                outCharm = trinketService.getAllCharms();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

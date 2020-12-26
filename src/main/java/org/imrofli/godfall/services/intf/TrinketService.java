@@ -18,6 +18,12 @@ public interface TrinketService {
 
     List<Charm> getAllCharms() throws ServiceCallException;
 
+    List<Amulet> getAllAmuletsByQuery(String name) throws ServiceCallException;
+
+    List<Ring> getAllRingsByQuery(String name) throws ServiceCallException;
+
+    List<Charm> getAllCharmsByQuery(String name) throws ServiceCallException;
+
     Trinket getTrinketById(Long id) throws ServiceCallException;
 
     Ring getRingById(Long id) throws ServiceCallException;

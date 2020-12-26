@@ -21,11 +21,15 @@ public class AugmentApiDelegateImpl implements AugmentApiDelegate {
 
 
     @Override
-    public ResponseEntity<List<Augment>> getAllAugments() {
-        LOGGER.info("Call to getAllAugments");
+    public ResponseEntity<List<Augment>> getAllAugments(String name) {
+        LOGGER.info("Call to getAllAugments. Query: name {}", name);
         List<Augment> outAugments = null;
         try {
-            outAugments = augmentService.getAllAugments();
+            if (name != null && !name.isEmpty()) {
+                outAugments = augmentService.getAllAugmentsByQuery(name);
+            } else {
+                outAugments = augmentService.getAllAugments();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

@@ -2,7 +2,6 @@ package org.imrofli.godfall.api.impl;
 
 import org.imrofli.godfall.api.LifestoneApiDelegate;
 import org.imrofli.godfall.api.model.LifeStone;
-import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.LifeStoneService;
 import org.slf4j.Logger;
@@ -21,11 +20,15 @@ public class LifestoneApiDelegateImpl implements LifestoneApiDelegate {
     LifeStoneService lifeStoneService;
 
     @Override
-    public ResponseEntity<List<LifeStone>> getAllLifestones() {
-        LOGGER.info("Call to getAllLifeStones");
+    public ResponseEntity<List<LifeStone>> getAllLifestones(String name) {
+        LOGGER.info("Call to getAllLifeStones. Query: name {}", name);
         List<LifeStone> outLifeStone = null;
         try {
-            outLifeStone = lifeStoneService.getAllLifeStones();
+            if (name != null && !name.isEmpty()) {
+                outLifeStone = lifeStoneService.getAllLifeStonesByQuery(name);
+            } else {
+                outLifeStone = lifeStoneService.getAllLifeStones();
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

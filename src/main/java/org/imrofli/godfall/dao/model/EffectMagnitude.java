@@ -1,12 +1,11 @@
 package org.imrofli.godfall.dao.model;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
-public class EffectMagnitude extends AbstractEntity{
+public class EffectMagnitude extends AbstractEntity {
 
     @NotNull
     private String name;
@@ -15,6 +14,9 @@ public class EffectMagnitude extends AbstractEntity{
     private ParameterType parameterType;
 
     private Double scalar;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    private Set<CalculatedMagnitude> calculatedMagnitudes;
 
     public String getName() {
         return name;
@@ -40,12 +42,11 @@ public class EffectMagnitude extends AbstractEntity{
         this.scalar = scalar;
     }
 
-    @Override
-    public String toString() {
-        return "Magnitude{" +
-                "name='" + name + '\'' +
-                ", parameterType=" + parameterType +
-                ", scalar=" + scalar +
-                '}';
+    public Set<CalculatedMagnitude> getCalculatedMagnitudes() {
+        return calculatedMagnitudes;
+    }
+
+    public void setCalculatedMagnitudes(Set<CalculatedMagnitude> calculatedMagnitudes) {
+        this.calculatedMagnitudes = calculatedMagnitudes;
     }
 }

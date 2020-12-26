@@ -26,7 +26,6 @@ public class ScalingServiceImpl implements ScalingService {
 
     @Override
     public List<Scaling> getScalingByRarityAndLevel(Rarity rarity, Long tier) throws ServiceCallException {
-        LOGGER.info("Getting Scaling by Rartiy: {} and Level: {}", rarity, tier);
         Set<org.imrofli.godfall.dao.model.Scaling> scaling;
         if (rarity == null && tier != null) {
             scaling = scalingDao.getAllByTierIdentifier(tier);
@@ -47,7 +46,6 @@ public class ScalingServiceImpl implements ScalingService {
             }
         }
         List<Scaling> out = DaoToViewInterpreter.convertScalingsDao(scaling);
-        LOGGER.info("Got {} Scalings", out.size());
         return out;
     }
 

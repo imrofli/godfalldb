@@ -9,6 +9,9 @@ import java.util.List;
 public interface LifeStoneService {
 
     List<LifeStone> getAllLifeStones() throws ServiceCallException;
+
+    List<LifeStone> getAllLifeStonesByQuery(String name) throws ServiceCallException;
+
     LifeStone getLifeStoneById(Long id) throws ServiceCallException;
 
     LifeStone getLifeStoneNoFetch(Long lifeStone) throws ServiceCallException;

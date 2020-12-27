@@ -17,6 +17,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -77,10 +79,17 @@ public class DataLoader implements ApplicationRunner {
     @Autowired
     private CalculationService calculationService;
 
+    @Autowired
+    private ValorplateDao valorplateDao;
+
+    @Autowired
+    private SkillDao skillDao;
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        LOGGER.info("Starting data Ingestion");
+        LOGGER.info("Starting Data Ingestion");
+        Instant start = Instant.now();
         loadGlobalInfo();
         loadPlayerStrengthIndex();
         loadTierInfo();
@@ -91,17 +100,21 @@ public class DataLoader implements ApplicationRunner {
         loadTraits();
         loadTraitSlots();
         loadLootInfo();
+        loadValorPlates();
         loadWeapons();
         loadBanners();
         loadLifeStones();
         loadTrinkets();
         loadAugments();
-        LOGGER.info("Data Ingestion Done");
+        loadSkills();
+        Instant stop = Instant.now();
+        LOGGER.info("Data Ingestion done in {}", Duration.between(start, stop));
     }
 
 
     private void loadGlobalInfo() {
         LOGGER.info("Loading GlobalParameters");
+        Instant start = Instant.now();
         GlobalParameters globalParameters = new GlobalParameters();
         org.imrofli.godfall.data.GlobalParameters entry = dataDao.getMainData().getGlobalParameters();
         globalParameters.setLootTierBonusScalar(entry.getLootTierBonusScalar());
@@ -194,11 +207,14 @@ public class DataLoader implements ApplicationRunner {
         globalParameters.setMaxCoopAdjustedLootTier(Double.valueOf(entry.getMaxCoopAdjustedLootTier()));
         globalParameterDao.save(globalParameters);
         globalParameterDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded GlobalParameters in {}", Duration.between(start, stop));
 
     }
 
     private void loadPlayerStrengthIndex() {
         LOGGER.info("Loading PlayerStrengthIndex Info");
+        Instant start = Instant.now();
         for (Map.Entry<String, PlayerStrengthIndexModifier> entry : dataDao.getMainData().getPlayerStrengthIndexModifiers().entrySet()) {
             PlayerStrengthIndex playerStrengthIndex = new PlayerStrengthIndex();
             playerStrengthIndex.setPlayerStrengthIndex(entry.getValue().getPlayerStrengthIndex());
@@ -210,11 +226,14 @@ public class DataLoader implements ApplicationRunner {
             playerStrengthIndexDao.save(playerStrengthIndex);
         }
         playerStrengthIndexDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded PlayerStrengthIndex in {}", Duration.between(start, stop));
 
     }
 
     private void loadPlayerTiers() {
         LOGGER.info("Loading PlayerTiers");
+        Instant start = Instant.now();
         for (Map.Entry<String, Map<String, Long>> entry : dataDao.getMainData().getPlayerTier().entrySet()) {
             PlayerTier out = new PlayerTier();
             out.setTier(entry.getValue().get("tier"));
@@ -232,10 +251,13 @@ public class DataLoader implements ApplicationRunner {
             playerTierDao.save(out);
         }
         playerTierDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded PlayerTiers in {}", Duration.between(start, stop));
     }
 
     private void loadEnemies() {
         LOGGER.info("Loading Enemies");
+        Instant start = Instant.now();
         for (EnemiesCollection entry : dataDao.getMainData().getEnemies().getCollection()) {
             Enemy out = new Enemy();
             out.setEnemyType(entry.getEnemyType().toValue());
@@ -246,10 +268,13 @@ public class DataLoader implements ApplicationRunner {
             enemyDao.save(out);
         }
         enemyDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Enemies in {}", Duration.between(start, stop));
     }
 
     private void loadEnemyClasses() {
         LOGGER.info("Loading EnemyClasses");
+        Instant start = Instant.now();
         for (EnemyClassesCollection entry : dataDao.getMainData().getEnemyClasses().getCollection()) {
             EnemyClass out = new EnemyClass();
             out.setName(entry.getName().toValue());
@@ -258,10 +283,13 @@ public class DataLoader implements ApplicationRunner {
             enemyClassDao.save(out);
         }
         enemyClassDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded EnemyClasses in {}", Duration.between(start, stop));
     }
 
     private void loadEnemyTiers() {
         LOGGER.info("Loading EnemyTiers");
+        Instant start = Instant.now();
         for (Map.Entry<String, EnemyTier> entry : dataDao.getMainData().getEnemyTiers().entrySet()) {
             org.imrofli.godfall.dao.model.EnemyTier out = new org.imrofli.godfall.dao.model.EnemyTier();
             out.setTier(entry.getValue().getTier());
@@ -272,10 +300,13 @@ public class DataLoader implements ApplicationRunner {
             enemyTierDao.save(out);
         }
         enemyTierDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded EnemyTiers in {}", Duration.between(start, stop));
     }
 
     private void loadTierInfo() {
         LOGGER.info("Loading Tier Info");
+        Instant start = Instant.now();
         for (ItemScalingCollection tagsCollection : dataDao.getMainData().getItemScaling().getCollection()) {
             Scaling scaling = new Scaling();
             scaling.setTierIdentifier(tagsCollection.getTierIdentifier());
@@ -323,10 +354,13 @@ public class DataLoader implements ApplicationRunner {
 
         }
         scalingDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Tier Info in {}", Duration.between(start, stop));
     }
 
     private void loadLootInfo(){
         LOGGER.info("Loading Loot Info");
+        Instant start = Instant.now();
         for (LootItemCollection tagsCollection : dataDao.getMainData().getLootItem().getCollection()) {
             if(tagsCollection.getName() != null && tagsCollection.getGameplayTag()!= null) {
                 LootInfo lootInfo = new LootInfo();
@@ -361,11 +395,14 @@ public class DataLoader implements ApplicationRunner {
             }
         }
         lootInfoDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Loot Info in {}", Duration.between(start, stop));
     }
 
 
     private void loadTraits(){
         LOGGER.info("Loading Traits");
+        Instant start = Instant.now();
         for (TraitCollection tagsCollection : dataDao.getMainData().getTrait().getCollection()) {
             if(tagsCollection.getTraitName() != null && tagsCollection.getDescription()!= null && tagsCollection.getGroupName() != null) {
                 Trait trait = new Trait();
@@ -404,10 +441,13 @@ public class DataLoader implements ApplicationRunner {
             }
         }
         traitDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Traits in {}", Duration.between(start, stop));
     }
 
     private void loadTraitSlots() {
         LOGGER.info("Loading TraitSlots");
+        Instant start = Instant.now();
         for (TraitSlotCollection tagsCollection : dataDao.getMainData().getTraitSlot().getCollection()) {
             if (tagsCollection.getName() != null && tagsCollection.getGroupName() != null) {
                 TraitSlot ts = new TraitSlot();
@@ -428,11 +468,47 @@ public class DataLoader implements ApplicationRunner {
             }
         }
         traitSlotDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded TraitSlots in {}", Duration.between(start, stop));
+    }
+
+    private void loadValorPlates() {
+        LOGGER.info("Loading ValorPlates");
+        Instant start = Instant.now();
+        for (ValorplatesCollection entry : dataDao.getMainData().getValorplates().getCollection()) {
+            Valorplate valorplateSave = new Valorplate();
+            valorplateSave.setName(entry.getName());
+            valorplateSave.setGameplayTag(entry.getGameplayTag());
+            valorplateSave.setAetheriumArchonChargeRate(Double.valueOf(entry.getAetheriumArchonChargeRate()));
+            valorplateSave.setArchonDamageScalar(Double.valueOf(entry.getArchonDamageScalar()));
+            valorplateSave.setEnabled(entry.getEnabled());
+            valorplateSave.setArchonModeDamageReduction(Double.valueOf(entry.getArchonModeDamageReduction()));
+            valorplateSave.setArchonModeDrainRate(Double.valueOf(entry.getArchonModeDrainRate()));
+            valorplateSave.setArchonChargeGainMultiplier(Double.valueOf(entry.getArchonChargeGainMultiplier()));
+            if (entry.getStartingLevel() != null) {
+                valorplateSave.setStartinglevel(Math.toIntExact(entry.getStartingLevel()));
+            } else {
+                valorplateSave.setStartinglevel(0);
+            }
+            Localization locale = dataDao.getMainData().getLocalization().get(valorplateSave.getName());
+            if (locale != null) {
+                if (locale.getName() != null) {
+                    valorplateSave.setDisplayname(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
+                }
+            }
+            valorplateSave.setArchonmode(ItemHelper.getArchonMode(entry.getArchonModeID(), dataDao.getMainData().getArchonModes()));
+            valorplateSave.setAugmentGraphs(ItemHelper.getAugmentGraphs(valorplateSave.getGameplayTag(), dataDao.getMainData().getAugmentGraphs().getCollection()));
+            valorplateDao.save(valorplateSave);
+        }
+        valorplateDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded ValorPlates in {}", Duration.between(start, stop));
     }
 
 
     private void loadWeapons() {
         LOGGER.info("Loading Weapons");
+        Instant start = Instant.now();
         for (WeaponsCollection entry : dataDao.getMainData().getWeapons().getCollection()) {
             Weapon weaponSave = new Weapon();
             weaponSave.setName(ItemHelper.formatName(entry.getName().stringValue, entry.getName().stringArrayValue));
@@ -459,10 +535,13 @@ public class DataLoader implements ApplicationRunner {
 
         }
         weaponDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Weapons in {}", Duration.between(start, stop));
     }
 
     private void loadBanners(){
         LOGGER.info("Loading Banners");
+        Instant start = Instant.now();
         for(BannersCollection entry : dataDao.getMainData().getBanners().getCollection()){
             Banner bannerSave = new Banner();
             bannerSave.setName(entry.getName());
@@ -490,10 +569,13 @@ public class DataLoader implements ApplicationRunner {
             bannerDao.save(bannerSave);
         }
         bannerDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Banners in {}", Duration.between(start, stop));
     }
 
     private void loadLifeStones(){
         LOGGER.info("Loading LifeStones");
+        Instant start = Instant.now();
         for(PotionsCollection entry : dataDao.getMainData().getPotions().getCollection()){
             LifeStone lifeStone = new LifeStone();
             lifeStone.setName(entry.getName());
@@ -522,10 +604,13 @@ public class DataLoader implements ApplicationRunner {
             lifeStoneDao.save(lifeStone);
         }
         lifeStoneDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded LifeStones in {}", Duration.between(start, stop));
     }
 
     private void loadTrinkets(){
         LOGGER.info("Loading Trinkets");
+        Instant start = Instant.now();
         for(TrinketsCollection entry : dataDao.getMainData().getTrinkets().getCollection()) {
             Trinket trinket = new Trinket();
             trinket.setName(entry.getName());
@@ -550,10 +635,13 @@ public class DataLoader implements ApplicationRunner {
             trinketDao.save(trinket);
         }
         trinketDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Trinkets in {}", Duration.between(start, stop));
     }
 
     private void loadAugments(){
         LOGGER.info("Loading Augments");
+        Instant start = Instant.now();
         for(AugmentsCollection entry : dataDao.getMainData().getAugments().getCollection()) {
             Augment augment = new Augment();
             augment.setName(entry.getName());
@@ -578,6 +666,33 @@ public class DataLoader implements ApplicationRunner {
             augmentDao.save(augment);
         }
         augmentDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Augments in {}", Duration.between(start, stop));
+    }
+
+    private void loadSkills() {
+        LOGGER.info("Loading Skills");
+        Instant start = Instant.now();
+        for (MasteryEntitlementsCollection entry : dataDao.getMainData().getMasteryEntitlements().getCollection()) {
+            Skill skill = new Skill();
+            skill.setName(entry.getID());
+            skill.setSkillgroup(entry.getMasteryID());
+            skill.setMinPoints(entry.getMinPoints());
+            skill.setTraitname(entry.getTraitName());
+            Localization locale = dataDao.getMainData().getLocalization().get(skill.getName());
+            if (locale != null) {
+                if (locale.getDescription() != null) {
+                    skill.setDisplaydescription(ItemHelper.formatName(locale.getDescription().stringValue, locale.getDescription().stringArrayValue));
+                }
+                if (locale.getName() != null) {
+                    skill.setDisplayname(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
+                }
+            }
+            skillDao.save(skill);
+        }
+        skillDao.flush();
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Skills in {}", Duration.between(start, stop));
     }
 
 }

@@ -51,6 +51,17 @@ public class TraitServiceImpl implements TraitService {
     }
 
     @Override
+    public Trait getTraitByName(String name) throws ServiceCallException {
+        LOGGER.info("Getting Trait by name: {}", name);
+        org.imrofli.godfall.dao.model.Trait trait = traitDao.findByNameAndFetchAll(name);
+        if (trait == null) {
+            throw new ServiceCallException("traitDao.findByNameAndFetchAll returned NULL");
+        }
+        Trait out = DaoToViewInterpreter.convertTraitDao(trait);
+        return out;
+    }
+
+    @Override
     public List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags) throws ServiceCallException {
         LOGGER.info("Getting all Traits for tags: {} and blacklistTags: {}", allowedTraitTags, blacklistTags);
         if (allowedTraitTags == null) {

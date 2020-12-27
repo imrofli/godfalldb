@@ -1,5 +1,6 @@
 package org.imrofli.godfall.helpers;
 
+import org.imrofli.godfall.dao.model.ArchonMode;
 import org.imrofli.godfall.dao.model.ConditionParamCategory;
 import org.imrofli.godfall.dao.model.ItemType;
 import org.imrofli.godfall.dao.model.TraitCategory;
@@ -622,5 +623,79 @@ public final class ItemHelper {
             enemyClassLvls.add(out);
         }
         return enemyClassLvls;
+    }
+
+    public static ArchonMode getArchonMode(String archonModeID, ArchonModes archonModes) {
+        ArchonMode out = new ArchonMode();
+        org.imrofli.godfall.data.ArchonMode input = null;
+        if (archonModeID.equals(archonModes.getArchonModeArmistice().getID())) {
+            input = archonModes.getArchonModeArmistice();
+        } else if (archonModeID.equals(archonModes.getArchonModeBulwark().getID())) {
+            input = archonModes.getArchonModeBulwark();
+        } else if (archonModeID.equals(archonModes.getArchonModeMesa().getID())) {
+            input = archonModes.getArchonModeMesa();
+        } else if (archonModeID.equals(archonModes.getArchonModeGrayehawk().getID())) {
+            input = archonModes.getArchonModeGrayehawk();
+        } else if (archonModeID.equals(archonModes.getArchonModeHinterclaw().getID())) {
+            input = archonModes.getArchonModeHinterclaw();
+        } else if (archonModeID.equals(archonModes.getArchonModeIllumina().getID())) {
+            input = archonModes.getArchonModeIllumina();
+        } else if (archonModeID.equals(archonModes.getArchonModeMoebius().getID())) {
+            input = archonModes.getArchonModeMoebius();
+        } else if (archonModeID.equals(archonModes.getArchonModePhoenix().getID())) {
+            input = archonModes.getArchonModePhoenix();
+        } else if (archonModeID.equals(archonModes.getArchonModeSilvermane().getID())) {
+            input = archonModes.getArchonModeSilvermane();
+        } else if (archonModeID.equals(archonModes.getArchonModeSirius().getID())) {
+            input = archonModes.getArchonModeSirius();
+        } else if (archonModeID.equals(archonModes.getArchonModeTyphon().getID())) {
+            input = archonModes.getArchonModeTyphon();
+        } else if (archonModeID.equals(archonModes.getArchonModeVertigo().getID())) {
+            input = archonModes.getArchonModeVertigo();
+        }
+        if (input != null) {
+            out.setGameplayTag(input.getID());
+            Set<String> alwaysOn = new HashSet<>();
+            alwaysOn.add(input.getAlwaysOn());
+            out.setAlwaysOn(alwaysOn);
+            Set<String> onActivation = new HashSet<>();
+            onActivation.add(input.getOnActivation());
+            out.setOnActivation(onActivation);
+            Set<String> whileActive = new HashSet<>();
+            whileActive.addAll(input.getWhileActive());
+            out.setWhileActive(whileActive);
+        }
+
+        return out;
+    }
+
+    public static Affinity getAffinityFromInt(Integer affinity) {
+        switch (affinity) {
+            case 1:
+                return Affinity.MIGHT;
+            case 2:
+                return Affinity.SPIRIT;
+            case 3:
+                return Affinity.VITALITY;
+            default:
+                return null;
+        }
+    }
+
+    public static Set<AugmentGraph> getAugmentGraphs(String gameplayTag, List<AugmentGraphsCollection> collection) {
+        Set<AugmentGraph> out = new HashSet<>();
+        for (AugmentGraphsCollection entry : collection) {
+            if (gameplayTag.equals(entry.getValorplateGameplayTag())) {
+                AugmentGraph graph = new AugmentGraph();
+                graph.setGraphName(entry.getGraphName());
+                graph.setGameplayTag(entry.getValorplateGameplayTag());
+
+                graph.setAffinityRequirement(getAffinityFromInt(Math.toIntExact(entry.getAffinityRequirement())));
+                graph.setNodeid(Math.toIntExact(entry.getNodeID()));
+                graph.setLevelAvailable(Math.toIntExact(entry.getLevelAvailable()));
+                out.add(graph);
+            }
+        }
+        return out;
     }
 }

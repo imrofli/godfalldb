@@ -409,17 +409,103 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static List<LootEffect> convertLootEffectList(Set<org.imrofli.godfall.dao.model.LootEffect> lootEffects){
+    public static List<LootEffect> convertLootEffectList(Set<org.imrofli.godfall.dao.model.LootEffect> lootEffects) {
         List<LootEffect> out = new ArrayList<>();
-        if(lootEffects != null){
-            for(org.imrofli.godfall.dao.model.LootEffect entry : lootEffects){
+        if (lootEffects != null) {
+            for (org.imrofli.godfall.dao.model.LootEffect entry : lootEffects) {
                 out.add(convertLootEffect(entry));
             }
         }
         return out;
     }
 
-    public static LootEffect convertLootEffect(org.imrofli.godfall.dao.model.LootEffect lootEffect){
+    public static Valorplate convertValorplate(org.imrofli.godfall.dao.model.Valorplate valorplate) {
+        Valorplate out = new Valorplate();
+        out.setName(valorplate.getName());
+        out.setGameplaytag(valorplate.getGameplayTag());
+        out.setArchonChargeGainMultiplier(valorplate.getArchonChargeGainMultiplier());
+        out.setDisplayname(valorplate.getDisplayname());
+        out.setId(valorplate.getId());
+        out.setAetheriumArchonChargeRate(valorplate.getAetheriumArchonChargeRate());
+        out.setArchonDamageScalar(valorplate.getArchonDamageScalar());
+        out.setArchonModeDamageReduction(valorplate.getArchonModeDamageReduction());
+        out.setEnabled(valorplate.getEnabled());
+        out.setStartinglevel(valorplate.getStartinglevel());
+        out.setArchonChargeGainMultiplier(valorplate.getArchonChargeGainMultiplier());
+        out.setArchonModeDrainRate(valorplate.getArchonModeDrainRate());
+        out.setArchonmode(convertArchonMode(valorplate.getArchonmode()));
+        out.setAugmentGraphs(convertAugmentGraphsSet(valorplate.getAugmentGraphs()));
+        return out;
+    }
+
+    private static List<AugmentGraph> convertAugmentGraphsSet(Set<org.imrofli.godfall.dao.model.AugmentGraph> augmentGraphs) {
+        List<AugmentGraph> out = new ArrayList<>();
+        if (augmentGraphs != null) {
+            for (org.imrofli.godfall.dao.model.AugmentGraph entry : augmentGraphs) {
+                out.add(convertAugmentGraph(entry));
+            }
+        }
+        return out;
+    }
+
+    public static Skill convertSkillDao(org.imrofli.godfall.dao.model.Skill entry) {
+        Skill out = new Skill();
+        if (entry != null) {
+            out.setId(entry.getId());
+            out.setDisplaydescription(entry.getDisplaydescription());
+            out.setDisplayname(entry.getDisplayname());
+            out.setName(entry.getName());
+            out.setSkillgroup(entry.getSkillgroup());
+            out.setMinPoints(entry.getMinPoints());
+            out.setTraitname(entry.getTraitname());
+        }
+        return out;
+    }
+
+    public static List<Skill> convertSkillDaoSet(Set<org.imrofli.godfall.dao.model.Skill> skillSet) {
+        List<Skill> out = new ArrayList<>();
+        if (skillSet != null) {
+            for (org.imrofli.godfall.dao.model.Skill entry : skillSet) {
+                out.add(convertSkillDao(entry));
+            }
+        }
+        return out;
+    }
+
+    private static AugmentGraph convertAugmentGraph(org.imrofli.godfall.dao.model.AugmentGraph entry) {
+        AugmentGraph out = new AugmentGraph();
+        if (entry != null) {
+            out.setGraphName(entry.getGraphName());
+            out.setGameplayTag(entry.getGameplayTag());
+            out.setNodeid(entry.getNodeid());
+            out.setLevelAvailable(entry.getLevelAvailable());
+            out.setAffinityRequirement(convertAffinity(entry.getAffinityRequirement()));
+        }
+        return out;
+    }
+
+    private static ArchonMode convertArchonMode(org.imrofli.godfall.dao.model.ArchonMode archonmode) {
+        ArchonMode out = new ArchonMode();
+        if (archonmode != null) {
+            out.setGameplayTag(archonmode.getGameplayTag());
+            out.setAlwaysOn(convertStringSet(archonmode.getAlwaysOn()));
+            out.setOnActivation(convertStringSet(archonmode.getOnActivation()));
+            out.setWhileActive(convertStringSet(archonmode.getWhileActive()));
+        }
+        return out;
+    }
+
+    public static List<Valorplate> convertValorplateList(Set<org.imrofli.godfall.dao.model.Valorplate> valorplates) {
+        List<Valorplate> out = new ArrayList<>();
+        if (valorplates != null) {
+            for (org.imrofli.godfall.dao.model.Valorplate entry : valorplates) {
+                out.add(convertValorplate(entry));
+            }
+        }
+        return out;
+    }
+
+    public static LootEffect convertLootEffect(org.imrofli.godfall.dao.model.LootEffect lootEffect) {
         LootEffect out = new LootEffect();
         out.setName(lootEffect.getName());
         out.setMagnitudes(convertMagnitudeList(lootEffect.getMagnitudes()));
@@ -766,14 +852,17 @@ public class DaoToViewInterpreter {
     }
 
     public static Affinity convertAffinity(org.imrofli.godfall.dao.model.Affinity affinity) {
-        switch (affinity) {
-            case VITALITY:
-                return Affinity.VITALITY;
-            case MIGHT:
-                return Affinity.MIGHT;
-            default:
-                return Affinity.SPIRIT;
+        if (affinity != null) {
+            switch (affinity) {
+                case VITALITY:
+                    return Affinity.VITALITY;
+                case MIGHT:
+                    return Affinity.MIGHT;
+                default:
+                    return Affinity.SPIRIT;
+            }
         }
+        return null;
     }
 
     public static List<Affinity> convertAffinitySet(Set<org.imrofli.godfall.dao.model.Affinity> affinitySet) {

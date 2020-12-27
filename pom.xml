@@ -16,6 +16,12 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <springdoc.version>1.5.2</springdoc.version>
+        <swagger.version>1.5.22</swagger.version>
+        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <commons-collections.version>4.4</commons-collections.version>
+        <apache.commons.version>3.6.1</apache.commons.version>
+        <openapi-generator.version>4.2.3</openapi-generator.version>
     </properties>
 
     <dependencies>
@@ -51,27 +57,27 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.2</version>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.5.22</version>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.1</version>
+            <version>${jackson-databind-nullable.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
+            <version>${commons-collections.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <version>${apache.commons.version}</version>
         </dependency>
     </dependencies>
 
@@ -84,7 +90,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>4.2.3</version>
+                <version>${openapi-generator.version}</version>
                 <executions>
                     <execution>
                         <goals>

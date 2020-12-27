@@ -10,7 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: http://test.godfalldb.ch/api
+  - url: http://testapi.godfalldb.ch/api
     description: Testserver url
   - url: http://192.168.1.11:8155/api
     description: Testserver Local IP

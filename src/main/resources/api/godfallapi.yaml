@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.1-SNAPSHOT
+  version: Release_2_0
 servers:
   - url: http://testapi.godfalldb.ch/api
     description: Testserver url
@@ -16,7 +16,7 @@ servers:
     description: Testserver Local IP
   - url: http://godfalldb.ch/api
     description: Production Server
-  - url: http://localhost/api
+  - url: http://localhost:8155/api
     description: Dev Environment
 tags:
   - name: weapon
@@ -49,6 +49,10 @@ tags:
     description: "Operations about Enemy Classes"
   - name: enemy
     description: "Operations about Enemies"
+  - name: valorplate
+    description: "Operations about Valorplates"
+  - name: skills
+    description: "Operations about Mastery/Skills"
 
 components:
   schemas:
@@ -245,6 +249,93 @@ components:
         required:
           type: boolean
         actorType:
+          type: string
+    ArchonMode:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        alwaysOn:
+          type: array
+          items:
+            type: string
+        onActivation:
+          type: array
+          items:
+            type: string
+        whileActive:
+          type: array
+          items:
+            type: string
+    AugmentGraph:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        graphName:
+          type: string
+        nodeid:
+          type: integer
+        levelAvailable:
+          type: integer
+        affinityRequirement:
+          $ref: '#/components/schemas/Affinity'
+
+    Valorplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        gameplaytag:
+          type: string
+        displayname:
+          type: string
+        archonmode:
+          $ref: '#/components/schemas/ArchonMode'
+        augmentGraphs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AugmentGraph'
+        enabled:
+          type: boolean
+        startinglevel:
+          type: integer
+        archonChargeGainMultiplier:
+          type: number
+          format: double
+        aetheriumArchonChargeRate:
+          type: number
+          format: double
+        archonModeDrainRate:
+          type: number
+          format: double
+        archonDamageScalar:
+          type: number
+          format: double
+        archonModeDamageReduction:
+          type: number
+          format: double
+    Skill:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        skillgroup:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        minPoints:
+          type: integer
+          format: int64
+        traitname:
           type: string
 
     Weapon:
@@ -1884,6 +1975,58 @@ paths:
         404:
           description: No Traits found
           content: { }
+  /trait/valorplate/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by Valorplate id
+      operationId: getTraitsByValorplateId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Valorplate'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/skill/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by Skill id
+      operationId: getTraitsBySkillId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Skill'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
   /scaling:
     get:
       tags:
@@ -2169,4 +2312,102 @@ paths:
                 $ref: '#/components/schemas/Enemy'
         404:
           description: No Enemy found
+          content: { }
+  /valorplate:
+    get:
+      tags:
+        - valorplate
+      summary: Get all Valorplates
+      operationId: getAllValorplates
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Valorplate'
+        404:
+          description: No Valorplates found
+          content: { }
+  /valorplate/{id}:
+    get:
+      tags:
+        - valorplate
+      summary: Get Valorplate by id
+      operationId: getValorplateById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Valorplate'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Valorplate'
+        404:
+          description: No Valorplate found
+          content: { }
+  /skill:
+    get:
+      tags:
+        - skills
+      summary: Get all Skills
+      operationId: getAllSkills
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the skill'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        404:
+          description: No Skills found
+          content: { }
+  /skill/{id}:
+    get:
+      tags:
+        - skills
+      summary: Get Skill by id
+      operationId: getSkillById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Skill'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        404:
+          description: No Skill found
           content: { }

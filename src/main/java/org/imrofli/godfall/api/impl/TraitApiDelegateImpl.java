@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +29,10 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
     BannerService bannerService;
     @Autowired
     LifeStoneService lifeStoneService;
+    @Autowired
+    ValorplateService valorplateService;
+    @Autowired
+    SkillService skillService;
 
     @Override
     public ResponseEntity<List<Trait>> getTraitsByWeaponId(Long id) {
@@ -156,6 +161,50 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
     }
 
     @Override
+    public ResponseEntity<List<Trait>> getTraitsByValorplateId(Long id) {
+        LOGGER.info("Call to getTraitsByValorplateId with params: ID {}", id);
+        List<Trait> out = new ArrayList<>();
+        try {
+            Valorplate buffer = valorplateService.getValorplateByID(id);
+            if (buffer != null) {
+                for (String entry : buffer.getArchonmode().getAlwaysOn()) {
+                    Trait t = traitService.getTraitByName(entry);
+                    out.add(t);
+                }
+                for (String entry : buffer.getArchonmode().getOnActivation()) {
+                    Trait t = traitService.getTraitByName(entry);
+                    out.add(t);
+                }
+                for (String entry : buffer.getArchonmode().getWhileActive()) {
+                    Trait t = traitService.getTraitByName(entry);
+                    out.add(t);
+                }
+            }
+        } catch (ServiceCallException e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(out);
+    }
+
+    @Override
+    public ResponseEntity<List<Trait>> getTraitsBySkillId(Long id) {
+        LOGGER.info("Call to getTraitsBySkillId with params: ID {}", id);
+        List<Trait> out = new ArrayList<>();
+        try {
+            Skill buffer = skillService.getSkillByID(id);
+            if (buffer != null) {
+                Trait t = traitService.getTraitByName(buffer.getTraitname());
+                out.add(t);
+            }
+        } catch (ServiceCallException e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(out);
+    }
+
+    @Override
     public ResponseEntity<List<Trait>> getAllTraits(List<String> tags, List<String> blacklisttags) {
         LOGGER.info("Call to getAllTraits with params: tags - {}", tags);
         List<Trait> outTraits = null;
@@ -191,5 +240,6 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
         }
         return ResponseEntity.notFound().build();
     }
-    
+
+
 }

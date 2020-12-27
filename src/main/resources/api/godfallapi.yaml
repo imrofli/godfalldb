@@ -1221,6 +1221,225 @@ components:
           format: int64
         lootEventRulesType:
           type: string
+    BuildWeapon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        weapon:
+          $ref: '#/components/schemas/Weapon'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateWeapon:
+          $ref: '#/components/schemas/Weapon'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildCharm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        charm:
+          $ref: '#/components/schemas/Charm'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateCharm:
+          $ref: '#/components/schemas/Charm'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildLifeStone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        lifeStone:
+          $ref: '#/components/schemas/LifeStone'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateLifeStone:
+          $ref: '#/components/schemas/LifeStone'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildBanner:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        banner:
+          $ref: '#/components/schemas/Banner'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateBanner:
+          $ref: '#/components/schemas/Banner'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildRing:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        ring:
+          $ref: '#/components/schemas/Ring'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateRing:
+          $ref: '#/components/schemas/Ring'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildAmulet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        amulet:
+          $ref: '#/components/schemas/Amulet'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateAmulet:
+          $ref: '#/components/schemas/Amulet'
+        alternateTraits:
+          $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildAugment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        amulet:
+          $ref: '#/components/schemas/Augment'
+        traits:
+          $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+
+    Build:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        creator:
+          type: string
+        valorplate:
+          $ref: '#/components/schemas/Valorplate'
+        mainWeapon:
+          $ref: '#/components/schemas/BuildWeapon'
+        secondaryWeapon:
+          $ref: '#/components/schemas/BuildWeapon'
+        charm:
+          $ref: '#/components/schemas/BuildCharm'
+        amulet:
+          $ref: '#/components/schemas/BuildAmulet'
+        ring:
+          $ref: '#/components/schemas/BuildRing'
+        lifeStone:
+          $ref: '#/components/schemas/BuildLifeStone'
+        augments:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildAugment'
+
 
 
 paths:

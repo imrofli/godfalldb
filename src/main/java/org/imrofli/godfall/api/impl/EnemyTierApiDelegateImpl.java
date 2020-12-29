@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.EnemytierApiDelegate;
 import org.imrofli.godfall.api.model.EnemyTier;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.EnemyTierService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,18 @@ public class EnemyTierApiDelegateImpl implements EnemytierApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(EnemyTierApiDelegateImpl.class);
     @Autowired
     EnemyTierService enemyTierService;
-    ;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<EnemyTier>> getAllEnemyTiers() {
-        LOGGER.info("Call to getAllEnemyTiers");
+    public ResponseEntity<List<EnemyTier>> getAllEnemyTiers(String version) {
+        LOGGER.info("Call to getAllEnemyTiers. Version {}", version);
         List<EnemyTier> outEnemyTiers = null;
         try {
-            outEnemyTiers = enemyTierService.getAllEnemyTiers();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outEnemyTiers = enemyTierService.getAllEnemyTiers(version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

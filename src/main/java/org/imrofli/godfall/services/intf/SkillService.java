@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface SkillService {
 
-    List<Skill> getAllSkills() throws ServiceCallException;
+    List<Skill> getAllSkills(String version) throws ServiceCallException;
 
-    List<Skill> getAllSkillsByQuery(String name) throws ServiceCallException;
+    List<Skill> getAllSkillsByQuery(String name, String version) throws ServiceCallException;
 
     Skill getSkillByID(Long SkillId) throws ServiceCallException;
 

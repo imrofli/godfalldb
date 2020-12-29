@@ -10,5 +10,7 @@ public interface EnemyClassService {
 
     EnemyClass getEnemyClassById(Long id) throws ServiceCallException;
 
-    List<EnemyClass> getAllEnemyClasses() throws ServiceCallException;
+    List<EnemyClass> getAllEnemyClasses(String version) throws ServiceCallException;
+
+    List<EnemyClass> getAllEnemyClassesByQuery(String name, String version) throws ServiceCallException;
 }

@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.AugmentApiDelegate;
 import org.imrofli.godfall.api.model.Augment;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.AugmentService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,21 @@ public class AugmentApiDelegateImpl implements AugmentApiDelegate {
 
     @Autowired
     AugmentService augmentService;
-
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Augment>> getAllAugments(String name) {
-        LOGGER.info("Call to getAllAugments. Query: name {}", name);
+    public ResponseEntity<List<Augment>> getAllAugments(String name, String version) {
+        LOGGER.info("Call to getAllAugments. Query: name {} Version {}", name, version);
         List<Augment> outAugments = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outAugments = augmentService.getAllAugmentsByQuery(name);
+                outAugments = augmentService.getAllAugmentsByQuery(name, version);
             } else {
-                outAugments = augmentService.getAllAugments();
+                outAugments = augmentService.getAllAugments(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

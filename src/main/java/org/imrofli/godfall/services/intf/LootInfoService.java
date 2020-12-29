@@ -9,11 +9,18 @@ import java.util.List;
 public interface LootInfoService {
 
     LootInfo getLootInfo(Long lootInfoId) throws ServiceCallException;
-    List<LootInfo> getAllLootInfo() throws ServiceCallException;
+
+    List<LootInfo> getAllLootInfo(String version) throws ServiceCallException;
+
     List<String> getAllDropTags();
-    LootInfo getLootInfoByAugmentId(Long id) throws ServiceCallException;
-    LootInfo getLootInfoByBannerId(Long id) throws ServiceCallException;
-    LootInfo getLootInfoByLifeStoneId(Long id) throws ServiceCallException;
-    LootInfo getLootInfoByWeaponId(Long id) throws ServiceCallException;
-    LootInfo getLootInfoByTrinketId(Long id) throws ServiceCallException;
+
+    LootInfo getLootInfoByAugmentId(Long id, String version) throws ServiceCallException;
+
+    LootInfo getLootInfoByBannerId(Long id, String version) throws ServiceCallException;
+
+    LootInfo getLootInfoByLifeStoneId(Long id, String version) throws ServiceCallException;
+
+    LootInfo getLootInfoByWeaponId(Long id, String version) throws ServiceCallException;
+
+    LootInfo getLootInfoByTrinketId(Long id, String version) throws ServiceCallException;
 }

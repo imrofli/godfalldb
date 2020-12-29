@@ -10,5 +10,5 @@ public interface EnemyTierService {
 
     EnemyTier getEnemyTierById(Long id) throws ServiceCallException;
 
-    List<EnemyTier> getAllEnemyTiers() throws ServiceCallException;
+    List<EnemyTier> getAllEnemyTiers(String version) throws ServiceCallException;
 }

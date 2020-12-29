@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.Valorplate;
 import org.imrofli.godfall.dao.intf.ValorplateDao;
+import org.imrofli.godfall.dao.model.ValorplateModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.ValorplateService;
@@ -21,9 +22,9 @@ public class ValorplateServiceImpl implements ValorplateService {
     private ValorplateDao valorplateDao;
 
     @Override
-    public List<Valorplate> getAllValorplates() throws ServiceCallException {
-        LOGGER.info("Getting all Valorplates");
-        Set<org.imrofli.godfall.dao.model.Valorplate> valorplateSet = valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsOrderByName();
+    public List<Valorplate> getAllValorplates(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Valorplates. Version {}", version);
+        Set<ValorplateModel> valorplateSet = valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsOrderByName(version);
         if (valorplateSet == null || valorplateSet.isEmpty()) {
             throw new ServiceCallException("valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsOrderByName returned NULL");
         }
@@ -33,9 +34,9 @@ public class ValorplateServiceImpl implements ValorplateService {
     }
 
     @Override
-    public List<Valorplate> getAllValorplatesByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Valorplates by query. Name {}", name);
-        Set<org.imrofli.godfall.dao.model.Valorplate> valorplateSet = valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsByNameOrderByName("%" + name + "%");
+    public List<Valorplate> getAllValorplatesByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Valorplates by query. Name {} Version {}", name, version);
+        Set<ValorplateModel> valorplateSet = valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsByNameOrderByName("%" + name + "%", version);
         if (valorplateSet == null || valorplateSet.isEmpty()) {
             throw new ServiceCallException("valorplateDao.findAllAndFetchArchonModeAndAugmentGraphsByNameOrderByName returned NULL");
         }
@@ -47,7 +48,7 @@ public class ValorplateServiceImpl implements ValorplateService {
     @Override
     public Valorplate getValorplateByID(Long valorplateId) throws ServiceCallException {
         LOGGER.info("Getting Valorplate id: {}", valorplateId);
-        org.imrofli.godfall.dao.model.Valorplate valorplate = valorplateDao.findByIdAndFetchArchonModeAndAugmentGraphs(valorplateId);
+        ValorplateModel valorplate = valorplateDao.findByIdAndFetchArchonModeAndAugmentGraphs(valorplateId);
         if (valorplate == null) {
             throw new ServiceCallException("valorplateDao.findByIdAndFetchArchonModeAndAugmentGraphs returned NULL");
         }
@@ -58,7 +59,7 @@ public class ValorplateServiceImpl implements ValorplateService {
     @Override
     public Valorplate getValorplateNoFetch(Long valorplateId) throws ServiceCallException {
         LOGGER.info("Getting Valorplate for id {}", valorplateId);
-        Optional<org.imrofli.godfall.dao.model.Valorplate> banner = valorplateDao.findById(valorplateId);
+        Optional<ValorplateModel> banner = valorplateDao.findById(valorplateId);
         if (banner.isPresent()) {
             Valorplate out = DaoToViewInterpreter.convertValorplate(banner.get());
             return out;

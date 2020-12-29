@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.PlayerstrengthindexApiDelegate;
 import org.imrofli.godfall.api.model.PlayerStrengthIndex;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.PlayerStrengthIndexService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,18 @@ public class PlayerStrengthIndexApiDelegateImpl implements PlayerstrengthindexAp
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerStrengthIndexApiDelegateImpl.class);
     @Autowired
     PlayerStrengthIndexService playerStrengthIndexService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<PlayerStrengthIndex>> getAllPlayerStrengthIndexes() {
-        LOGGER.info("Call to getAllPlayerStrengthIndexes");
+    public ResponseEntity<List<PlayerStrengthIndex>> getAllPlayerStrengthIndexes(String version) {
+        LOGGER.info("Call to getAllPlayerStrengthIndexes. Version {}", version);
         List<PlayerStrengthIndex> outPlayerStrengthIndices = null;
         try {
-            outPlayerStrengthIndices = playerStrengthIndexService.getAllPlayerStrengthIndexes();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outPlayerStrengthIndices = playerStrengthIndexService.getAllPlayerStrengthIndexes(version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

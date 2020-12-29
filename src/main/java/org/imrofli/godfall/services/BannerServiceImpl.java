@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.Banner;
 import org.imrofli.godfall.dao.intf.BannerDao;
+import org.imrofli.godfall.dao.model.BannerModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.BannerService;
@@ -21,9 +22,9 @@ public class BannerServiceImpl implements BannerService {
     private BannerDao bannerDao;
 
     @Override
-    public List<Banner> getAllBanners() throws ServiceCallException {
-        LOGGER.info("Getting all Banners");
-        Set<org.imrofli.godfall.dao.model.Banner> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesOrderByName();
+    public List<Banner> getAllBanners(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Banners. Version {}", version);
+        Set<BannerModel> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesByVersionOrderByName(version);
         if (bannerSet == null || bannerSet.isEmpty()) {
             throw new ServiceCallException("bannerDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
         }
@@ -33,9 +34,9 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public List<Banner> getAllBannersByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Banners by query. Name {}", name);
-        Set<org.imrofli.godfall.dao.model.Banner> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+    public List<Banner> getAllBannersByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Banners by query. Name {}, version {}", name, version);
+        Set<BannerModel> bannerSet = bannerDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%", version);
         if (bannerSet == null || bannerSet.isEmpty()) {
             throw new ServiceCallException("bannerDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
@@ -47,7 +48,7 @@ public class BannerServiceImpl implements BannerService {
     @Override
     public Banner getBannerByID(Long bannerID) throws ServiceCallException {
         LOGGER.info("Getting banner id: {}", bannerID);
-        org.imrofli.godfall.dao.model.Banner banner = bannerDao.findByIdAndFetchElementsAndAffinities(bannerID);
+        BannerModel banner = bannerDao.findByIdAndFetchElementsAndAffinities(bannerID);
         if (banner == null) {
             throw new ServiceCallException("bannerDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
@@ -58,7 +59,7 @@ public class BannerServiceImpl implements BannerService {
     @Override
     public Banner getBannerNoFetch(Long bannerId) throws ServiceCallException {
         LOGGER.info("Getting LifeStone for id {}", bannerId);
-        Optional<org.imrofli.godfall.dao.model.Banner> banner = bannerDao.findById(bannerId);
+        Optional<BannerModel> banner = bannerDao.findById(bannerId);
         if (banner.isPresent()) {
             org.imrofli.godfall.api.model.Banner out = DaoToViewInterpreter.convertBannerDao(banner.get());
             return out;

@@ -1,7 +1,7 @@
 package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.dao.intf.WeaponDao;
-import org.imrofli.godfall.dao.model.Weapon;
+import org.imrofli.godfall.dao.model.WeaponModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.WeaponService;
@@ -27,9 +27,9 @@ public class WeaponServiceImpl implements WeaponService {
     }
 
     @Override
-    public List<org.imrofli.godfall.api.model.Weapon> getAllWeapons() throws ServiceCallException {
-        LOGGER.info("Getting all Weapons");
-        Set<Weapon> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesOrderByName();
+    public List<org.imrofli.godfall.api.model.Weapon> getAllWeapons(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Weapons. Version {}", version);
+        Set<WeaponModel> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesOrderByName(version);
         if (weaponSet == null || weaponSet.isEmpty()) {
             throw new ServiceCallException("weaponDao.findAllAndFetchElementsAndAffinitiesOrderByName returned NULL");
         }
@@ -39,9 +39,9 @@ public class WeaponServiceImpl implements WeaponService {
     }
 
     @Override
-    public List<org.imrofli.godfall.api.model.Weapon> getAllWeaponsByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Weapons by query. Name {}", name);
-        Set<Weapon> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%");
+    public List<org.imrofli.godfall.api.model.Weapon> getAllWeaponsByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Weapons by query. Name {} Version {}", name, version);
+        Set<WeaponModel> weaponSet = weaponDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName("%" + name + "%", version);
         if (weaponSet == null || weaponSet.isEmpty()) {
             throw new ServiceCallException("weaponDao.findAllAndFetchElementsAndAffinitiesByNameOrderByName returned NULL");
         }
@@ -53,7 +53,7 @@ public class WeaponServiceImpl implements WeaponService {
     @Override
     public org.imrofli.godfall.api.model.Weapon getWeapon(Long weaponId) throws ServiceCallException {
         LOGGER.info("Getting Weapon id: {}", weaponId);
-        Weapon weapon = weaponDao.findByIdAndFetchElementsAndAffinities(weaponId);
+        WeaponModel weapon = weaponDao.findByIdAndFetchElementsAndAffinities(weaponId);
         if (weapon == null) {
             throw new ServiceCallException("weaponDao.findByIdAndFetchElementsAndAffinities returned NULL");
         }
@@ -64,7 +64,7 @@ public class WeaponServiceImpl implements WeaponService {
     @Override
     public org.imrofli.godfall.api.model.Weapon getWeaponNoFetch(Long weaponId) throws ServiceCallException {
         LOGGER.info("Getting Weapon for id {}", weaponId);
-        Optional<Weapon> weapon = weaponDao.findById(weaponId);
+        Optional<WeaponModel> weapon = weaponDao.findById(weaponId);
         if (weapon.isPresent()) {
             org.imrofli.godfall.api.model.Weapon out = DaoToViewInterpreter.convertWeaponDao(weapon.get());
             return out;
@@ -76,7 +76,7 @@ public class WeaponServiceImpl implements WeaponService {
     @Override
     public List<String> getWeaponTags(Long weaponId) throws ServiceCallException {
         LOGGER.info("Getting Weapon Tags for id {}", weaponId);
-        Optional<Weapon> weapon = weaponDao.findById(weaponId);
+        Optional<WeaponModel> weapon = weaponDao.findById(weaponId);
         if (weapon.isPresent()) {
             Set<String> tagSet = weapon.get().getTags();
             if (tagSet == null || tagSet.isEmpty()) {

@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface AugmentService {
 
-    List<Augment> getAllAugments() throws ServiceCallException;
+    List<Augment> getAllAugments(String version) throws ServiceCallException;
 
-    List<Augment> getAllAugmentsByQuery(String name) throws ServiceCallException;
+    List<Augment> getAllAugmentsByQuery(String name, String version) throws ServiceCallException;
 
     Augment getAugmentById(Long id) throws ServiceCallException;
 

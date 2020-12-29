@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface BannerService {
 
-    List<Banner> getAllBanners() throws ServiceCallException;
+    List<Banner> getAllBanners(String version) throws ServiceCallException;
 
-    List<Banner> getAllBannersByQuery(String name) throws ServiceCallException;
+    List<Banner> getAllBannersByQuery(String name, String version) throws ServiceCallException;
 
     Banner getBannerByID(Long bannerId) throws ServiceCallException;
 

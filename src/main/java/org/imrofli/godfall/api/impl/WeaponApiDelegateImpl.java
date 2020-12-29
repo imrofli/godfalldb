@@ -3,6 +3,7 @@ package org.imrofli.godfall.api.impl;
 import org.imrofli.godfall.api.WeaponApiDelegate;
 import org.imrofli.godfall.api.model.Weapon;
 import org.imrofli.godfall.exception.ServiceCallException;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.imrofli.godfall.services.intf.WeaponService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,21 @@ public class WeaponApiDelegateImpl implements WeaponApiDelegate {
 
     @Autowired
     WeaponService weaponService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Weapon>> getAllWeapons(String name) {
-        LOGGER.info("Call to getAllWeapons. Query: name {}", name);
+    public ResponseEntity<List<Weapon>> getAllWeapons(String name, String version) {
+        LOGGER.info("Call to getAllWeapons. Query: name {}, version {}", name, version);
         List<Weapon> outWeapons = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outWeapons = weaponService.getAllWeaponsByQuery(name);
+                outWeapons = weaponService.getAllWeaponsByQuery(name, version);
             } else {
-                outWeapons = weaponService.getAllWeapons();
+                outWeapons = weaponService.getAllWeapons(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

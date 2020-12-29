@@ -4,8 +4,8 @@ import org.imrofli.godfall.api.model.Amulet;
 import org.imrofli.godfall.api.model.Charm;
 import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.dao.intf.TrinketDao;
-import org.imrofli.godfall.dao.model.ItemType;
-import org.imrofli.godfall.dao.model.Trinket;
+import org.imrofli.godfall.dao.model.ItemTypeModel;
+import org.imrofli.godfall.dao.model.TrinketModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.TrinketService;
@@ -25,10 +25,10 @@ public class TrinketServiceImpl implements TrinketService {
     private TrinketDao trinketDao;
 
     @Override
-    public List<Amulet> getAllAmulets() throws ServiceCallException {
-        LOGGER.info("Getting all Amulets");
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemType.AMULET);
-        if(trinketSet == null || trinketSet.isEmpty()){
+    public List<Amulet> getAllAmulets(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Amulets. Version {}", version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemTypeModel.AMULET, version);
+        if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName returned NULL");
         }
         List<Amulet> out = DaoToViewInterpreter.convertAmuletDaoList(trinketSet);
@@ -37,10 +37,10 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public List<Ring> getAllRings() throws ServiceCallException {
-        LOGGER.info("Getting all Rings");
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemType.RING);
-        if(trinketSet == null || trinketSet.isEmpty()){
+    public List<Ring> getAllRings(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Rings. Version {}", version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemTypeModel.RING, version);
+        if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName returned NULL");
         }
         List<Ring> out = DaoToViewInterpreter.convertRingDaoList(trinketSet);
@@ -49,9 +49,9 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public List<Charm> getAllCharms() throws ServiceCallException {
-        LOGGER.info("Getting all Charms");
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemType.CHARM);
+    public List<Charm> getAllCharms(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Charms. Version {}", version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName(ItemTypeModel.CHARM, version);
         if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeOrderByName returned NULL");
         }
@@ -61,9 +61,9 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public List<Amulet> getAllAmuletsByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Amulets by query. Name {}", name);
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemType.AMULET, "%" + name + "%");
+    public List<Amulet> getAllAmuletsByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Amulets by query. Name {} Version {}", name, version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemTypeModel.AMULET, "%" + name + "%", version);
         if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName returned NULL");
         }
@@ -73,9 +73,9 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public List<Ring> getAllRingsByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Rings by query. Name {}", name);
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemType.RING, "%" + name + "%");
+    public List<Ring> getAllRingsByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Rings by query. Name {} Version {}", name, version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemTypeModel.RING, "%" + name + "%", version);
         if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName returned NULL");
         }
@@ -85,9 +85,9 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public List<Charm> getAllCharmsByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Charms by query. Name {}", name);
-        Set<Trinket> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemType.CHARM, "%" + name + "%");
+    public List<Charm> getAllCharmsByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Charms by query. Name {} Version {}", name, version);
+        Set<TrinketModel> trinketSet = trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName(ItemTypeModel.CHARM, "%" + name + "%", version);
         if (trinketSet == null || trinketSet.isEmpty()) {
             throw new ServiceCallException("trinketDao.findAllAndFetchElementsAndAffinitiesWhereTrinketTypeAndNameOrderByName returned NULL");
         }
@@ -97,9 +97,9 @@ public class TrinketServiceImpl implements TrinketService {
     }
 
     @Override
-    public Trinket getTrinketById(Long id) throws ServiceCallException {
+    public TrinketModel getTrinketById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Trinket id: {}", id);
-        Trinket trinket = trinketDao.findByIdAndFetchAffinities(id);
+        TrinketModel trinket = trinketDao.findByIdAndFetchAffinities(id);
         if (trinket == null) {
             throw new ServiceCallException("trinketDao.findByIdAndFetchAffinities(id) returned NULL");
         }
@@ -109,7 +109,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Ring getRingById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Ring id: {}", id);
-        Trinket trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemType.RING);
+        TrinketModel trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemTypeModel.RING);
         if(trinket == null){
             throw new ServiceCallException("trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType returned NULL");
         }
@@ -120,7 +120,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Charm getCharmById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Charm id: {}", id);
-        Trinket trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemType.CHARM);
+        TrinketModel trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemTypeModel.CHARM);
         if(trinket == null){
             throw new ServiceCallException("trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType returned NULL");
         }
@@ -131,7 +131,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Amulet getAmuletById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Charm id: {}", id);
-        Trinket trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemType.AMULET);
+        TrinketModel trinket = trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType(id, ItemTypeModel.AMULET);
         if (trinket == null) {
             throw new ServiceCallException("trinketDao.findByIdAndFetchElementsAndAffinitiesWhereTrinketType returned NULL");
         }
@@ -142,7 +142,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Amulet getAmuletNoFetch(Long trinketId) throws ServiceCallException {
         LOGGER.info("Getting Amulet for id {}", trinketId);
-        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.AMULET);
+        Optional<TrinketModel> trinket = trinketDao.findByIdAndItemType(trinketId, ItemTypeModel.AMULET);
         if (trinket.isPresent()) {
             org.imrofli.godfall.api.model.Amulet out = DaoToViewInterpreter.convertAmuletDao(trinket.get());
             return out;
@@ -154,7 +154,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Ring getRingNoFetch(Long trinketId) throws ServiceCallException {
         LOGGER.info("Getting Ring for id {}", trinketId);
-        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.RING);
+        Optional<TrinketModel> trinket = trinketDao.findByIdAndItemType(trinketId, ItemTypeModel.RING);
         if (trinket.isPresent()) {
             org.imrofli.godfall.api.model.Ring out = DaoToViewInterpreter.convertRingDao(trinket.get());
             return out;
@@ -166,7 +166,7 @@ public class TrinketServiceImpl implements TrinketService {
     @Override
     public Charm getCharmNoFetch(Long trinketId) throws ServiceCallException {
         LOGGER.info("Getting Charm for id {}", trinketId);
-        Optional<Trinket> trinket = trinketDao.findByIdAndItemType(trinketId, ItemType.CHARM);
+        Optional<TrinketModel> trinket = trinketDao.findByIdAndItemType(trinketId, ItemTypeModel.CHARM);
         if (trinket.isPresent()) {
             org.imrofli.godfall.api.model.Charm out = DaoToViewInterpreter.convertCharmDao(trinket.get());
             return out;

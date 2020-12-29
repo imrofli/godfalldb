@@ -10,5 +10,5 @@ public interface PlayerStrengthIndexService {
 
     PlayerStrengthIndex getPlayerStrengthIndexById(Long id) throws ServiceCallException;
 
-    List<PlayerStrengthIndex> getAllPlayerStrengthIndexes() throws ServiceCallException;
+    List<PlayerStrengthIndex> getAllPlayerStrengthIndexes(String version) throws ServiceCallException;
 }

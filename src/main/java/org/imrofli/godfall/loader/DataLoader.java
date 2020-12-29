@@ -857,7 +857,7 @@ public class DataLoader implements DataLoaderIntf {
                 Files.createDirectory(Paths.get(godfallDBProperties.getArchiveDirectory()));
             }
             Path sourcepath = Paths.get(dataset.getCanonicalPath());
-            Path destinationpath = Paths.get(godfallDBProperties.getArchiveDirectory() + "\\" + dataset.getName());
+            Path destinationpath = Paths.get(godfallDBProperties.getArchiveDirectory() + File.separator + dataset.getName());
             Files.move(sourcepath, destinationpath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();

@@ -8,12 +8,13 @@ import java.util.List;
 
 public interface TraitService {
 
-    List<Trait> getAllTraits() throws ServiceCallException;
+    List<Trait> getAllTraits(String version) throws ServiceCallException;
+
     Trait getTraitById(Long traitId) throws ServiceCallException;
 
-    Trait getTraitByName(String name) throws ServiceCallException;
+    Trait getTraitByName(String name, String version) throws ServiceCallException;
 
-    List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags) throws ServiceCallException;
+    List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags, String version) throws ServiceCallException;
 
 
 }

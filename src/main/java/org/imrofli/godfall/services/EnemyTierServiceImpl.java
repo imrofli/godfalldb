@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.EnemyTier;
 import org.imrofli.godfall.dao.intf.EnemyTierDao;
+import org.imrofli.godfall.dao.model.EnemyTierModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.EnemyTierService;
@@ -25,7 +26,7 @@ public class EnemyTierServiceImpl implements EnemyTierService {
     @Override
     public EnemyTier getEnemyTierById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Enemy Tier id: {}", id);
-        Optional<org.imrofli.godfall.dao.model.EnemyTier> enemyTier = enemyTierDao.findById(id);
+        Optional<EnemyTierModel> enemyTier = enemyTierDao.findById(id);
         if (!enemyTier.isPresent()) {
             throw new ServiceCallException("enemyTierDao.findById returned NULL");
         }
@@ -34,9 +35,9 @@ public class EnemyTierServiceImpl implements EnemyTierService {
     }
 
     @Override
-    public List<EnemyTier> getAllEnemyTiers() throws ServiceCallException {
-        LOGGER.info("Getting all Enemy Tiers");
-        Set<org.imrofli.godfall.dao.model.EnemyTier> enemyTierSet = enemyTierDao.getAllEnemyTiers();
+    public List<EnemyTier> getAllEnemyTiers(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Enemy Tiers. Version {}", version);
+        Set<EnemyTierModel> enemyTierSet = enemyTierDao.getAllEnemyTiers(version);
         if (enemyTierSet == null || enemyTierSet.isEmpty()) {
             throw new ServiceCallException("enemyTierDao.getAllEnemyTiers returned NULL");
         }

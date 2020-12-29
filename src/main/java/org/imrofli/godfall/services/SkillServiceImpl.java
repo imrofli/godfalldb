@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.Skill;
 import org.imrofli.godfall.dao.intf.SkillDao;
+import org.imrofli.godfall.dao.model.SkillModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.SkillService;
@@ -21,9 +22,9 @@ public class SkillServiceImpl implements SkillService {
     private SkillDao skillDao;
 
     @Override
-    public List<Skill> getAllSkills() throws ServiceCallException {
-        LOGGER.info("Getting all Skills");
-        Set<org.imrofli.godfall.dao.model.Skill> skillSet = skillDao.findAllOrderByName();
+    public List<Skill> getAllSkills(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Skills. Version {}", version);
+        Set<SkillModel> skillSet = skillDao.findAllOrderByName(version);
         if (skillSet == null || skillSet.isEmpty()) {
             throw new ServiceCallException("skillDao.findAllOrderByName returned NULL");
         }
@@ -33,9 +34,9 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
-    public List<Skill> getAllSkillsByQuery(String name) throws ServiceCallException {
-        LOGGER.info("Getting all Skills by query. Name {}", name);
-        Set<org.imrofli.godfall.dao.model.Skill> skillSet = skillDao.findAllByNameOrderByName("%" + name + "%");
+    public List<Skill> getAllSkillsByQuery(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Skills by query. Name {} Version {}", name, version);
+        Set<SkillModel> skillSet = skillDao.findAllByNameOrderByName("%" + name + "%", version);
         if (skillSet == null || skillSet.isEmpty()) {
             throw new ServiceCallException("skillDao.findAllByNameOrderByName returned NULL");
         }
@@ -47,7 +48,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     public Skill getSkillByID(Long SkillId) throws ServiceCallException {
         LOGGER.info("Getting Skill id: {}", SkillId);
-        Optional<org.imrofli.godfall.dao.model.Skill> skill = skillDao.findById(SkillId);
+        Optional<SkillModel> skill = skillDao.findById(SkillId);
         if (!skill.isPresent()) {
             throw new ServiceCallException("skillDao.findById returned NULL");
         }

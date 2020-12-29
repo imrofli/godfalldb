@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.PlayerTier;
 import org.imrofli.godfall.dao.intf.PlayerTierDao;
+import org.imrofli.godfall.dao.model.PlayerTierModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.PlayerTierService;
@@ -25,7 +26,7 @@ public class PlayerTierServiceImpl implements PlayerTierService {
     @Override
     public PlayerTier getPlayerTierById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Player Tier id: {}", id);
-        Optional<org.imrofli.godfall.dao.model.PlayerTier> playerTier = playerTierDao.findById(id);
+        Optional<PlayerTierModel> playerTier = playerTierDao.findById(id);
         if (!playerTier.isPresent()) {
             throw new ServiceCallException("playerTierDao.findById returned NULL");
         }
@@ -34,11 +35,11 @@ public class PlayerTierServiceImpl implements PlayerTierService {
     }
 
     @Override
-    public List<PlayerTier> getAllPlayerTier() throws ServiceCallException {
-        LOGGER.info("Getting all Player Tiers");
-        Set<org.imrofli.godfall.dao.model.PlayerTier> playerTierSet = playerTierDao.getAllPlayerTiers();
+    public List<PlayerTier> getAllPlayerTier(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Player Tiers. Version {}", version);
+        Set<PlayerTierModel> playerTierSet = playerTierDao.getAllPlayerTiers(version);
         if (playerTierSet == null || playerTierSet.isEmpty()) {
-            throw new ServiceCallException("playerStrengthIndexDao.getAllPlayerStrengthIndex() returned NULL");
+            throw new ServiceCallException("playerTierDao.getAllPlayerTiers returned NULL");
         }
         List<PlayerTier> out = DaoToViewInterpreter.convertPlayerTierSetDao(playerTierSet);
         LOGGER.info("Got {} Player Tiers", out.size());

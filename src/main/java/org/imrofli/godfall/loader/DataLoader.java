@@ -1,30 +1,34 @@
 package org.imrofli.godfall.loader;
 
+import org.imrofli.godfall.config.GodfallDBProperties;
 import org.imrofli.godfall.dao.intf.*;
-import org.imrofli.godfall.dao.model.GlobalParameters;
-import org.imrofli.godfall.dao.model.ItemType;
-import org.imrofli.godfall.dao.model.TraitSlot;
 import org.imrofli.godfall.dao.model.*;
-import org.imrofli.godfall.data.EnemyTier;
 import org.imrofli.godfall.data.*;
 import org.imrofli.godfall.exception.ServiceCallException;
+import org.imrofli.godfall.helpers.DataHelper;
 import org.imrofli.godfall.helpers.ItemHelper;
 import org.imrofli.godfall.services.intf.CalculationService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Component
-public class DataLoader implements ApplicationRunner {
+@Service
+public class DataLoader implements DataLoaderIntf {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
@@ -85,37 +89,77 @@ public class DataLoader implements ApplicationRunner {
     @Autowired
     private SkillDao skillDao;
 
+    @Autowired
+    private VersionDao versionDao;
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    @Autowired
+    private VersionService versionService;
+
+    @Autowired
+    private GodfallDBProperties godfallDBProperties;
+
+
+    public void loadData(File dataset) throws Exception {
+        DataHelper.setDatasetPath(dataset);
+        String vers = dataset.getName().replace(".json", "");
         LOGGER.info("Starting Data Ingestion");
         Instant start = Instant.now();
-        loadGlobalInfo();
-        loadPlayerStrengthIndex();
-        loadTierInfo();
-        loadPlayerTiers();
-        loadEnemyTiers();
-        loadEnemyClasses();
-        loadEnemies();
-        loadTraits();
-        loadTraitSlots();
-        loadLootInfo();
-        loadValorPlates();
-        loadWeapons();
-        loadBanners();
-        loadLifeStones();
-        loadTrinkets();
-        loadAugments();
-        loadSkills();
-        Instant stop = Instant.now();
-        LOGGER.info("Data Ingestion done in {}", Duration.between(start, stop));
+        try {
+            loadVersion(vers);
+            loadGlobalInfo();
+            loadPlayerStrengthIndex();
+            loadTierInfo();
+            loadPlayerTiers();
+            loadEnemyTiers();
+            loadEnemyClasses();
+            loadEnemies();
+            loadTraits();
+            loadTraitSlots();
+            loadLootInfo();
+            loadValorPlates();
+            loadWeapons();
+            loadBanners();
+            loadLifeStones();
+            loadTrinkets();
+            loadAugments();
+            loadSkills();
+            moveInputFile(dataset);
+            Instant stop = Instant.now();
+            LOGGER.info("Data Ingestion done in {}", Duration.between(start, stop));
+        } catch (ServiceCallException e) {
+            LOGGER.error(e.getMessage());
+        }
+
     }
 
+
+    private void loadVersion(String version) throws ServiceCallException {
+        LOGGER.info("Loading Version");
+        Instant start = Instant.now();
+        Set<VersionModel> versionModelSet = versionDao.findAllByVersionOrderByTime(version);
+        if (versionModelSet != null && !versionModelSet.isEmpty()) {
+            throw new ServiceCallException("Version " + version + " has already been loaded!");
+        }
+        VersionModel vs = new VersionModel();
+        vs.setLoadTime(Timestamp.from(start));
+        vs.setVersion(version);
+        versionDao.save(vs);
+        Instant stop = Instant.now();
+        LOGGER.info("Loaded Version in {}", Duration.between(start, stop));
+    }
 
     private void loadGlobalInfo() {
         LOGGER.info("Loading GlobalParameters");
         Instant start = Instant.now();
-        GlobalParameters globalParameters = new GlobalParameters();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
+        LOGGER.info("version {}", version.getVersion());
+        GlobalParametersModel globalParameters = new GlobalParametersModel();
+        globalParameters.setVersion(version);
         org.imrofli.godfall.data.GlobalParameters entry = dataDao.getMainData().getGlobalParameters();
         globalParameters.setLootTierBonusScalar(entry.getLootTierBonusScalar());
         globalParameters.setShieldBaseDamage(Double.valueOf(entry.getShieldBaseDamage()));
@@ -215,8 +259,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadPlayerStrengthIndex() {
         LOGGER.info("Loading PlayerStrengthIndex Info");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (Map.Entry<String, PlayerStrengthIndexModifier> entry : dataDao.getMainData().getPlayerStrengthIndexModifiers().entrySet()) {
-            PlayerStrengthIndex playerStrengthIndex = new PlayerStrengthIndex();
+            PlayerStrengthIndexModel playerStrengthIndex = new PlayerStrengthIndexModel();
+            playerStrengthIndex.setVersion(version);
             playerStrengthIndex.setPlayerStrengthIndex(entry.getValue().getPlayerStrengthIndex());
             playerStrengthIndex.setPowerMultiplierArchonMode(entry.getValue().getPowerMultiplierArchonMode());
             playerStrengthIndex.setPowerMultiplierDrain(entry.getValue().getPowerMultiplierDrain());
@@ -234,8 +285,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadPlayerTiers() {
         LOGGER.info("Loading PlayerTiers");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (Map.Entry<String, Map<String, Long>> entry : dataDao.getMainData().getPlayerTier().entrySet()) {
-            PlayerTier out = new PlayerTier();
+            PlayerTierModel out = new PlayerTierModel();
+            out.setVersion(version);
             out.setTier(entry.getValue().get("tier"));
             out.setCoopScalingPlayerMinTier(entry.getValue().get("coopScalingPlayerMinTier"));
             out.setCoopScalingPlayerMaxTier(entry.getValue().get("coopScalingPlayerMaxTier"));
@@ -258,8 +316,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadEnemies() {
         LOGGER.info("Loading Enemies");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (EnemiesCollection entry : dataDao.getMainData().getEnemies().getCollection()) {
-            Enemy out = new Enemy();
+            EnemyModel out = new EnemyModel();
+            out.setVersion(version);
             out.setEnemyType(entry.getEnemyType().toValue());
             out.setName(entry.getName());
             out.setExperienceGranted(entry.getExperienceGranted());
@@ -275,8 +340,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadEnemyClasses() {
         LOGGER.info("Loading EnemyClasses");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (EnemyClassesCollection entry : dataDao.getMainData().getEnemyClasses().getCollection()) {
-            EnemyClass out = new EnemyClass();
+            EnemyClassModel out = new EnemyClassModel();
+            out.setVersion(version);
             out.setName(entry.getName().toValue());
             out.setArchonChargeGainMultiplier(entry.getArchonChargeGainMultiplier());
             out.setEnemyclasslevels(ItemHelper.getEnemyClassLevels(entry.getThe2(), entry.getThe3()));
@@ -290,8 +362,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadEnemyTiers() {
         LOGGER.info("Loading EnemyTiers");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (Map.Entry<String, EnemyTier> entry : dataDao.getMainData().getEnemyTiers().entrySet()) {
-            org.imrofli.godfall.dao.model.EnemyTier out = new org.imrofli.godfall.dao.model.EnemyTier();
+            EnemyTierModel out = new EnemyTierModel();
+            out.setVersion(version);
             out.setTier(entry.getValue().getTier());
             out.setBreachHealthScalar(entry.getValue().getBreachHealthScalar());
             out.setExperienceScalar(entry.getValue().getExperienceScalar());
@@ -307,8 +386,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadTierInfo() {
         LOGGER.info("Loading Tier Info");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (ItemScalingCollection tagsCollection : dataDao.getMainData().getItemScaling().getCollection()) {
-            Scaling scaling = new Scaling();
+            ScalingModel scaling = new ScalingModel();
+            scaling.setVersion(version);
             scaling.setTierIdentifier(tagsCollection.getTierIdentifier());
             scaling.setRarity(ItemHelper.getRarity(tagsCollection.getRarityIdentifier()));
             scaling.setPlayerTierRequirement(tagsCollection.getPlayerTierRequirement());
@@ -358,12 +444,19 @@ public class DataLoader implements ApplicationRunner {
         LOGGER.info("Loaded Tier Info in {}", Duration.between(start, stop));
     }
 
-    private void loadLootInfo(){
+    private void loadLootInfo() {
         LOGGER.info("Loading Loot Info");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (LootItemCollection tagsCollection : dataDao.getMainData().getLootItem().getCollection()) {
-            if(tagsCollection.getName() != null && tagsCollection.getGameplayTag()!= null) {
-                LootInfo lootInfo = new LootInfo();
+            if (tagsCollection.getName() != null && tagsCollection.getGameplayTag() != null) {
+                LootInfoModel lootInfo = new LootInfoModel();
+                lootInfo.setVersion(version);
                 lootInfo.setName(ItemHelper.formatName(tagsCollection.getName().stringValue, tagsCollection.getName().stringArrayValue));
                 lootInfo.setGameplayTag(tagsCollection.getGameplayTag());
                 lootInfo.setItemType(ItemHelper.getItemType(tagsCollection.getItemType().toValue()));
@@ -400,12 +493,19 @@ public class DataLoader implements ApplicationRunner {
     }
 
 
-    private void loadTraits(){
+    private void loadTraits() {
         LOGGER.info("Loading Traits");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (TraitCollection tagsCollection : dataDao.getMainData().getTrait().getCollection()) {
-            if(tagsCollection.getTraitName() != null && tagsCollection.getDescription()!= null && tagsCollection.getGroupName() != null) {
-                Trait trait = new Trait();
+            if (tagsCollection.getTraitName() != null && tagsCollection.getDescription() != null && tagsCollection.getGroupName() != null) {
+                TraitModel trait = new TraitModel();
+                trait.setVersion(version);
                 trait.setName(tagsCollection.getTraitName());
                 trait.setTraitGroup(tagsCollection.getGroupName());
                 trait.setDescription(tagsCollection.getDescription().replaceAll("\"", ""));
@@ -433,7 +533,7 @@ public class DataLoader implements ApplicationRunner {
                 }
                 trait.setKeywords(keywords);
                 try {
-                    calculationService.calculateTrait(trait);
+                    calculationService.calculateTrait(version.getVersion(), trait);
                 } catch (ServiceCallException e) {
                     e.printStackTrace();
                 }
@@ -448,9 +548,16 @@ public class DataLoader implements ApplicationRunner {
     private void loadTraitSlots() {
         LOGGER.info("Loading TraitSlots");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (TraitSlotCollection tagsCollection : dataDao.getMainData().getTraitSlot().getCollection()) {
             if (tagsCollection.getName() != null && tagsCollection.getGroupName() != null) {
-                TraitSlot ts = new TraitSlot();
+                TraitSlotModel ts = new TraitSlotModel();
+                ts.setVersion(version);
                 ts.setName(tagsCollection.getName());
                 ts.setSlotIndex(tagsCollection.getSlotIndex().toValue());
                 ts.setGroupName(tagsCollection.getGroupName());
@@ -475,8 +582,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadValorPlates() {
         LOGGER.info("Loading ValorPlates");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (ValorplatesCollection entry : dataDao.getMainData().getValorplates().getCollection()) {
-            Valorplate valorplateSave = new Valorplate();
+            ValorplateModel valorplateSave = new ValorplateModel();
+            valorplateSave.setVersion(version);
             valorplateSave.setName(entry.getName());
             valorplateSave.setGameplayTag(entry.getGameplayTag());
             valorplateSave.setAetheriumArchonChargeRate(Double.valueOf(entry.getAetheriumArchonChargeRate()));
@@ -509,15 +623,22 @@ public class DataLoader implements ApplicationRunner {
     private void loadWeapons() {
         LOGGER.info("Loading Weapons");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (WeaponsCollection entry : dataDao.getMainData().getWeapons().getCollection()) {
-            Weapon weaponSave = new Weapon();
+            WeaponModel weaponSave = new WeaponModel();
+            weaponSave.setVersion(version);
             weaponSave.setName(ItemHelper.formatName(entry.getName().stringValue, entry.getName().stringArrayValue));
             weaponSave.setElements(ItemHelper.getElements(entry.getElementTraitTagGroups()));
             weaponSave.setWeaponType(ItemHelper.getWeaponType(entry.getWeaponClassIdentifier()));
             weaponSave.setMinimumRarity(ItemHelper.getRarityByIndex(entry.getRarityIdentifier()));
             weaponSave.setGameplayTag(entry.getGameplayTag());
             weaponSave.setAffinities(ItemHelper.getAffinities(entry.getTraitTagGroups()));
-            weaponSave.setLootInfo(lootInfoDao.findByGameplayTag(weaponSave.getGameplayTag()));
+            weaponSave.setLootInfo(lootInfoDao.findByGameplayTagAndVersion(weaponSave.getGameplayTag(), version.getVersion()));
             weaponSave.setBlacklistTags(ItemHelper.getBlacklistSet(entry.getBlacklistReforgeRecipeTags()));
             weaponSave.setTags(ItemHelper.getItemTags(dataDao.getMainData().getTraitTags().getCollection(), entry.getTraitTagGroups(), entry.getDefaultTraitTagGroups(), entry.getElementTraitTagGroups()));
             Localization locale = dataDao.getMainData().getLocalization().get(weaponSave.getGameplayTag());
@@ -529,7 +650,7 @@ public class DataLoader implements ApplicationRunner {
                     weaponSave.setDisplayName(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
                 }
             }
-            Set<TraitSlot> buffer = traitSlotDao.findAllByGroupName(entry.getTraitSlotGroups().toValue());
+            Set<TraitSlotModel> buffer = traitSlotDao.findAllByGroupNameAndVersion(entry.getTraitSlotGroups().toValue(), version.getVersion());
             weaponSave.setTraitSlots(buffer);
             weaponDao.save(weaponSave);
 
@@ -539,11 +660,18 @@ public class DataLoader implements ApplicationRunner {
         LOGGER.info("Loaded Weapons in {}", Duration.between(start, stop));
     }
 
-    private void loadBanners(){
+    private void loadBanners() {
         LOGGER.info("Loading Banners");
         Instant start = Instant.now();
-        for(BannersCollection entry : dataDao.getMainData().getBanners().getCollection()){
-            Banner bannerSave = new Banner();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
+        for (BannersCollection entry : dataDao.getMainData().getBanners().getCollection()) {
+            BannerModel bannerSave = new BannerModel();
+            bannerSave.setVersion(version);
             bannerSave.setName(entry.getName());
             bannerSave.setElements(ItemHelper.getElements(entry.getElementTraitTagGroups()));
             bannerSave.setGameplayTag(entry.getGameplayTag());
@@ -551,8 +679,8 @@ public class DataLoader implements ApplicationRunner {
             bannerSave.setCooldownScalar(entry.getCooldownScalar());
             bannerSave.setOvershieldScalar(entry.getOvershieldScalar());
             bannerSave.setRadiusScalar(entry.getRadiusScalar());
-            bannerSave.setItemType(ItemType.BANNER);
-            bannerSave.setLootInfo(lootInfoDao.findByGameplayTag(bannerSave.getGameplayTag()));
+            bannerSave.setItemType(ItemTypeModel.BANNER);
+            bannerSave.setLootInfo(lootInfoDao.findByGameplayTagAndVersion(bannerSave.getGameplayTag(), version.getVersion()));
             bannerSave.setTags(ItemHelper.getItemTagsWithItemType(dataDao.getMainData().getTraitTags().getCollection(), entry.getTraitTagGroups(), entry.getDefaultTraitTagGroups(), entry.getElementTraitTagGroups()));
             //bannerSave.setBlacklistTags(ItemHelper.getBlacklistSet(entry.getBlacklistReforgeRecipeTags())); // No blacklists yet
             Localization locale = dataDao.getMainData().getLocalization().get(bannerSave.getGameplayTag());
@@ -564,7 +692,7 @@ public class DataLoader implements ApplicationRunner {
                     bannerSave.setDisplayName(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
                 }
             }
-            Set<TraitSlot> buffer = traitSlotDao.findAllByGroupName(entry.getTraitSlotGroups());
+            Set<TraitSlotModel> buffer = traitSlotDao.findAllByGroupNameAndVersion(entry.getTraitSlotGroups(), version.getVersion());
             bannerSave.setTraitSlots(buffer);
             bannerDao.save(bannerSave);
         }
@@ -573,11 +701,18 @@ public class DataLoader implements ApplicationRunner {
         LOGGER.info("Loaded Banners in {}", Duration.between(start, stop));
     }
 
-    private void loadLifeStones(){
+    private void loadLifeStones() {
         LOGGER.info("Loading LifeStones");
         Instant start = Instant.now();
-        for(PotionsCollection entry : dataDao.getMainData().getPotions().getCollection()){
-            LifeStone lifeStone = new LifeStone();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
+        for (PotionsCollection entry : dataDao.getMainData().getPotions().getCollection()) {
+            LifeStoneModel lifeStone = new LifeStoneModel();
+            lifeStone.setVersion(version);
             lifeStone.setName(entry.getName());
             lifeStone.setElements(ItemHelper.getElements(entry.getElementTraitTagGroups()));
             lifeStone.setMinimumRarity(ItemHelper.getRarityByIndex(entry.getRarityIdentifier()));
@@ -587,8 +722,8 @@ public class DataLoader implements ApplicationRunner {
             lifeStone.setHealDurationScalar(entry.getHealDurationScalar());
             lifeStone.setHealScalar(entry.getHealScalar());
             lifeStone.setSecondaryTraitDurationScalar(entry.getSecondaryTraitDurationScalar());
-            lifeStone.setItemType(ItemType.LIFESTONE);
-            lifeStone.setLootInfo(lootInfoDao.findByGameplayTag(lifeStone.getGameplayTag()));
+            lifeStone.setItemType(ItemTypeModel.LIFESTONE);
+            lifeStone.setLootInfo(lootInfoDao.findByGameplayTagAndVersion(lifeStone.getGameplayTag(), version.getVersion()));
             lifeStone.setTags(ItemHelper.getItemTags(dataDao.getMainData().getTraitTags().getCollection(), entry.getTraitTagGroups(), entry.getDefaultTraitTagGroups(), entry.getElementTraitTagGroups()));
             Localization locale = dataDao.getMainData().getLocalization().get(lifeStone.getGameplayTag());
             if (locale != null) {
@@ -599,7 +734,7 @@ public class DataLoader implements ApplicationRunner {
                     lifeStone.setDisplayName(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
                 }
             }
-            Set<TraitSlot> buffer = traitSlotDao.findAllByGroupName(entry.getTraitSlotGroups().toValue());
+            Set<TraitSlotModel> buffer = traitSlotDao.findAllByGroupNameAndVersion(entry.getTraitSlotGroups().toValue(), version.getVersion());
             lifeStone.setTraitSlots(buffer);
             lifeStoneDao.save(lifeStone);
         }
@@ -608,18 +743,25 @@ public class DataLoader implements ApplicationRunner {
         LOGGER.info("Loaded LifeStones in {}", Duration.between(start, stop));
     }
 
-    private void loadTrinkets(){
+    private void loadTrinkets() {
         LOGGER.info("Loading Trinkets");
         Instant start = Instant.now();
-        for(TrinketsCollection entry : dataDao.getMainData().getTrinkets().getCollection()) {
-            Trinket trinket = new Trinket();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
+        for (TrinketsCollection entry : dataDao.getMainData().getTrinkets().getCollection()) {
+            TrinketModel trinket = new TrinketModel();
+            trinket.setVersion(version);
             trinket.setName(entry.getName());
             trinket.setElements(ItemHelper.getElements(entry.getElementTraitTagGroups()));
             trinket.setMinimumRarity(ItemHelper.getRarityByIndex(entry.getRarityIdentifier()));
             trinket.setGameplayTag(entry.getGameplayTag());
             trinket.setAffinities(ItemHelper.getAffinities(entry.getTraitTagGroups()));
             trinket.setItemType(ItemHelper.getItemType(entry.getClassName().toValue()));
-            trinket.setLootInfo(lootInfoDao.findByGameplayTag(trinket.getGameplayTag()));
+            trinket.setLootInfo(lootInfoDao.findByGameplayTagAndVersion(trinket.getGameplayTag(), version.getVersion()));
             trinket.setTags(ItemHelper.getItemTags(dataDao.getMainData().getTraitTags().getCollection(), entry.getTraitTagGroups(), entry.getDefaultTraitTagGroups(), entry.getElementTraitTagGroups()));
             Localization locale = dataDao.getMainData().getLocalization().get(trinket.getGameplayTag());
             if (locale != null) {
@@ -630,7 +772,7 @@ public class DataLoader implements ApplicationRunner {
                     trinket.setDisplayName(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
                 }
             }
-            Set<TraitSlot> buffer = traitSlotDao.findAllByGroupName(entry.getTraitSlotGroups().toValue());
+            Set<TraitSlotModel> buffer = traitSlotDao.findAllByGroupNameAndVersion(entry.getTraitSlotGroups().toValue(), version.getVersion());
             trinket.setTraitSlots(buffer);
             trinketDao.save(trinket);
         }
@@ -639,18 +781,25 @@ public class DataLoader implements ApplicationRunner {
         LOGGER.info("Loaded Trinkets in {}", Duration.between(start, stop));
     }
 
-    private void loadAugments(){
+    private void loadAugments() {
         LOGGER.info("Loading Augments");
         Instant start = Instant.now();
-        for(AugmentsCollection entry : dataDao.getMainData().getAugments().getCollection()) {
-            Augment augment = new Augment();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
+        for (AugmentsCollection entry : dataDao.getMainData().getAugments().getCollection()) {
+            AugmentModel augment = new AugmentModel();
+            augment.setVersion(version);
             augment.setName(entry.getName());
             augment.setElements(ItemHelper.getElements(entry.getTraitTagGroups()));
             augment.setMinimumRarity(ItemHelper.getRarity(entry.getRarityIdentifier()));
             augment.setGameplayTag(entry.getGameplayTag());
             augment.setAffinities(ItemHelper.getAffinities(entry.getTraitTagGroups()));
-            augment.setItemType(ItemType.AUGMENT);
-            augment.setLootInfo(lootInfoDao.findByGameplayTag(augment.getGameplayTag()));
+            augment.setItemType(ItemTypeModel.AUGMENT);
+            augment.setLootInfo(lootInfoDao.findByGameplayTagAndVersion(augment.getGameplayTag(), version.getVersion()));
             augment.setTags(ItemHelper.getItemTagsElementTraitTag(dataDao.getMainData().getTraitTags().getCollection(), entry.getTraitTagGroups(), entry.getDefaultTraitTagGroups(), entry.getElementTraitTagGroups()));
             Localization locale = dataDao.getMainData().getLocalization().get(augment.getGameplayTag());
             if (locale != null) {
@@ -661,7 +810,7 @@ public class DataLoader implements ApplicationRunner {
                     augment.setDisplayName(ItemHelper.formatName(locale.getName().stringValue, locale.getName().stringArrayValue));
                 }
             }
-            Set<TraitSlot> buffer = traitSlotDao.findAllByGroupName(entry.getTraitSlotGroups().toValue());
+            Set<TraitSlotModel> buffer = traitSlotDao.findAllByGroupNameAndVersion(entry.getTraitSlotGroups().toValue(), version.getVersion());
             augment.setTraitSlots(buffer);
             augmentDao.save(augment);
         }
@@ -673,8 +822,15 @@ public class DataLoader implements ApplicationRunner {
     private void loadSkills() {
         LOGGER.info("Loading Skills");
         Instant start = Instant.now();
+        VersionModel version = null;
+        try {
+            version = versionService.getLatestVersionModel();
+        } catch (ServiceCallException e) {
+            e.printStackTrace();
+        }
         for (MasteryEntitlementsCollection entry : dataDao.getMainData().getMasteryEntitlements().getCollection()) {
-            Skill skill = new Skill();
+            SkillModel skill = new SkillModel();
+            skill.setVersion(version);
             skill.setName(entry.getID());
             skill.setSkillgroup(entry.getMasteryID());
             skill.setMinPoints(entry.getMinPoints());
@@ -693,6 +849,20 @@ public class DataLoader implements ApplicationRunner {
         skillDao.flush();
         Instant stop = Instant.now();
         LOGGER.info("Loaded Skills in {}", Duration.between(start, stop));
+    }
+
+    private void moveInputFile(File dataset) {
+        try {
+            if (Files.notExists(Paths.get(godfallDBProperties.getArchiveDirectory()))) {
+                Files.createDirectory(Paths.get(godfallDBProperties.getArchiveDirectory()));
+            }
+            Path sourcepath = Paths.get(dataset.getCanonicalPath());
+            Path destinationpath = Paths.get(godfallDBProperties.getArchiveDirectory() + "\\" + dataset.getName());
+            Files.move(sourcepath, destinationpath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

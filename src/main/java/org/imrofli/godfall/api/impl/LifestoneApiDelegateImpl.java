@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.LifestoneApiDelegate;
 import org.imrofli.godfall.api.model.LifeStone;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.LifeStoneService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,21 @@ public class LifestoneApiDelegateImpl implements LifestoneApiDelegate {
 
     @Autowired
     LifeStoneService lifeStoneService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<LifeStone>> getAllLifestones(String name) {
-        LOGGER.info("Call to getAllLifeStones. Query: name {}", name);
+    public ResponseEntity<List<LifeStone>> getAllLifestones(String name, String version) {
+        LOGGER.info("Call to getAllLifeStones. Query: name {} version {}", name, version);
         List<LifeStone> outLifeStone = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outLifeStone = lifeStoneService.getAllLifeStonesByQuery(name);
+                outLifeStone = lifeStoneService.getAllLifeStonesByQuery(name, version);
             } else {
-                outLifeStone = lifeStoneService.getAllLifeStones();
+                outLifeStone = lifeStoneService.getAllLifeStones(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

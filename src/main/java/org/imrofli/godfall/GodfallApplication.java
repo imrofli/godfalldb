@@ -1,6 +1,5 @@
 package org.imrofli.godfall;
 
-import org.imrofli.godfall.helpers.DataHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -19,8 +18,5 @@ public class GodfallApplication implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-			for(String s : args.getNonOptionArgs()){
-				DataHelper.setDatasetPath(s);
-			}
 		}
 }

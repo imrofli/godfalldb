@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.PlayerStrengthIndex;
 import org.imrofli.godfall.dao.intf.PlayerStrengthIndexDao;
+import org.imrofli.godfall.dao.model.PlayerStrengthIndexModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.PlayerStrengthIndexService;
@@ -25,7 +26,7 @@ public class PlayerStrengthIndexServiceImpl implements PlayerStrengthIndexServic
     @Override
     public PlayerStrengthIndex getPlayerStrengthIndexById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Player Strength Index id: {}", id);
-        Optional<org.imrofli.godfall.dao.model.PlayerStrengthIndex> playerStrengthIndex = playerStrengthIndexDao.findById(id);
+        Optional<PlayerStrengthIndexModel> playerStrengthIndex = playerStrengthIndexDao.findById(id);
         if (!playerStrengthIndex.isPresent()) {
             throw new ServiceCallException("playerStrengthIndexDao.findById returned NULL");
         }
@@ -34,9 +35,9 @@ public class PlayerStrengthIndexServiceImpl implements PlayerStrengthIndexServic
     }
 
     @Override
-    public List<PlayerStrengthIndex> getAllPlayerStrengthIndexes() throws ServiceCallException {
-        LOGGER.info("Getting all Player Strength Index");
-        Set<org.imrofli.godfall.dao.model.PlayerStrengthIndex> playerStrengthIndexSet = playerStrengthIndexDao.getAllPlayerStrengthIndex();
+    public List<PlayerStrengthIndex> getAllPlayerStrengthIndexes(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Player Strength Index. Version {}", version);
+        Set<PlayerStrengthIndexModel> playerStrengthIndexSet = playerStrengthIndexDao.getAllPlayerStrengthIndex(version);
         if (playerStrengthIndexSet == null || playerStrengthIndexSet.isEmpty()) {
             throw new ServiceCallException("playerStrengthIndexDao.getAllPlayerStrengthIndex() returned NULL");
         }

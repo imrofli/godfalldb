@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GlobalParameterService {
 
-    List<GlobalParameters> getAllGlobalParameters() throws ServiceCallException;
+    List<GlobalParameters> getAllGlobalParameters(String version) throws ServiceCallException;
 }

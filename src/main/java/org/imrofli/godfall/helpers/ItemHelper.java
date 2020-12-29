@@ -1,10 +1,5 @@
 package org.imrofli.godfall.helpers;
 
-import org.imrofli.godfall.dao.model.ArchonMode;
-import org.imrofli.godfall.dao.model.ConditionParamCategory;
-import org.imrofli.godfall.dao.model.ItemType;
-import org.imrofli.godfall.dao.model.TraitCategory;
-import org.imrofli.godfall.dao.model.TraitSlot;
 import org.imrofli.godfall.dao.model.*;
 import org.imrofli.godfall.data.*;
 import org.slf4j.Logger;
@@ -76,99 +71,99 @@ public final class ItemHelper {
         return Index.COMMON;
     }
 
-    public static Rarity getRarity(Long value) {
+    public static RarityModel getRarity(Long value) {
         if (value != null) {
-            if (value == 1L) return Rarity.COMMON;
-            if (value == 4L) return Rarity.EPIC;
-            if (value == 6L) return Rarity.EXOTIC;
-            if (value == 5L) return Rarity.LEGENDARY;
-            if (value == 3L) return Rarity.RARE;
-            if (value == 2L) return Rarity.UNCOMMON;
+            if (value == 1L) return RarityModel.COMMON;
+            if (value == 4L) return RarityModel.EPIC;
+            if (value == 6L) return RarityModel.EXOTIC;
+            if (value == 5L) return RarityModel.LEGENDARY;
+            if (value == 3L) return RarityModel.RARE;
+            if (value == 2L) return RarityModel.UNCOMMON;
         }
-        return Rarity.NA;
+        return RarityModel.NA;
     }
 
-    public static Rarity getRarityByIndex(Index value) {
+    public static RarityModel getRarityByIndex(Index value) {
         if (value != null) {
-            if (value == Index.COMMON) return Rarity.COMMON;
-            if (value == Index.EPIC) return Rarity.EPIC;
-            if (value == Index.EXOTIC) return Rarity.EXOTIC;
-            if (value == Index.LEGENDARY) return Rarity.LEGENDARY;
-            if (value == Index.RARE) return Rarity.RARE;
-            if (value == Index.UNCOMMON) return Rarity.UNCOMMON;
+            if (value == Index.COMMON) return RarityModel.COMMON;
+            if (value == Index.EPIC) return RarityModel.EPIC;
+            if (value == Index.EXOTIC) return RarityModel.EXOTIC;
+            if (value == Index.LEGENDARY) return RarityModel.LEGENDARY;
+            if (value == Index.RARE) return RarityModel.RARE;
+            if (value == Index.UNCOMMON) return RarityModel.UNCOMMON;
         }
-        return Rarity.NA;
+        return RarityModel.NA;
     }
 
-    public static Set<Element> getElements(String element) {
-        Set<Element> elementSet = new HashSet<>();
+    public static Set<ElementModel> getElements(String element) {
+        Set<ElementModel> elementSet = new HashSet<>();
         if (element.equals("Random Element")) {
-            elementSet.add(Element.FIRE);
-            elementSet.add(Element.AIR);
-            elementSet.add(Element.EARTH);
-            elementSet.add(Element.VOID);
-            elementSet.add(Element.WATER);
-            elementSet.add(Element.PHYSICAL);
+            elementSet.add(ElementModel.FIRE);
+            elementSet.add(ElementModel.AIR);
+            elementSet.add(ElementModel.EARTH);
+            elementSet.add(ElementModel.VOID);
+            elementSet.add(ElementModel.WATER);
+            elementSet.add(ElementModel.PHYSICAL);
         } else if (element.equals("Air")) {
-            elementSet.add(Element.AIR);
+            elementSet.add(ElementModel.AIR);
         } else if (element.equals("Physical")) {
-            elementSet.add(Element.PHYSICAL);
+            elementSet.add(ElementModel.PHYSICAL);
         } else if (element.equals("Fire")) {
-            elementSet.add(Element.FIRE);
+            elementSet.add(ElementModel.FIRE);
         } else if (element.equals("Water")) {
-            elementSet.add(Element.WATER);
+            elementSet.add(ElementModel.WATER);
         } else if (element.equals("Earth")) {
-            elementSet.add(Element.EARTH);
+            elementSet.add(ElementModel.EARTH);
         } else if (element.equals("Void")) {
-            elementSet.add(Element.VOID);
+            elementSet.add(ElementModel.VOID);
         } else {
-            elementSet.add(Element.NA);
+            elementSet.add(ElementModel.NA);
         }
         return elementSet;
     }
 
-    public static Element getElementsIgnoreRandom(String element) {
+    public static ElementModel getElementsIgnoreRandom(String element) {
         if (element.equals("Air")) {
-            return Element.AIR;
+            return ElementModel.AIR;
         } else if (element.equals("Physical")) {
-            return Element.PHYSICAL;
+            return ElementModel.PHYSICAL;
         } else if (element.equals("Fire")) {
-            return Element.FIRE;
+            return ElementModel.FIRE;
         } else if (element.equals("Water")) {
-            return Element.WATER;
+            return ElementModel.WATER;
         } else if (element.equals("Earth")) {
-            return Element.EARTH;
+            return ElementModel.EARTH;
         } else if (element.equals("Void")) {
-            return Element.VOID;
+            return ElementModel.VOID;
         } else {
-            return Element.NA;
+            return ElementModel.NA;
         }
     }
 
-    public static Set<Element> getElements(List<String> elements) {
+    public static Set<ElementModel> getElements(List<String> elements) {
         return getElements(getElement(elements));
     }
 
-    public static TraitType getTraitTypeFromGroup(String traitGroup) {
+    public static TraitTypeModel getTraitTypeFromGroup(String traitGroup) {
         if (traitGroup != null) {
             if (traitGroup.contains("secondary") || traitGroup.contains("Secondary")) {
-                return TraitType.SECONDARY;
+                return TraitTypeModel.SECONDARY;
             } else if (traitGroup.contains("masterwork") || traitGroup.contains("Masterwork")) {
-                return TraitType.MASTERWORK;
+                return TraitTypeModel.MASTERWORK;
             } else {
-                return TraitType.PRIMARY;
+                return TraitTypeModel.PRIMARY;
             }
         }
         return null;
     }
 
-    public static Set<LootEffect> getLootEffects(List<FluffyNamedLootEffect> namedLootEffects) {
-        Set<LootEffect> lootEffectSet = new HashSet<>();
+    public static Set<LootEffectModel> getLootEffects(List<FluffyNamedLootEffect> namedLootEffects) {
+        Set<LootEffectModel> lootEffectSet = new HashSet<>();
         if (namedLootEffects != null) {
             for (FluffyNamedLootEffect named : namedLootEffects) {
-                LootEffect lootEffect = new LootEffect();
+                LootEffectModel lootEffect = new LootEffectModel();
                 lootEffect.setName(named.getName());
-                Set<EffectMagnitude> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
+                Set<EffectMagnitudeModel> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
                 lootEffect.setMagnitudes(effectMagnitudeSet);
                 lootEffectSet.add(lootEffect);
             }
@@ -176,13 +171,13 @@ public final class ItemHelper {
         return lootEffectSet;
     }
 
-    public static Set<LootEffect> getLootEffectsForConditional(List<PurpleNamedLootEffect> namedLootEffects) {
-        Set<LootEffect> lootEffectSet = new HashSet<>();
+    public static Set<LootEffectModel> getLootEffectsForConditional(List<PurpleNamedLootEffect> namedLootEffects) {
+        Set<LootEffectModel> lootEffectSet = new HashSet<>();
         if (namedLootEffects != null) {
             for (PurpleNamedLootEffect named : namedLootEffects) {
-                LootEffect lootEffect = new LootEffect();
+                LootEffectModel lootEffect = new LootEffectModel();
                 lootEffect.setName(named.getName());
-                Set<EffectMagnitude> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
+                Set<EffectMagnitudeModel> effectMagnitudeSet = getMagnitudes(named.getMagnitudes());
                 lootEffect.setMagnitudes(effectMagnitudeSet);
                 lootEffectSet.add(lootEffect);
             }
@@ -190,27 +185,26 @@ public final class ItemHelper {
         return lootEffectSet;
     }
 
-    public static ConditionParamCategory getConditionParamCategory(org.imrofli.godfall.data.ConditionParamCategory conditionParamCategory) {
-        ConditionParamCategory category = new ConditionParamCategory();
-        if(conditionParamCategory != null){
+    public static ConditionParamCategoryModel getConditionParamCategory(org.imrofli.godfall.data.ConditionParamCategory conditionParamCategory) {
+        ConditionParamCategoryModel category = new ConditionParamCategoryModel();
+        if (conditionParamCategory != null) {
             if (BoonWhitelistTagElement.MIGHT.equals(conditionParamCategory.enumValue)) {
-                category.setAffinity(Affinity.MIGHT);
+                category.setAffinity(AffinityModel.MIGHT);
                 return category;
             } else if (BoonWhitelistTagElement.SPIRIT.equals(conditionParamCategory.enumValue)) {
-                category.setAffinity(Affinity.SPIRIT);
+                category.setAffinity(AffinityModel.SPIRIT);
                 return category;
             } else if (BoonWhitelistTagElement.VITALITY.equals(conditionParamCategory.enumValue)) {
-                category.setAffinity(Affinity.VITALITY);
+                category.setAffinity(AffinityModel.VITALITY);
                 return category;
             } else if (1L == conditionParamCategory.integerValue) {
-                category.setColor(Color.RED);
+                category.setColor(ColorModel.RED);
                 return category;
             } else if (2L == conditionParamCategory.integerValue) {
-                category.setColor(Color.GREEN);
+                category.setColor(ColorModel.GREEN);
                 return category;
-            }
-            else if (3L == conditionParamCategory.integerValue) {
-                category.setColor(Color.BLUE);
+            } else if (3L == conditionParamCategory.integerValue) {
+                category.setColor(ColorModel.BLUE);
                 return category;
             }
         }
@@ -218,19 +212,19 @@ public final class ItemHelper {
 
     }
 
-    public static Set<ConditionalLootEffect> getConditionalLootEffects(List<String> conditionalLootEffects, List<ConditionalLootEffectsCollection> conditionalLootEffectsCollections) {
-        Set<ConditionalLootEffect> lootEffectSet = new HashSet<>();
+    public static Set<ConditionalLootEffectModel> getConditionalLootEffects(List<String> conditionalLootEffects, List<ConditionalLootEffectsCollection> conditionalLootEffectsCollections) {
+        Set<ConditionalLootEffectModel> lootEffectSet = new HashSet<>();
         if (conditionalLootEffects != null && conditionalLootEffectsCollections != null) {
             for (String searchEntry : conditionalLootEffects) {
                 for (ConditionalLootEffectsCollection condEffect : conditionalLootEffectsCollections) {
                     if (searchEntry.equals(condEffect.getName())) {
-                        ConditionalLootEffect effect = new ConditionalLootEffect();
+                        ConditionalLootEffectModel effect = new ConditionalLootEffectModel();
                         effect.setName(condEffect.getName());
                         effect.setDescription(condEffect.getDescription().replace("\\", "").replace("\"", "").trim());
                         effect.setApplyToSelf(condEffect.getApplyToSelf());
                         effect.setApplyToConnected(condEffect.getApplyToConnected());
                         effect.setApplyForEach(condEffect.getApplyForEach());
-                        Set<LootEffect> namedLootEffects = getLootEffectsForConditional(condEffect.getNamedLootEffects());
+                        Set<LootEffectModel> namedLootEffects = getLootEffectsForConditional(condEffect.getNamedLootEffects());
                         effect.setLootEffects(namedLootEffects);
                         effect.setConditionName(condEffect.getConditionName().toValue());
                         effect.setConditionParamCategory(getConditionParamCategory(condEffect.getConditionParamCategory()));
@@ -244,10 +238,10 @@ public final class ItemHelper {
         return lootEffectSet;
     }
 
-    public static TraitCategory getTraitCategory(String name, List<TraitCategoryCollection> traitCategoryCollections) {
+    public static TraitCategoryModel getTraitCategory(String name, List<TraitCategoryCollection> traitCategoryCollections) {
         for (TraitCategoryCollection collection : traitCategoryCollections) {
             if (name.equals(collection.getName())) {
-                TraitCategory traitCategory = new TraitCategory();
+                TraitCategoryModel traitCategory = new TraitCategoryModel();
                 traitCategory.setName(collection.getName());
                 traitCategory.setGroupname(collection.getGroupName().toString());
                 traitCategory.setTraitType(getTraitType(collection.getGroupName()));
@@ -275,24 +269,24 @@ public final class ItemHelper {
         return null;
     }
 
-    public static TraitType getTraitType(GroupName groupName) {
+    public static TraitTypeModel getTraitType(GroupName groupName) {
         switch (groupName) {
             case PRIMARY_TRAIT:
-                return TraitType.PRIMARY;
+                return TraitTypeModel.PRIMARY;
             case PRIMARY_ATTRIBUTE:
-                return TraitType.PRIMARY;
+                return TraitTypeModel.PRIMARY;
             case MASTERWORK_TRAIT:
-                return TraitType.MASTERWORK;
+                return TraitTypeModel.MASTERWORK;
             default:
-                return TraitType.SECONDARY;
+                return TraitTypeModel.SECONDARY;
         }
     }
 
-    public static Set<EffectMagnitude> getMagnitudes(List<Magnitude> magnitudeList) {
-        Set<EffectMagnitude> effectMagnitudeSet = new HashSet<>();
+    public static Set<EffectMagnitudeModel> getMagnitudes(List<Magnitude> magnitudeList) {
+        Set<EffectMagnitudeModel> effectMagnitudeSet = new HashSet<>();
         if (magnitudeList != null && !magnitudeList.isEmpty()) {
             for (Magnitude magn : magnitudeList) {
-                EffectMagnitude entry = new EffectMagnitude();
+                EffectMagnitudeModel entry = new EffectMagnitudeModel();
                 entry.setName(magn.getMagnitudeName().toValue());
                 entry.setParameterType(getParamType(magn.getParamType()));
                 entry.setScalar(magn.getScalar());
@@ -303,26 +297,26 @@ public final class ItemHelper {
     }
 
 
-    public static ParameterType getParamType(ParamType type) {
+    public static ParameterTypeModel getParamType(ParamType type) {
         switch (type) {
             case CORE_ATTRIBUTE:
-                return ParameterType.CORE_ATTRIBUTE;
+                return ParameterTypeModel.CORE_ATTRIBUTE;
             case PLAYER_POWER:
-                return ParameterType.PLAYER_POWER;
+                return ParameterTypeModel.PLAYER_POWER;
             case NON_SCALING:
-                return ParameterType.NON_SCALING;
+                return ParameterTypeModel.NON_SCALING;
             case DEFENSE_PERCENT:
-                return ParameterType.DEFENSE_PERCENT;
+                return ParameterTypeModel.DEFENSE_PERCENT;
             case ATTRIBUTE_NO_VARIANCE:
-                return ParameterType.ATTRIBUTE_NO_VARIANCE;
+                return ParameterTypeModel.ATTRIBUTE_NO_VARIANCE;
             case CORE_ATTRIBUTE_PERCENT:
-                return ParameterType.CORE_ATTRIBUTE_PERCENT;
+                return ParameterTypeModel.CORE_ATTRIBUTE_PERCENT;
             case NO_VARIANCE_PLAYER_POWER:
-                return ParameterType.NO_VARIANCE_PLAYER_POWER;
+                return ParameterTypeModel.NO_VARIANCE_PLAYER_POWER;
             case NO_VARIANCE_DEFENSE_PERCENT:
-                return ParameterType.NO_VARIANCE_DEFENSE_PERCENT;
+                return ParameterTypeModel.NO_VARIANCE_DEFENSE_PERCENT;
             default:
-                return ParameterType.NO_VARIANCE_CORE_ATTRIBUTE_PERCENT;
+                return ParameterTypeModel.NO_VARIANCE_CORE_ATTRIBUTE_PERCENT;
         }
     }
 
@@ -340,37 +334,37 @@ public final class ItemHelper {
         return sb.toString().replace("\\", "").replace("\"", "").trim();
     }
 
-    public static WeaponType getWeaponType(Long typeId) {
-        if (typeId == 1) return WeaponType.LONGSWORD;
-        if (typeId == 2) return WeaponType.POLEARM;
-        if (typeId == 3) return WeaponType.GREATSWORD;
-        if (typeId == 4) return WeaponType.WARHAMMER;
-        if (typeId == 5) return WeaponType.DUALBLADES;
-        else return WeaponType.NA;
+    public static WeaponTypeModel getWeaponType(Long typeId) {
+        if (typeId == 1) return WeaponTypeModel.LONGSWORD;
+        if (typeId == 2) return WeaponTypeModel.POLEARM;
+        if (typeId == 3) return WeaponTypeModel.GREATSWORD;
+        if (typeId == 4) return WeaponTypeModel.WARHAMMER;
+        if (typeId == 5) return WeaponTypeModel.DUALBLADES;
+        else return WeaponTypeModel.NA;
     }
 
-    public static Set<WeaponType> getWeaponTypeSet(List<String> traitTags) {
-        Set<WeaponType> weaponTypeSet = new HashSet<>();
+    public static Set<WeaponTypeModel> getWeaponTypeSet(List<String> traitTags) {
+        Set<WeaponTypeModel> weaponTypeSet = new HashSet<>();
         if (traitTags != null) {
             for (String entry : traitTags) {
                 String[] splits = entry.split("-");
                 if (splits.length > 1) {
                     if (splits[1].trim().equals("Random Weapon")) {
-                        weaponTypeSet.add(WeaponType.DUALBLADES);
-                        weaponTypeSet.add(WeaponType.GREATSWORD);
-                        weaponTypeSet.add(WeaponType.LONGSWORD);
-                        weaponTypeSet.add(WeaponType.POLEARM);
-                        weaponTypeSet.add(WeaponType.WARHAMMER);
+                        weaponTypeSet.add(WeaponTypeModel.DUALBLADES);
+                        weaponTypeSet.add(WeaponTypeModel.GREATSWORD);
+                        weaponTypeSet.add(WeaponTypeModel.LONGSWORD);
+                        weaponTypeSet.add(WeaponTypeModel.POLEARM);
+                        weaponTypeSet.add(WeaponTypeModel.WARHAMMER);
                     } else if (splits[1].trim().equals("Polearm")) {
-                        weaponTypeSet.add(WeaponType.POLEARM);
+                        weaponTypeSet.add(WeaponTypeModel.POLEARM);
                     } else if (splits[1].trim().equals("Dual Blades")) {
-                        weaponTypeSet.add(WeaponType.DUALBLADES);
+                        weaponTypeSet.add(WeaponTypeModel.DUALBLADES);
                     } else if (splits[1].trim().equals("Greatsword")) {
-                        weaponTypeSet.add(WeaponType.GREATSWORD);
+                        weaponTypeSet.add(WeaponTypeModel.GREATSWORD);
                     } else if (splits[1].trim().equals("Longsword")) {
-                        weaponTypeSet.add(WeaponType.LONGSWORD);
+                        weaponTypeSet.add(WeaponTypeModel.LONGSWORD);
                     } else if (splits[1].trim().equals("Warhammer")) {
-                        weaponTypeSet.add(WeaponType.WARHAMMER);
+                        weaponTypeSet.add(WeaponTypeModel.WARHAMMER);
                     }
 
                 }
@@ -380,76 +374,76 @@ public final class ItemHelper {
         return weaponTypeSet;
     }
 
-    public static WeaponType getWeaponTypeFromString(String tag) {
+    public static WeaponTypeModel getWeaponTypeFromString(String tag) {
         if (tag != null) {
             if (tag.equals("Polearm")) {
-                return WeaponType.POLEARM;
+                return WeaponTypeModel.POLEARM;
             } else if (tag.equals("Dual Blades")) {
-                return WeaponType.DUALBLADES;
+                return WeaponTypeModel.DUALBLADES;
             } else if (tag.equals("Greatsword")) {
-                return WeaponType.GREATSWORD;
+                return WeaponTypeModel.GREATSWORD;
             } else if (tag.equals("Longsword")) {
-                return WeaponType.LONGSWORD;
+                return WeaponTypeModel.LONGSWORD;
             } else if (tag.equals("Warhammer")) {
-                return WeaponType.WARHAMMER;
+                return WeaponTypeModel.WARHAMMER;
             }
         }
-        return WeaponType.NA;
+        return WeaponTypeModel.NA;
     }
 
-    public static ItemType getItemType(String value) {
+    public static ItemTypeModel getItemType(String value) {
         if (value != null) {
-            if (value.equals("Amulet")) return ItemType.AMULET;
-            if (value.equals("Augment")) return ItemType.AUGMENT;
-            if (value.equals("Banner")) return ItemType.BANNER;
-            if (value.equals("Bomb")) return ItemType.BOMB;
-            if (value.equals("Charm")) return ItemType.CHARM;
-            if (value.equals("Consumable")) return ItemType.CONSUMABLE;
-            if (value.equals("Potion")) return ItemType.LIFESTONE;
-            if (value.equals("Ring")) return ItemType.RING;
-            if (value.equals("Talisman")) return ItemType.TALISMAN;
-            if (value.equals("Trinket")) return ItemType.TRINKET;
-            if (value.equals("Weapon")) return ItemType.WEAPON;
+            if (value.equals("Amulet")) return ItemTypeModel.AMULET;
+            if (value.equals("Augment")) return ItemTypeModel.AUGMENT;
+            if (value.equals("Banner")) return ItemTypeModel.BANNER;
+            if (value.equals("Bomb")) return ItemTypeModel.BOMB;
+            if (value.equals("Charm")) return ItemTypeModel.CHARM;
+            if (value.equals("Consumable")) return ItemTypeModel.CONSUMABLE;
+            if (value.equals("Potion")) return ItemTypeModel.LIFESTONE;
+            if (value.equals("Ring")) return ItemTypeModel.RING;
+            if (value.equals("Talisman")) return ItemTypeModel.TALISMAN;
+            if (value.equals("Trinket")) return ItemTypeModel.TRINKET;
+            if (value.equals("Weapon")) return ItemTypeModel.WEAPON;
         }
-        return ItemType.NA;
+        return ItemTypeModel.NA;
     }
 
-    public static Set<Affinity> getAffinities(List<String> tagList) {
-        Set<Affinity> affinitySet = new HashSet<>();
+    public static Set<AffinityModel> getAffinities(List<String> tagList) {
+        Set<AffinityModel> affinitySet = new HashSet<>();
         if (tagList != null && !tagList.isEmpty()) {
             for (String entry : tagList) {
                 if (entry != null && entry.contains("- Might")) {
-                    affinitySet.add(Affinity.MIGHT);
+                    affinitySet.add(AffinityModel.MIGHT);
                 } else if (entry != null && entry.contains("- Spirit")) {
-                    affinitySet.add(Affinity.SPIRIT);
+                    affinitySet.add(AffinityModel.SPIRIT);
                 } else if (entry != null && entry.contains("- Vitality")) {
-                    affinitySet.add(Affinity.VITALITY);
+                    affinitySet.add(AffinityModel.VITALITY);
                 }
             }
         }
         return affinitySet;
     }
 
-    public static Affinity getAffinity(String tag) {
+    public static AffinityModel getAffinity(String tag) {
 
         if (tag != null && !tag.isEmpty()) {
 
             if (tag.contains("Might")) {
-                return Affinity.MIGHT;
+                return AffinityModel.MIGHT;
             } else if (tag.contains("Spirit")) {
-                return Affinity.SPIRIT;
+                return AffinityModel.SPIRIT;
             } else if (tag.contains("Vitality")) {
-                return Affinity.VITALITY;
+                return AffinityModel.VITALITY;
             }
         }
         return null;
     }
 
-    public static Set<TagRequirement> getTagRequirements(List<OngoingTagRequirement> ongoingTagRequirements) {
-        Set<TagRequirement> out = new HashSet<>();
-        if(ongoingTagRequirements!=null){
+    public static Set<TagRequirementModel> getTagRequirements(List<OngoingTagRequirement> ongoingTagRequirements) {
+        Set<TagRequirementModel> out = new HashSet<>();
+        if (ongoingTagRequirements != null) {
             for (OngoingTagRequirement tagRequirement : ongoingTagRequirements) {
-                TagRequirement entry = new TagRequirement();
+                TagRequirementModel entry = new TagRequirementModel();
                 entry.setName(tagRequirement.getGameplayTag());
                 entry.setActorType(tagRequirement.getActorType().toString());
                 entry.setRequireOrIgnore(tagRequirement.getRequireOrIgnore().toString());
@@ -571,12 +565,12 @@ public final class ItemHelper {
     }
 
 
-    public static Set<TraitSlot> getTraitSlotsSet(String traitSlotGroups, List<TraitSlotCollection> collection) {
-        Set<TraitSlot> out = new HashSet<>();
+    public static Set<TraitSlotModel> getTraitSlotsSet(String traitSlotGroups, List<TraitSlotCollection> collection) {
+        Set<TraitSlotModel> out = new HashSet<>();
         if (traitSlotGroups != null && collection != null) {
             for (TraitSlotCollection entry : collection) {
                 if (traitSlotGroups.equals(entry.getGroupName())) {
-                    TraitSlot ts = new TraitSlot();
+                    TraitSlotModel ts = new TraitSlotModel();
                     ts.setName(entry.getName());
                     ts.setSlotIndex(entry.getSlotIndex().toValue());
                     ts.setGroupName(entry.getGroupName());
@@ -587,23 +581,23 @@ public final class ItemHelper {
         return out;
     }
 
-    public static SlotType getSlotTypeFromIndex(SlotIndex slotType) {
+    public static SlotTypeModel getSlotTypeFromIndex(SlotIndex slotType) {
         switch (slotType) {
             case PRIMARY_TRAIT:
-                return SlotType.PRIMARY_TRAIT;
+                return SlotTypeModel.PRIMARY_TRAIT;
             case PRIMARY_ATTRIBUTE:
-                return SlotType.PRIMARY_ATTRIBUTE;
+                return SlotTypeModel.PRIMARY_ATTRIBUTE;
             case MASTERWORK_TRAIT:
-                return SlotType.MASTERWORK_TRAIT;
+                return SlotTypeModel.MASTERWORK_TRAIT;
             default:
-                return SlotType.SECONDARY_TRAIT;
+                return SlotTypeModel.SECONDARY_TRAIT;
         }
     }
 
-    public static Set<EnemyClassLvl> getEnemyClassLevels(The2 the2, The2 the3) {
-        Set<EnemyClassLvl> enemyClassLvls = new HashSet<>();
+    public static Set<EnemyClassLvlModel> getEnemyClassLevels(The2 the2, The2 the3) {
+        Set<EnemyClassLvlModel> enemyClassLvls = new HashSet<>();
         if (the2 != null) {
-            EnemyClassLvl out = new EnemyClassLvl();
+            EnemyClassLvlModel out = new EnemyClassLvlModel();
             out.setBreachHealthScalar(the2.getBreachHealthScalar());
             out.setExperienceScalar(the2.getExperienceScalar());
             out.setBreachHealthRegenScalar(the2.getBreachHealthRegenScalar());
@@ -613,7 +607,7 @@ public final class ItemHelper {
             enemyClassLvls.add(out);
         }
         if (the3 != null) {
-            EnemyClassLvl out = new EnemyClassLvl();
+            EnemyClassLvlModel out = new EnemyClassLvlModel();
             out.setBreachHealthScalar(the3.getBreachHealthScalar());
             out.setExperienceScalar(the3.getExperienceScalar());
             out.setBreachHealthRegenScalar(the3.getBreachHealthRegenScalar());
@@ -625,8 +619,8 @@ public final class ItemHelper {
         return enemyClassLvls;
     }
 
-    public static ArchonMode getArchonMode(String archonModeID, ArchonModes archonModes) {
-        ArchonMode out = new ArchonMode();
+    public static ArchonModeModel getArchonMode(String archonModeID, ArchonModes archonModes) {
+        ArchonModeModel out = new ArchonModeModel();
         org.imrofli.godfall.data.ArchonMode input = null;
         if (archonModeID.equals(archonModes.getArchonModeArmistice().getID())) {
             input = archonModes.getArchonModeArmistice();
@@ -669,24 +663,24 @@ public final class ItemHelper {
         return out;
     }
 
-    public static Affinity getAffinityFromInt(Integer affinity) {
+    public static AffinityModel getAffinityFromInt(Integer affinity) {
         switch (affinity) {
             case 1:
-                return Affinity.MIGHT;
+                return AffinityModel.MIGHT;
             case 2:
-                return Affinity.SPIRIT;
+                return AffinityModel.SPIRIT;
             case 3:
-                return Affinity.VITALITY;
+                return AffinityModel.VITALITY;
             default:
                 return null;
         }
     }
 
-    public static Set<AugmentGraph> getAugmentGraphs(String gameplayTag, List<AugmentGraphsCollection> collection) {
-        Set<AugmentGraph> out = new HashSet<>();
+    public static Set<AugmentGraphModel> getAugmentGraphs(String gameplayTag, List<AugmentGraphsCollection> collection) {
+        Set<AugmentGraphModel> out = new HashSet<>();
         for (AugmentGraphsCollection entry : collection) {
             if (gameplayTag.equals(entry.getValorplateGameplayTag())) {
-                AugmentGraph graph = new AugmentGraph();
+                AugmentGraphModel graph = new AugmentGraphModel();
                 graph.setGraphName(entry.getGraphName());
                 graph.setGameplayTag(entry.getValorplateGameplayTag());
 

@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.LootInfo;
 import org.imrofli.godfall.dao.intf.LootInfoDao;
+import org.imrofli.godfall.dao.model.LootInfoModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.LootInfoService;
@@ -24,7 +25,7 @@ public class LootInfoServiceImpl implements LootInfoService {
     @Override
     public LootInfo getLootInfo(Long lootInfoId) throws ServiceCallException {
         LOGGER.info("Getting LootInfo id: {}", lootInfoId);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findByIdAndFetch(lootInfoId);
+        LootInfoModel lootInfo = lootInfoDao.findByIdAndFetch(lootInfoId);
         if(lootInfo == null){
             throw new ServiceCallException("lootInfoDao.findByIdAndFetch returned NULL");
         }
@@ -32,10 +33,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public List<LootInfo> getAllLootInfo() throws ServiceCallException {
-        LOGGER.info("Getting all Loot Info");
-        Set<org.imrofli.godfall.dao.model.LootInfo> lootInfoSet = lootInfoDao.findAllAndFetch();
-        if(lootInfoSet == null || lootInfoSet.isEmpty()){
+    public List<LootInfo> getAllLootInfo(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Loot Info. Version {}", version);
+        Set<LootInfoModel> lootInfoSet = lootInfoDao.findAllAndFetch(version);
+        if (lootInfoSet == null || lootInfoSet.isEmpty()) {
             throw new ServiceCallException("lootInfoDao.findAllAndFetch() returned NULL");
         }
         List<LootInfo> out = DaoToViewInterpreter.convertLootInfoDaoList(lootInfoSet);
@@ -53,10 +54,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public LootInfo getLootInfoByAugmentId(Long id) throws ServiceCallException {
-        LOGGER.info("Getting LootInfo from Augment ID: {}", id);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findLootInfoByAugmentIdAndFetchDropTags(id);
-        if(lootInfo == null){
+    public LootInfo getLootInfoByAugmentId(Long id, String version) throws ServiceCallException {
+        LOGGER.info("Getting LootInfo from Augment ID: {} Version {}", id, version);
+        LootInfoModel lootInfo = lootInfoDao.findLootInfoByAugmentIdAndFetchDropTags(id, version);
+        if (lootInfo == null) {
             throw new ServiceCallException("lootInfoDao.findLootInfoByAugmentIdAndFetchDropTags returned NULL");
         }
         LootInfo out = DaoToViewInterpreter.convertLootInfoDao(lootInfo);
@@ -64,10 +65,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public LootInfo getLootInfoByBannerId(Long id) throws ServiceCallException {
-        LOGGER.info("Getting LootInfo from Banner ID: {}", id);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findLootInfoByBannerIdAndFetchDropTags(id);
-        if(lootInfo == null){
+    public LootInfo getLootInfoByBannerId(Long id, String version) throws ServiceCallException {
+        LOGGER.info("Getting LootInfo from Banner ID: {} Version {}", id, version);
+        LootInfoModel lootInfo = lootInfoDao.findLootInfoByBannerIdAndFetchDropTags(id, version);
+        if (lootInfo == null) {
             throw new ServiceCallException("lootInfoDao.findLootInfoByBannerIdAndFetchDropTags returned NULL");
         }
         LootInfo out = DaoToViewInterpreter.convertLootInfoDao(lootInfo);
@@ -75,10 +76,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public LootInfo getLootInfoByLifeStoneId(Long id) throws ServiceCallException {
-        LOGGER.info("Getting LootInfo from LifeStone ID: {}", id);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findLootInfoByLifeStoneIdAndFetchDropTags(id);
-        if(lootInfo == null){
+    public LootInfo getLootInfoByLifeStoneId(Long id, String version) throws ServiceCallException {
+        LOGGER.info("Getting LootInfo from LifeStone ID: {} Version {}", id, version);
+        LootInfoModel lootInfo = lootInfoDao.findLootInfoByLifeStoneIdAndFetchDropTags(id, version);
+        if (lootInfo == null) {
             throw new ServiceCallException("lootInfoDao.findLootInfoByLifeStoneIdAndFetchDropTags returned NULL");
         }
         LootInfo out = DaoToViewInterpreter.convertLootInfoDao(lootInfo);
@@ -86,10 +87,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public LootInfo getLootInfoByWeaponId(Long id) throws ServiceCallException {
-        LOGGER.info("Getting LootInfo from Weapon ID: {}", id);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findLootInfoByWeaponIdAndFetchDropTags(id);
-        if(lootInfo == null){
+    public LootInfo getLootInfoByWeaponId(Long id, String version) throws ServiceCallException {
+        LOGGER.info("Getting LootInfo from Weapon ID: {} Version {}", id, version);
+        LootInfoModel lootInfo = lootInfoDao.findLootInfoByWeaponIdAndFetchDropTags(id, version);
+        if (lootInfo == null) {
             throw new ServiceCallException("lootInfoDao.findLootInfoByWeaponIdAndFetchDropTags returned NULL");
         }
         LootInfo out = DaoToViewInterpreter.convertLootInfoDao(lootInfo);
@@ -97,10 +98,10 @@ public class LootInfoServiceImpl implements LootInfoService {
     }
 
     @Override
-    public LootInfo getLootInfoByTrinketId(Long id) throws ServiceCallException {
-        LOGGER.info("Getting LootInfo from Trinket ID: {}", id);
-        org.imrofli.godfall.dao.model.LootInfo lootInfo = lootInfoDao.findLootInfoByTrinketIdAndFetchDropTags(id);
-        if(lootInfo == null){
+    public LootInfo getLootInfoByTrinketId(Long id, String version) throws ServiceCallException {
+        LOGGER.info("Getting LootInfo from Trinket ID: {} Version {}", id, version);
+        LootInfoModel lootInfo = lootInfoDao.findLootInfoByTrinketIdAndFetchDropTags(id, version);
+        if (lootInfo == null) {
             throw new ServiceCallException("lootInfoDao.findLootInfoByTrinketIdAndFetchDropTags returned NULL");
         }
         LootInfo out = DaoToViewInterpreter.convertLootInfoDao(lootInfo);

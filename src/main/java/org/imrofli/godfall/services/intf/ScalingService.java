@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ScalingService {
 
-    List<Scaling> getScalingByRarityAndLevel(Rarity rarity, Long tier) throws ServiceCallException;
+    List<Scaling> getScalingByRarityAndLevel(Rarity rarity, Long tier, String version) throws ServiceCallException;
 
     Scaling getScalingById(Long id) throws ServiceCallException;
 

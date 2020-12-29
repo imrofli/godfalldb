@@ -1,20 +1,24 @@
 package org.imrofli.godfall.dao.intf;
 
-import org.imrofli.godfall.dao.model.Rarity;
-import org.imrofli.godfall.dao.model.Scaling;
+import org.imrofli.godfall.dao.model.RarityModel;
+import org.imrofli.godfall.dao.model.ScalingModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
-public interface ScalingDao extends JpaRepository<Scaling, Long> {
-    @Query(value = "SELECT a from Scaling a")
-    Set<Scaling> getAllScalings();
+public interface ScalingDao extends JpaRepository<ScalingModel, Long> {
+    @Query(value = "SELECT a from ScalingModel a")
+    Set<ScalingModel> getAllScalings();
 
-    Set<Scaling> getAllByRarity(Rarity rarity);
+    @Query(value = "SELECT a from ScalingModel a LEFT join fetch a.version v where v.version=:version and a.rarity=:rarity")
+    Set<ScalingModel> getAllByRarity(@Param("rarity") RarityModel rarity, @Param("version") String version);
 
-    Set<Scaling> getAllByTierIdentifier(Long tier);
+    @Query(value = "SELECT a from ScalingModel a LEFT join fetch a.version v where v.version=:version and a.tierIdentifier=:tier")
+    Set<ScalingModel> getAllByTierIdentifier(@Param("tier") Long tier, @Param("version") String version);
 
-    Set<Scaling> getByTierIdentifierAndRarity(Long tier, Rarity rarity);
+    @Query(value = "SELECT a from ScalingModel a LEFT join fetch a.version v where v.version=:version and a.rarity=:rarity and a.tierIdentifier=:tier")
+    Set<ScalingModel> getByTierIdentifierAndRarity(@Param("tier") Long tier, @Param("rarity") RarityModel rarity, @Param("version") String version);
 
 }

@@ -3,6 +3,7 @@ package org.imrofli.godfall.services;
 import org.imrofli.godfall.api.model.Rarity;
 import org.imrofli.godfall.api.model.Scaling;
 import org.imrofli.godfall.dao.intf.ScalingDao;
+import org.imrofli.godfall.dao.model.ScalingModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.ScalingService;
@@ -25,17 +26,18 @@ public class ScalingServiceImpl implements ScalingService {
 
 
     @Override
-    public List<Scaling> getScalingByRarityAndLevel(Rarity rarity, Long tier) throws ServiceCallException {
-        Set<org.imrofli.godfall.dao.model.Scaling> scaling;
+    public List<Scaling> getScalingByRarityAndLevel(Rarity rarity, Long tier, String version) throws ServiceCallException {
+        LOGGER.info("Getting Scaling: Rarity {} Level {} Version {}", rarity, tier, version);
+        Set<ScalingModel> scaling;
         if (rarity == null && tier != null) {
-            scaling = scalingDao.getAllByTierIdentifier(tier);
+            scaling = scalingDao.getAllByTierIdentifier(tier, version);
         } else if (rarity != null && tier == null) {
-            scaling = scalingDao.getAllByRarity(DaoToViewInterpreter.convertRarityBack(rarity));
+            scaling = scalingDao.getAllByRarity(DaoToViewInterpreter.convertRarityBack(rarity), version);
             if (scaling == null) {
                 throw new ServiceCallException("scalingDao.getAllByRarity returned NULL");
             }
         } else if (rarity != null && tier != null) {
-            scaling = scalingDao.getByTierIdentifierAndRarity(tier, DaoToViewInterpreter.convertRarityBack(rarity));
+            scaling = scalingDao.getByTierIdentifierAndRarity(tier, DaoToViewInterpreter.convertRarityBack(rarity), version);
             if (scaling == null) {
                 throw new ServiceCallException("scalingDao.getByTierIdentifierAndRarity returned NULL");
             }
@@ -52,7 +54,7 @@ public class ScalingServiceImpl implements ScalingService {
     @Override
     public Scaling getScalingById(Long id) throws ServiceCallException {
         LOGGER.info("Getting Scaling id: {}", id);
-        Optional<org.imrofli.godfall.dao.model.Scaling> scaling = scalingDao.findById(id);
+        Optional<ScalingModel> scaling = scalingDao.findById(id);
         if (!scaling.isPresent()) {
             throw new ServiceCallException("scalingDao.findById returned NULL");
         }
@@ -63,7 +65,7 @@ public class ScalingServiceImpl implements ScalingService {
     @Override
     public List<Scaling> getAllScalings() throws ServiceCallException {
         LOGGER.info("Getting all Scalings");
-        Set<org.imrofli.godfall.dao.model.Scaling> scalingSet = scalingDao.getAllScalings();
+        Set<ScalingModel> scalingSet = scalingDao.getAllScalings();
         if (scalingSet == null || scalingSet.isEmpty()) {
             throw new ServiceCallException("scalingDao.getAllScalings returned NULL");
         }

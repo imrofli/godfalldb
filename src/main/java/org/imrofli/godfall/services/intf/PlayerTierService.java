@@ -10,5 +10,5 @@ public interface PlayerTierService {
 
     PlayerTier getPlayerTierById(Long id) throws ServiceCallException;
 
-    List<PlayerTier> getAllPlayerTier() throws ServiceCallException;
+    List<PlayerTier> getAllPlayerTier(String version) throws ServiceCallException;
 }

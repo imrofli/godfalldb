@@ -33,28 +33,36 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
     ValorplateService valorplateService;
     @Autowired
     SkillService skillService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByWeaponId(Long id) {
-        LOGGER.info("Call to getTraitsByWeaponIdId with params: ID {}", id);
-        List<String> tags = null;
-        List<String> blacklistTags = null;
+    public ResponseEntity<List<Trait>> getAllTraits(List<String> tags, List<String> blacklisttags, String version) {
+        LOGGER.info("Call to getAllTraits with params: Version {} tags - {} blacklisttags - {}", version, tags, blacklisttags);
+        List<Trait> outTraits = null;
         try {
-            Weapon buffer = weaponService.getWeaponNoFetch(id);
-            if (buffer != null) {
-                tags = buffer.getTags();
-                blacklistTags = buffer.getBlacklisttags();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            if ((tags != null && !tags.isEmpty()) || (blacklisttags != null && !blacklisttags.isEmpty())) {
+
+                outTraits = traitService.getTraitsByAllowedTraitTagsAndBlacklistTags(tags, blacklisttags, version);
+            } else {
+                outTraits = traitService.getAllTraits(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        if (outTraits != null && !outTraits.isEmpty()) {
+            return ResponseEntity.ok(outTraits);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByAmuletId(Long id) {
-        LOGGER.info("Call to getTraitsByAmuletId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByAmuletId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByAmuletId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -67,12 +75,12 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByAugmentId(Long id) {
-        LOGGER.info("Call to getTraitsByAugmentId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByAugmentId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByAugmentId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -85,12 +93,12 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByBannerId(Long id) {
-        LOGGER.info("Call to getTraitsByBannerId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByBannerId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByBannerId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -103,12 +111,12 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByCharmId(Long id) {
-        LOGGER.info("Call to getTraitsByCharmId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByCharmId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByCharmId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -121,12 +129,12 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByLifestoneId(Long id) {
-        LOGGER.info("Call to getTraitsByLifestoneId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByLifestoneId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByLifestoneId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -139,12 +147,12 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByRingId(Long id) {
-        LOGGER.info("Call to getTraitsByRingId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsByRingId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByRingId with params: ID {} Version {}", id, version);
         List<String> tags = null;
         List<String> blacklistTags = null;
         try {
@@ -157,44 +165,20 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        return getAllTraits(tags, blacklistTags);
+        return getAllTraits(tags, blacklistTags, version);
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getTraitsByValorplateId(Long id) {
-        LOGGER.info("Call to getTraitsByValorplateId with params: ID {}", id);
+    public ResponseEntity<List<Trait>> getTraitsBySkillId(Long id, String version) {
+        LOGGER.info("Call to getTraitsBySkillId with params: ID {} Version {}", id, version);
         List<Trait> out = new ArrayList<>();
         try {
-            Valorplate buffer = valorplateService.getValorplateByID(id);
-            if (buffer != null) {
-                for (String entry : buffer.getArchonmode().getAlwaysOn()) {
-                    Trait t = traitService.getTraitByName(entry);
-                    out.add(t);
-                }
-                for (String entry : buffer.getArchonmode().getOnActivation()) {
-                    Trait t = traitService.getTraitByName(entry);
-                    out.add(t);
-                }
-                for (String entry : buffer.getArchonmode().getWhileActive()) {
-                    Trait t = traitService.getTraitByName(entry);
-                    out.add(t);
-                }
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
             }
-        } catch (ServiceCallException e) {
-            LOGGER.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(out);
-    }
-
-    @Override
-    public ResponseEntity<List<Trait>> getTraitsBySkillId(Long id) {
-        LOGGER.info("Call to getTraitsBySkillId with params: ID {}", id);
-        List<Trait> out = new ArrayList<>();
-        try {
             Skill buffer = skillService.getSkillByID(id);
             if (buffer != null) {
-                Trait t = traitService.getTraitByName(buffer.getTraitname());
+                Trait t = traitService.getTraitByName(buffer.getTraitname(), version);
                 out.add(t);
             }
         } catch (ServiceCallException e) {
@@ -205,25 +189,53 @@ public class TraitApiDelegateImpl implements TraitApiDelegate {
     }
 
     @Override
-    public ResponseEntity<List<Trait>> getAllTraits(List<String> tags, List<String> blacklisttags) {
-        LOGGER.info("Call to getAllTraits with params: tags - {}", tags);
-        List<Trait> outTraits = null;
+    public ResponseEntity<List<Trait>> getTraitsByValorplateId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByValorplateId with params: ID {} Version {}", id, version);
+        List<Trait> out = new ArrayList<>();
         try {
-            if ((tags != null && !tags.isEmpty()) || (blacklisttags != null && !blacklisttags.isEmpty())) {
-
-                outTraits = traitService.getTraitsByAllowedTraitTagsAndBlacklistTags(tags, blacklisttags);
-            } else {
-                outTraits = traitService.getAllTraits();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            Valorplate buffer = valorplateService.getValorplateByID(id);
+            if (buffer != null) {
+                for (String entry : buffer.getArchonmode().getAlwaysOn()) {
+                    Trait t = traitService.getTraitByName(entry, version);
+                    out.add(t);
+                }
+                for (String entry : buffer.getArchonmode().getOnActivation()) {
+                    Trait t = traitService.getTraitByName(entry, version);
+                    out.add(t);
+                }
+                for (String entry : buffer.getArchonmode().getWhileActive()) {
+                    Trait t = traitService.getTraitByName(entry, version);
+                    out.add(t);
+                }
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        if (outTraits != null && !outTraits.isEmpty()) {
-            return ResponseEntity.ok(outTraits);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(out);
     }
+
+    @Override
+    public ResponseEntity<List<Trait>> getTraitsByWeaponId(Long id, String version) {
+        LOGGER.info("Call to getTraitsByWeaponIdId with params: ID {} Version {}", id, version);
+        List<String> tags = null;
+        List<String> blacklistTags = null;
+        try {
+            Weapon buffer = weaponService.getWeaponNoFetch(id);
+            if (buffer != null) {
+                tags = buffer.getTags();
+                blacklistTags = buffer.getBlacklisttags();
+            }
+        } catch (ServiceCallException e) {
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+        return getAllTraits(tags, blacklistTags, version);
+    }
+
 
     @Override
     public ResponseEntity<Trait> getTraitById(Long id) {

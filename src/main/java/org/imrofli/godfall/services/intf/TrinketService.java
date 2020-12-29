@@ -5,26 +5,26 @@ package org.imrofli.godfall.services.intf;
 import org.imrofli.godfall.api.model.Amulet;
 import org.imrofli.godfall.api.model.Charm;
 import org.imrofli.godfall.api.model.Ring;
-import org.imrofli.godfall.dao.model.Trinket;
+import org.imrofli.godfall.dao.model.TrinketModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 
 import java.util.List;
 
 public interface TrinketService {
 
-    List<Amulet> getAllAmulets() throws ServiceCallException;
+    List<Amulet> getAllAmulets(String version) throws ServiceCallException;
 
-    List<Ring> getAllRings() throws ServiceCallException;
+    List<Ring> getAllRings(String version) throws ServiceCallException;
 
-    List<Charm> getAllCharms() throws ServiceCallException;
+    List<Charm> getAllCharms(String version) throws ServiceCallException;
 
-    List<Amulet> getAllAmuletsByQuery(String name) throws ServiceCallException;
+    List<Amulet> getAllAmuletsByQuery(String name, String version) throws ServiceCallException;
 
-    List<Ring> getAllRingsByQuery(String name) throws ServiceCallException;
+    List<Ring> getAllRingsByQuery(String name, String version) throws ServiceCallException;
 
-    List<Charm> getAllCharmsByQuery(String name) throws ServiceCallException;
+    List<Charm> getAllCharmsByQuery(String name, String version) throws ServiceCallException;
 
-    Trinket getTrinketById(Long id) throws ServiceCallException;
+    TrinketModel getTrinketById(Long id) throws ServiceCallException;
 
     Ring getRingById(Long id) throws ServiceCallException;
 

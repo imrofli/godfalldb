@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +36,6 @@ public class CalculationServiceImpl implements CalculationService {
         if (trait == null || level == null || rarity == null || version == null) {
             throw new ServiceCallException("VersionModel, Trait, level or rarity were NULL");
         }
-        ;
         List<Scaling> scalingList = scalingService.getScalingByRarityAndLevel(DaoToViewInterpreter.convertRarity(rarity), level, version);
         if (scalingList == null || scalingList.isEmpty()) {
             throw new ServiceCallException("scalingService.getScalingByRarityAndLevel returned NULL or Empty");
@@ -45,20 +45,30 @@ public class CalculationServiceImpl implements CalculationService {
             throw new ServiceCallException("globalParameterService.getAllGlobalParameters returned NULL or Empty");
         }
         GlobalParameters globalParameters = globalParametersList.get(0);
-        if (trait.getLootEffects() != null && !trait.getLootEffects().isEmpty()) {
-            for (LootEffectModel lootEffect : trait.getLootEffects()) {
-                for (EffectMagnitudeModel effectMagnitude : lootEffect.getMagnitudes()) {
-                    CalculatedMagnitudeModel calculatedMagnitude = calculateValue(globalParameters, scaling, descriptionParamType, effectMagnitude, trait.getMatchModifierMagnitudes());
-                    calculatedMagnitude.setRarity(rarity);
-                    calculatedMagnitude.setLevel(level);
-                    if (effectMagnitude.getCalculatedMagnitudes() == null) {
-                        effectMagnitude.setCalculatedMagnitudes(new HashSet<>());
-                    }
-                    effectMagnitude.getCalculatedMagnitudes().add(calculatedMagnitude);
-                }
-
+        if (trait.getConditionalLootEffects() != null && !trait.getConditionalLootEffects().isEmpty()) {
+            for (ConditionalLootEffectModel cond : trait.getConditionalLootEffects()) {
+                String conditionalDescription = cond.getDescription();
+                String conditionalDescriptionParamType = getDescriptionParamType(conditionalDescription);
+                calculateLootEffects(cond.getLootEffects(), level, rarity, descriptionParamType, scaling, globalParameters, trait.getMatchModifierMagnitudes());
             }
 
+        }
+        if (trait.getLootEffects() != null && !trait.getLootEffects().isEmpty()) {
+            calculateLootEffects(trait.getLootEffects(), level, rarity, descriptionParamType, scaling, globalParameters, trait.getMatchModifierMagnitudes());
+        }
+    }
+
+    private void calculateLootEffects(Set<LootEffectModel> lootEffects, Long level, RarityModel rarity, String descriptionParamType, Scaling scaling, GlobalParameters globalParameters, Boolean matchModifierMagnitudes) {
+        for (LootEffectModel lootEffect : lootEffects) {
+            for (EffectMagnitudeModel effectMagnitude : lootEffect.getMagnitudes()) {
+                CalculatedMagnitudeModel calculatedMagnitude = calculateValue(globalParameters, scaling, descriptionParamType, effectMagnitude, matchModifierMagnitudes);
+                calculatedMagnitude.setRarity(rarity);
+                calculatedMagnitude.setLevel(level);
+                if (effectMagnitude.getCalculatedMagnitudes() == null) {
+                    effectMagnitude.setCalculatedMagnitudes(new HashSet<>());
+                }
+                effectMagnitude.getCalculatedMagnitudes().add(calculatedMagnitude);
+            }
         }
     }
 

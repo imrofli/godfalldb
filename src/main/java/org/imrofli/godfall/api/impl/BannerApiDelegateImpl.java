@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.BannerApiDelegate;
 import org.imrofli.godfall.api.model.Banner;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.BannerService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,21 @@ public class BannerApiDelegateImpl implements BannerApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(BannerApiDelegateImpl.class);
     @Autowired
     BannerService bannerService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Banner>> getAllBanners(String name) {
-        LOGGER.info("Call to getAllBanners. Query: name {}", name);
+    public ResponseEntity<List<Banner>> getAllBanners(String name, String version) {
+        LOGGER.info("Call to getAllBanners. Query: name {}, version {}", name, version);
         List<Banner> outBanner = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outBanner = bannerService.getAllBannersByQuery(name);
+                outBanner = bannerService.getAllBannersByQuery(name, version);
             } else {
-                outBanner = bannerService.getAllBanners();
+                outBanner = bannerService.getAllBanners(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

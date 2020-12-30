@@ -1,6 +1,7 @@
 package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.dao.intf.GlobalParameterDao;
+import org.imrofli.godfall.dao.model.GlobalParametersModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.GlobalParameterService;
@@ -20,9 +21,11 @@ public class GlobalParameterServiceImpl implements GlobalParameterService {
     @Autowired
     private GlobalParameterDao globalParameterDao;
 
+
     @Override
-    public List<org.imrofli.godfall.api.model.GlobalParameters> getAllGlobalParameters() throws ServiceCallException {
-        Set<org.imrofli.godfall.dao.model.GlobalParameters> globalParametersSet = globalParameterDao.getAllParameters();
+    public List<org.imrofli.godfall.api.model.GlobalParameters> getAllGlobalParameters(String version) throws ServiceCallException {
+        LOGGER.info("Call to getAllGlobalParameters. version {}", version);
+        Set<GlobalParametersModel> globalParametersSet = globalParameterDao.getAllParameters(version);
         if (globalParametersSet == null || globalParametersSet.isEmpty()) {
             throw new ServiceCallException("globalParameterDao.getAllParameters() returned NULL");
         }

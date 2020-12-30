@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ValorplateService {
 
-    List<Valorplate> getAllValorplates() throws ServiceCallException;
+    List<Valorplate> getAllValorplates(String version) throws ServiceCallException;
 
-    List<Valorplate> getAllValorplatesByQuery(String name) throws ServiceCallException;
+    List<Valorplate> getAllValorplatesByQuery(String name, String version) throws ServiceCallException;
 
     Valorplate getValorplateByID(Long valorplateId) throws ServiceCallException;
 

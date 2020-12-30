@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface WeaponService {
 
-    List<Weapon> getAllWeapons() throws ServiceCallException;
+    List<Weapon> getAllWeapons(String version) throws ServiceCallException;
 
-    List<Weapon> getAllWeaponsByQuery(String name) throws ServiceCallException;
+    List<Weapon> getAllWeaponsByQuery(String name, String version) throws ServiceCallException;
 
     Weapon getWeapon(Long weaponId) throws ServiceCallException;
 

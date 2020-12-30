@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.RingApiDelegate;
 import org.imrofli.godfall.api.model.Ring;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.TrinketService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,21 @@ public class RingApiDelegateImpl implements RingApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(RingApiDelegateImpl.class);
     @Autowired
     TrinketService trinketService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Ring>> getAllRings(String name) {
-        LOGGER.info("Call to getAllRings. Query: name {}", name);
+    public ResponseEntity<List<Ring>> getAllRings(String name, String version) {
+        LOGGER.info("Call to getAllRings. Query: name {} Version {}", name, version);
         List<Ring> outRing = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outRing = trinketService.getAllRingsByQuery(name);
+                outRing = trinketService.getAllRingsByQuery(name, version);
             } else {
-                outRing = trinketService.getAllRings();
+                outRing = trinketService.getAllRings(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

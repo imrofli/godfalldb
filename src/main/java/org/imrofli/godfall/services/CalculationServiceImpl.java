@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,12 +32,11 @@ public class CalculationServiceImpl implements CalculationService {
 
 
     @Override
-    public void calculateTraitPerLevelAndRarity(Trait trait, Long level, Rarity rarity, String descriptionParamType, List<GlobalParameters> globalParametersList) throws ServiceCallException {
-        if (trait == null || level == null || rarity == null) {
-            throw new ServiceCallException("Trait, level or rarity were NULL");
+    public void calculateTraitPerLevelAndRarity(String version, TraitModel trait, Long level, RarityModel rarity, String descriptionParamType, List<GlobalParameters> globalParametersList) throws ServiceCallException {
+        if (trait == null || level == null || rarity == null || version == null) {
+            throw new ServiceCallException("VersionModel, Trait, level or rarity were NULL");
         }
-        ;
-        List<Scaling> scalingList = scalingService.getScalingByRarityAndLevel(DaoToViewInterpreter.convertRarity(rarity), level);
+        List<Scaling> scalingList = scalingService.getScalingByRarityAndLevel(DaoToViewInterpreter.convertRarity(rarity), level, version);
         if (scalingList == null || scalingList.isEmpty()) {
             throw new ServiceCallException("scalingService.getScalingByRarityAndLevel returned NULL or Empty");
         }
@@ -45,25 +45,35 @@ public class CalculationServiceImpl implements CalculationService {
             throw new ServiceCallException("globalParameterService.getAllGlobalParameters returned NULL or Empty");
         }
         GlobalParameters globalParameters = globalParametersList.get(0);
-        if (trait.getLootEffects() != null && !trait.getLootEffects().isEmpty()) {
-            for (LootEffect lootEffect : trait.getLootEffects()) {
-                for (EffectMagnitude effectMagnitude : lootEffect.getMagnitudes()) {
-                    CalculatedMagnitude calculatedMagnitude = calculateValue(globalParameters, scaling, descriptionParamType, effectMagnitude, trait.getMatchModifierMagnitudes());
-                    calculatedMagnitude.setRarity(rarity);
-                    calculatedMagnitude.setLevel(level);
-                    if (effectMagnitude.getCalculatedMagnitudes() == null) {
-                        effectMagnitude.setCalculatedMagnitudes(new HashSet<>());
-                    }
-                    effectMagnitude.getCalculatedMagnitudes().add(calculatedMagnitude);
-                }
-
+        if (trait.getConditionalLootEffects() != null && !trait.getConditionalLootEffects().isEmpty()) {
+            for (ConditionalLootEffectModel cond : trait.getConditionalLootEffects()) {
+                String conditionalDescription = cond.getDescription();
+                String conditionalDescriptionParamType = getDescriptionParamType(conditionalDescription);
+                calculateLootEffects(cond.getLootEffects(), level, rarity, descriptionParamType, scaling, globalParameters, trait.getMatchModifierMagnitudes());
             }
 
+        }
+        if (trait.getLootEffects() != null && !trait.getLootEffects().isEmpty()) {
+            calculateLootEffects(trait.getLootEffects(), level, rarity, descriptionParamType, scaling, globalParameters, trait.getMatchModifierMagnitudes());
+        }
+    }
+
+    private void calculateLootEffects(Set<LootEffectModel> lootEffects, Long level, RarityModel rarity, String descriptionParamType, Scaling scaling, GlobalParameters globalParameters, Boolean matchModifierMagnitudes) {
+        for (LootEffectModel lootEffect : lootEffects) {
+            for (EffectMagnitudeModel effectMagnitude : lootEffect.getMagnitudes()) {
+                CalculatedMagnitudeModel calculatedMagnitude = calculateValue(globalParameters, scaling, descriptionParamType, effectMagnitude, matchModifierMagnitudes);
+                calculatedMagnitude.setRarity(rarity);
+                calculatedMagnitude.setLevel(level);
+                if (effectMagnitude.getCalculatedMagnitudes() == null) {
+                    effectMagnitude.setCalculatedMagnitudes(new HashSet<>());
+                }
+                effectMagnitude.getCalculatedMagnitudes().add(calculatedMagnitude);
+            }
         }
     }
 
     @Override
-    public void calculateTrait(Trait trait) throws ServiceCallException {
+    public void calculateTrait(String version, TraitModel trait) throws ServiceCallException {
         String description = trait.getDescription();
         String descriptionParamType = getDescriptionParamType(description);
         Long minTier = 1L;
@@ -78,15 +88,15 @@ public class CalculationServiceImpl implements CalculationService {
             //this is done in this way so all rarities from the minimum up are calculated
             switch (trait.getMinimumRarity()) {
                 case COMMON:
-                    calculateTraitPerLevelAndRarity(trait, i, Rarity.COMMON, descriptionParamType, globalParameterService.getAllGlobalParameters());
+                    calculateTraitPerLevelAndRarity(version, trait, i, RarityModel.COMMON, descriptionParamType, globalParameterService.getAllGlobalParameters(version));
                 case UNCOMMON:
-                    calculateTraitPerLevelAndRarity(trait, i, Rarity.UNCOMMON, descriptionParamType, globalParameterService.getAllGlobalParameters());
+                    calculateTraitPerLevelAndRarity(version, trait, i, RarityModel.UNCOMMON, descriptionParamType, globalParameterService.getAllGlobalParameters(version));
                 case RARE:
-                    calculateTraitPerLevelAndRarity(trait, i, Rarity.RARE, descriptionParamType, globalParameterService.getAllGlobalParameters());
+                    calculateTraitPerLevelAndRarity(version, trait, i, RarityModel.RARE, descriptionParamType, globalParameterService.getAllGlobalParameters(version));
                 case EPIC:
-                    calculateTraitPerLevelAndRarity(trait, i, Rarity.EPIC, descriptionParamType, globalParameterService.getAllGlobalParameters());
+                    calculateTraitPerLevelAndRarity(version, trait, i, RarityModel.EPIC, descriptionParamType, globalParameterService.getAllGlobalParameters(version));
                 case LEGENDARY:
-                    calculateTraitPerLevelAndRarity(trait, i, Rarity.LEGENDARY, descriptionParamType, globalParameterService.getAllGlobalParameters());
+                    calculateTraitPerLevelAndRarity(version, trait, i, RarityModel.LEGENDARY, descriptionParamType, globalParameterService.getAllGlobalParameters(version));
             }
         }
 
@@ -151,8 +161,8 @@ public class CalculationServiceImpl implements CalculationService {
         return output;
     }
 
-    private CalculatedMagnitude calculateValue(GlobalParameters globalParameters, Scaling scaling, String descriptionParamType, EffectMagnitude magnitude, Boolean matchModifierMagnitudes) {
-        CalculatedMagnitude calculatedMagnitude = new CalculatedMagnitude();
+    private CalculatedMagnitudeModel calculateValue(GlobalParameters globalParameters, Scaling scaling, String descriptionParamType, EffectMagnitudeModel magnitude, Boolean matchModifierMagnitudes) {
+        CalculatedMagnitudeModel calculatedMagnitude = new CalculatedMagnitudeModel();
         Double min = 0d;
         Double max = 0d;
         Double scalar = 1d;

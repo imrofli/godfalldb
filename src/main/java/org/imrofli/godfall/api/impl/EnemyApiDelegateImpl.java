@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.EnemyApiDelegate;
 import org.imrofli.godfall.api.model.Enemy;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.EnemyService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,22 @@ public class EnemyApiDelegateImpl implements EnemyApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(EnemyApiDelegateImpl.class);
     @Autowired
     EnemyService enemyService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Enemy>> getAllEnemies() {
-        LOGGER.info("Call to getAllEnemies");
+    public ResponseEntity<List<Enemy>> getAllEnemies(String name, String version) {
+        LOGGER.info("Call to getAllEnemies Query: name {}, version {}", name, version);
         List<Enemy> outEnemies = null;
         try {
-            outEnemies = enemyService.getAllEnemies();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            if (name != null && !name.isEmpty()) {
+                outEnemies = enemyService.getAllEnemiesByQuery(name, version);
+            } else {
+                outEnemies = enemyService.getAllEnemies(version);
+            }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

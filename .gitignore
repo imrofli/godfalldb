@@ -11,6 +11,8 @@ target/
 *.log*
 /client_stubs/*.*
 /client_stubs/*
+/archive/*.*
+/archive/*
 
 ### STS ###
 .apt_generated

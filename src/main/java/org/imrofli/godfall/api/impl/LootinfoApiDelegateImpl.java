@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.LootinfoApiDelegate;
 import org.imrofli.godfall.api.model.LootInfo;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.LootInfoService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,18 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
 
     @Autowired
     LootInfoService lootInfoService;
-
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<LootInfo>> getAllLootInfos() {
-        LOGGER.info("Call to getAllLootInfos");
+    public ResponseEntity<List<LootInfo>> getAllLootInfos(String version) {
+        LOGGER.info("Call to getAllLootInfos. Version {}", version);
         List<LootInfo> outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getAllLootInfo();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getAllLootInfo(version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -37,11 +42,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByWeaponId(Long id) {
-        LOGGER.info("Call to getLootInfoByWeaponId");
+    public ResponseEntity<LootInfo> getLootInfoByAmuletId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByAmuletId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByWeaponId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByTrinketId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -53,11 +61,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByAmuletId(Long id) {
-        LOGGER.info("Call to getLootInfoByAmuletId");
+    public ResponseEntity<LootInfo> getLootInfoByAugmentId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByAugmentId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByTrinketId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByAugmentId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -69,11 +80,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByAugmentId(Long id) {
-        LOGGER.info("Call to getLootInfoByAugmentId");
+    public ResponseEntity<LootInfo> getLootInfoByBannerId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByBannerId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByAugmentId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByBannerId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -85,11 +99,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByBannerId(Long id) {
-        LOGGER.info("Call to getLootInfoByBannerId");
+    public ResponseEntity<LootInfo> getLootInfoByCharmId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByCharmId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByBannerId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByTrinketId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -101,11 +118,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByCharmId(Long id) {
-        LOGGER.info("Call to getLootInfoByCharmId");
+    public ResponseEntity<LootInfo> getLootInfoByLifeStoneId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByLifeStoneId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByTrinketId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByLifeStoneId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -117,11 +137,14 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByLifeStoneId(Long id) {
-        LOGGER.info("Call to getLootInfoByLifeStoneId");
+    public ResponseEntity<LootInfo> getLootInfoByRingId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByRingId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByLifeStoneId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByTrinketId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -133,18 +156,22 @@ public class LootinfoApiDelegateImpl implements LootinfoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<LootInfo> getLootInfoByRingId(Long id) {
-        LOGGER.info("Call to getLootInfoByRingId");
+    public ResponseEntity<LootInfo> getLootInfoByWeaponId(Long id, String version) {
+        LOGGER.info("Call to getLootInfoByWeaponId. Version {}", version);
         LootInfo outLootInfo = null;
         try {
-            outLootInfo = lootInfoService.getLootInfoByTrinketId(id);
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outLootInfo = lootInfoService.getLootInfoByWeaponId(id, version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-        if(outLootInfo != null){
+        if (outLootInfo != null) {
             return ResponseEntity.ok(outLootInfo);
         }
         return ResponseEntity.notFound().build();
     }
+
 }

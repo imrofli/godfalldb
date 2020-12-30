@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.ValorplateApiDelegate;
 import org.imrofli.godfall.api.model.Valorplate;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.ValorplateService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,21 @@ public class ValorplateApiDelegateImpl implements ValorplateApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValorplateApiDelegateImpl.class);
     @Autowired
     ValorplateService valorplateService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Valorplate>> getAllValorplates(String name) {
-        LOGGER.info("Call to getAllValorplates. Query: name {}", name);
+    public ResponseEntity<List<Valorplate>> getAllValorplates(String name, String version) {
+        LOGGER.info("Call to getAllValorplates. Query: name {}, Version {}", name, version);
         List<Valorplate> outValorplates = null;
         try {
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
             if (name != null && !name.isEmpty()) {
-                outValorplates = valorplateService.getAllValorplatesByQuery(name);
+                outValorplates = valorplateService.getAllValorplatesByQuery(name, version);
             } else {
-                outValorplates = valorplateService.getAllValorplates();
+                outValorplates = valorplateService.getAllValorplates(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.SkillApiDelegate;
 import org.imrofli.godfall.api.model.Skill;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.SkillService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,18 @@ public class SkillApiDelegateImpl implements SkillApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SkillApiDelegateImpl.class);
     @Autowired
     SkillService skillService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<Skill>> getAllSkills(String name) {
-        LOGGER.info("Call to getAllSkills. Query: name {}", name);
+    public ResponseEntity<List<Skill>> getAllSkills(String name, String version) {
+        LOGGER.info("Call to getAllSkills. Query: name {} Version", name, version);
         List<Skill> outSkills = null;
         try {
             if (name != null && !name.isEmpty()) {
-                outSkills = skillService.getAllSkillsByQuery(name);
+                outSkills = skillService.getAllSkillsByQuery(name, version);
             } else {
-                outSkills = skillService.getAllSkills();
+                outSkills = skillService.getAllSkills(version);
             }
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());

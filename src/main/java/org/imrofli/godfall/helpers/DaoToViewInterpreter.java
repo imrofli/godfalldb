@@ -2,26 +2,25 @@ package org.imrofli.godfall.helpers;
 
 import org.apache.commons.collections4.list.SetUniqueList;
 import org.imrofli.godfall.api.model.*;
-import org.imrofli.godfall.dao.model.Element;
-import org.imrofli.godfall.dao.model.ParameterType;
-import org.imrofli.godfall.dao.model.TagRequirement;
-import org.imrofli.godfall.dao.model.WeaponType;
+import org.imrofli.godfall.dao.model.*;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class DaoToViewInterpreter {
 
-    public static List<Weapon> convertWeaponDaoList(Set<org.imrofli.godfall.dao.model.Weapon> weaponSet){
+    public static List<Weapon> convertWeaponDaoList(Set<WeaponModel> weaponSet) {
         List<Weapon> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Weapon weapon : weaponSet){
+        for (WeaponModel weapon : weaponSet) {
             out.add(convertWeaponDao(weapon));
         }
         return out;
     }
 
-    public static Weapon convertWeaponDao(org.imrofli.godfall.dao.model.Weapon weapon) {
+    public static Weapon convertWeaponDao(WeaponModel weapon) {
         Weapon out = new Weapon();
         out.setId(weapon.getId());
         out.setName(weapon.getName());
@@ -35,19 +34,20 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(weapon.getTags()));
         out.setBlacklisttags(convertStringSet(weapon.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(weapon.getTraitSlots()));
+        out.setVersion(convertVersionModelDao(weapon.getVersion()));
 
         return out;
     }
 
-    public static List<Augment> convertAugmentDaoList(Set<org.imrofli.godfall.dao.model.Augment> augmentSet){
+    public static List<Augment> convertAugmentDaoList(Set<AugmentModel> augmentSet) {
         List<Augment> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Augment augment : augmentSet){
+        for (AugmentModel augment : augmentSet) {
             out.add(convertAugmentDao(augment));
         }
         return out;
     }
 
-    public static Augment convertAugmentDao(org.imrofli.godfall.dao.model.Augment augment) {
+    public static Augment convertAugmentDao(AugmentModel augment) {
         Augment out = new Augment();
         out.setId(augment.getId());
         out.setName(augment.getName());
@@ -60,18 +60,19 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(augment.getTags()));
         out.setBlacklisttags(convertStringSet(augment.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(augment.getTraitSlots()));
-
+        out.setVersion(convertVersionModelDao(augment.getVersion()));
         return out;
     }
-    public static List<Banner> convertBannerDaoList(Set<org.imrofli.godfall.dao.model.Banner> bannerSet){
+
+    public static List<Banner> convertBannerDaoList(Set<BannerModel> bannerSet) {
         List<Banner> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Banner banner : bannerSet){
+        for (BannerModel banner : bannerSet) {
             out.add(convertBannerDao(banner));
         }
         return out;
     }
 
-    public static Banner convertBannerDao(org.imrofli.godfall.dao.model.Banner banner) {
+    public static Banner convertBannerDao(BannerModel banner) {
         Banner out = new Banner();
         out.setId(banner.getId());
         out.setName(banner.getName());
@@ -86,18 +87,19 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(banner.getTags()));
         out.setBlacklisttags(convertStringSet(banner.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(banner.getTraitSlots()));
+        out.setVersion(convertVersionModelDao(banner.getVersion()));
         return out;
     }
 
-    public static List<LifeStone> convertLifeStoneDaoList(Set<org.imrofli.godfall.dao.model.LifeStone> lifeStoneSet){
+    public static List<LifeStone> convertLifeStoneDaoList(Set<LifeStoneModel> lifeStoneSet) {
         List<LifeStone> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.LifeStone lifeStone : lifeStoneSet){
+        for (LifeStoneModel lifeStone : lifeStoneSet) {
             out.add(convertLifeStoneDao(lifeStone));
         }
         return out;
     }
 
-    public static LifeStone convertLifeStoneDao(org.imrofli.godfall.dao.model.LifeStone lifeStone) {
+    public static LifeStone convertLifeStoneDao(LifeStoneModel lifeStone) {
         LifeStone out = new LifeStone();
         out.setId(lifeStone.getId());
         out.setName(lifeStone.getName());
@@ -114,18 +116,19 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(lifeStone.getTags()));
         out.setBlacklisttags(convertStringSet(lifeStone.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(lifeStone.getTraitSlots()));
+        out.setVersion(convertVersionModelDao(lifeStone.getVersion()));
         return out;
     }
 
-    public static List<Ring> convertRingDaoList(Set<org.imrofli.godfall.dao.model.Trinket> trinketSet){
+    public static List<Ring> convertRingDaoList(Set<TrinketModel> trinketSet) {
         List<Ring> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Trinket trinket : trinketSet){
+        for (TrinketModel trinket : trinketSet) {
             out.add(convertRingDao(trinket));
         }
         return out;
     }
 
-    public static Ring convertRingDao(org.imrofli.godfall.dao.model.Trinket trinket) {
+    public static Ring convertRingDao(TrinketModel trinket) {
         Ring out = new Ring();
         out.setId(trinket.getId());
         out.setName(trinket.getName());
@@ -138,18 +141,19 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(trinket.getTags()));
         out.setBlacklisttags(convertStringSet(trinket.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(trinket.getTraitSlots()));
+        out.setVersion(convertVersionModelDao(trinket.getVersion()));
         return out;
     }
 
-    public static List<Amulet> convertAmuletDaoList(Set<org.imrofli.godfall.dao.model.Trinket> trinketSet){
+    public static List<Amulet> convertAmuletDaoList(Set<TrinketModel> trinketSet) {
         List<Amulet> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Trinket trinket : trinketSet){
+        for (TrinketModel trinket : trinketSet) {
             out.add(convertAmuletDao(trinket));
         }
         return out;
     }
 
-    public static Amulet convertAmuletDao(org.imrofli.godfall.dao.model.Trinket trinket) {
+    public static Amulet convertAmuletDao(TrinketModel trinket) {
         Amulet out = new Amulet();
         out.setId(trinket.getId());
         out.setName(trinket.getName());
@@ -162,31 +166,31 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(trinket.getTags()));
         out.setBlacklisttags(convertStringSet(trinket.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(trinket.getTraitSlots()));
-
+        out.setVersion(convertVersionModelDao(trinket.getVersion()));
         return out;
     }
 
-    public static List<TraitSlot> convertTraitSlots(Set<org.imrofli.godfall.dao.model.TraitSlot> traitSlots) {
+    public static List<TraitSlot> convertTraitSlots(Set<TraitSlotModel> traitSlots) {
         List<TraitSlot> out = new ArrayList<>();
         if (traitSlots != null) {
-            for (org.imrofli.godfall.dao.model.TraitSlot entry : traitSlots) {
+            for (TraitSlotModel entry : traitSlots) {
                 out.add(convertTraitSlot(entry));
             }
         }
         return out;
     }
 
-    public static List<Scaling> convertScalingsDao(Set<org.imrofli.godfall.dao.model.Scaling> scalings) {
+    public static List<Scaling> convertScalingsDao(Set<ScalingModel> scalings) {
         List<Scaling> out = new ArrayList<>();
         if (scalings != null) {
-            for (org.imrofli.godfall.dao.model.Scaling entry : scalings) {
+            for (ScalingModel entry : scalings) {
                 out.add(convertScaling(entry));
             }
         }
         return out;
     }
 
-    public static Scaling convertScaling(org.imrofli.godfall.dao.model.Scaling entry) {
+    public static Scaling convertScaling(ScalingModel entry) {
         Scaling out = new Scaling();
         if (entry != null) {
             out.setId(entry.getId());
@@ -231,12 +235,12 @@ public class DaoToViewInterpreter {
             out.setNoVarianceHealthToDamageMax(entry.getNoVarianceHealthToDamageMax());
             out.setNoVariancePlayerHealthMax(entry.getNoVariancePlayerHealthMax());
             out.setNoVariancePlayerHealthMin(entry.getNoVariancePlayerHealthMin());
-
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    private static TraitSlot convertTraitSlot(org.imrofli.godfall.dao.model.TraitSlot entry) {
+    private static TraitSlot convertTraitSlot(TraitSlotModel entry) {
         TraitSlot out = new TraitSlot();
         if (entry != null) {
             out.setName(entry.getName());
@@ -249,11 +253,12 @@ public class DaoToViewInterpreter {
             out.setSlotchance(entry.getSlotChance());
             out.setTraitchance(entry.getTraitChance());
             out.setDisplayname(entry.getDisplayName());
+
         }
         return out;
     }
 
-    private static SlotType convertSlotType(org.imrofli.godfall.dao.model.SlotType slotType) {
+    private static SlotType convertSlotType(SlotTypeModel slotType) {
         switch (slotType) {
             case PRIMARY_TRAIT:
                 return SlotType.PRIMARY_TRAIT;
@@ -274,15 +279,15 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static List<Charm> convertCharmDaoList(Set<org.imrofli.godfall.dao.model.Trinket> trinketSet) {
+    public static List<Charm> convertCharmDaoList(Set<TrinketModel> trinketSet) {
         List<Charm> out = new ArrayList<>();
-        for (org.imrofli.godfall.dao.model.Trinket trinket : trinketSet) {
+        for (TrinketModel trinket : trinketSet) {
             out.add(convertCharmDao(trinket));
         }
         return out;
     }
 
-    public static Charm convertCharmDao(org.imrofli.godfall.dao.model.Trinket trinket) {
+    public static Charm convertCharmDao(TrinketModel trinket) {
         Charm out = new Charm();
         out.setId(trinket.getId());
         out.setName(trinket.getName());
@@ -295,18 +300,19 @@ public class DaoToViewInterpreter {
         out.setTags(convertStringSet(trinket.getTags()));
         out.setBlacklisttags(convertStringSet(trinket.getBlacklistTags()));
         out.setTraitslots(convertTraitSlots(trinket.getTraitSlots()));
-
+        out.setVersion(convertVersionModelDao(trinket.getVersion()));
         return out;
     }
-    public static List<LootInfo> convertLootInfoDaoList(Set<org.imrofli.godfall.dao.model.LootInfo> lootInfoSet){
+
+    public static List<LootInfo> convertLootInfoDaoList(Set<LootInfoModel> lootInfoSet) {
         List<LootInfo> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.LootInfo lootInfo : lootInfoSet){
+        for (LootInfoModel lootInfo : lootInfoSet) {
             out.add(convertLootInfoDao(lootInfo));
         }
         return out;
     }
 
-    public static LootInfo convertLootInfoDao(org.imrofli.godfall.dao.model.LootInfo lootInfo) {
+    public static LootInfo convertLootInfoDao(LootInfoModel lootInfo) {
         LootInfo out = new LootInfo();
         out.setId(lootInfo.getId());
         out.setName(lootInfo.getName());
@@ -320,19 +326,37 @@ public class DaoToViewInterpreter {
         List<String> stringList = new ArrayList<>();
         stringList.addAll(lootInfo.getDropTags());
         out.setDropTags(stringList);
+        out.setVersion(convertVersionModelDao(lootInfo.getVersion()));
+        return out;
+    }
+
+    public static List<Version> convertVersionModelDaoSet(Set<VersionModel> versionModelSet) {
+        List<Version> out = new ArrayList<>();
+        for (VersionModel versionModel : versionModelSet) {
+            out.add(convertVersionModelDao(versionModel));
+        }
+        return out;
+    }
+
+    public static Version convertVersionModelDao(VersionModel versionModel) {
+        Version out = new Version();
+        out.setId(versionModel.getId());
+        out.setVersion(versionModel.getVersion());
+        OffsetDateTime offset = OffsetDateTime.ofInstant(versionModel.getLoadTime().toInstant(), ZoneId.systemDefault());
+        out.setLoadtime(offset);
 
         return out;
     }
 
-    public static List<Trait> convertTraitSetDao(Set<org.imrofli.godfall.dao.model.Trait> traitSet){
+    public static List<Trait> convertTraitSetDao(Set<TraitModel> traitSet) {
         List<Trait> out = new ArrayList<>();
-        for(org.imrofli.godfall.dao.model.Trait entry : traitSet){
+        for (TraitModel entry : traitSet) {
             out.add(convertTraitDao(entry));
         }
         return out;
     }
 
-    public static Trait convertTraitDao(org.imrofli.godfall.dao.model.Trait trait){
+    public static Trait convertTraitDao(TraitModel trait) {
         Trait out = new Trait();
         out.setId(trait.getId());
         out.setName(trait.getName());
@@ -353,36 +377,35 @@ public class DaoToViewInterpreter {
             keywords.addAll(trait.getKeywords());
             out.setKeywords(keywords);
         }
-
+        out.setVersion(convertVersionModelDao(trait.getVersion()));
         return out;
     }
 
-    public static List<TraitRequirement> convertTagRequirementSet(Set<TagRequirement> requirements){
+    public static List<TraitRequirement> convertTagRequirementSet(Set<TagRequirementModel> requirements) {
         List<TraitRequirement> out = new ArrayList<>();
-        if(requirements!=null){
-            for(TagRequirement entry : requirements){
+        if (requirements != null) {
+            for (TagRequirementModel entry : requirements) {
                 out.add(convertTagRequirement(entry));
             }
         }
         return out;
     }
 
-    public static TraitRequirement convertTagRequirement(TagRequirement requirement){
+    public static TraitRequirement convertTagRequirement(TagRequirementModel requirement) {
         TraitRequirement out = new TraitRequirement();
         out.setGameplayTag(requirement.getName());
         out.setActorType(requirement.getActorType());
-        if("Required".equalsIgnoreCase(requirement.getRequireOrIgnore())){
+        if ("Required".equalsIgnoreCase(requirement.getRequireOrIgnore())) {
             out.setRequired(true);
-        }
-        else{
+        } else {
             out.setRequired(false);
         }
         return out;
     }
 
-    public static TraitCategory convertTraitCategory(org.imrofli.godfall.dao.model.TraitCategory traitCategory){
+    public static TraitCategory convertTraitCategory(TraitCategoryModel traitCategory) {
         TraitCategory out = new TraitCategory();
-        if(traitCategory!=null) {
+        if (traitCategory != null) {
             out.setName(traitCategory.getName());
             out.setGroupname(traitCategory.getGroupname());
             out.setTraittype(convertTraitType(traitCategory.getTraitType()));
@@ -409,17 +432,17 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static List<LootEffect> convertLootEffectList(Set<org.imrofli.godfall.dao.model.LootEffect> lootEffects) {
+    public static List<LootEffect> convertLootEffectList(Set<LootEffectModel> lootEffects) {
         List<LootEffect> out = new ArrayList<>();
         if (lootEffects != null) {
-            for (org.imrofli.godfall.dao.model.LootEffect entry : lootEffects) {
+            for (LootEffectModel entry : lootEffects) {
                 out.add(convertLootEffect(entry));
             }
         }
         return out;
     }
 
-    public static Valorplate convertValorplate(org.imrofli.godfall.dao.model.Valorplate valorplate) {
+    public static Valorplate convertValorplate(ValorplateModel valorplate) {
         Valorplate out = new Valorplate();
         out.setName(valorplate.getName());
         out.setGameplaytag(valorplate.getGameplayTag());
@@ -435,20 +458,21 @@ public class DaoToViewInterpreter {
         out.setArchonModeDrainRate(valorplate.getArchonModeDrainRate());
         out.setArchonmode(convertArchonMode(valorplate.getArchonmode()));
         out.setAugmentGraphs(convertAugmentGraphsSet(valorplate.getAugmentGraphs()));
+        out.setVersion(convertVersionModelDao(valorplate.getVersion()));
         return out;
     }
 
-    private static List<AugmentGraph> convertAugmentGraphsSet(Set<org.imrofli.godfall.dao.model.AugmentGraph> augmentGraphs) {
+    private static List<AugmentGraph> convertAugmentGraphsSet(Set<AugmentGraphModel> augmentGraphs) {
         List<AugmentGraph> out = new ArrayList<>();
         if (augmentGraphs != null) {
-            for (org.imrofli.godfall.dao.model.AugmentGraph entry : augmentGraphs) {
+            for (AugmentGraphModel entry : augmentGraphs) {
                 out.add(convertAugmentGraph(entry));
             }
         }
         return out;
     }
 
-    public static Skill convertSkillDao(org.imrofli.godfall.dao.model.Skill entry) {
+    public static Skill convertSkillDao(SkillModel entry) {
         Skill out = new Skill();
         if (entry != null) {
             out.setId(entry.getId());
@@ -458,21 +482,22 @@ public class DaoToViewInterpreter {
             out.setSkillgroup(entry.getSkillgroup());
             out.setMinPoints(entry.getMinPoints());
             out.setTraitname(entry.getTraitname());
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<Skill> convertSkillDaoSet(Set<org.imrofli.godfall.dao.model.Skill> skillSet) {
+    public static List<Skill> convertSkillDaoSet(Set<SkillModel> skillSet) {
         List<Skill> out = new ArrayList<>();
         if (skillSet != null) {
-            for (org.imrofli.godfall.dao.model.Skill entry : skillSet) {
+            for (SkillModel entry : skillSet) {
                 out.add(convertSkillDao(entry));
             }
         }
         return out;
     }
 
-    private static AugmentGraph convertAugmentGraph(org.imrofli.godfall.dao.model.AugmentGraph entry) {
+    private static AugmentGraph convertAugmentGraph(AugmentGraphModel entry) {
         AugmentGraph out = new AugmentGraph();
         if (entry != null) {
             out.setGraphName(entry.getGraphName());
@@ -484,7 +509,7 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    private static ArchonMode convertArchonMode(org.imrofli.godfall.dao.model.ArchonMode archonmode) {
+    private static ArchonMode convertArchonMode(ArchonModeModel archonmode) {
         ArchonMode out = new ArchonMode();
         if (archonmode != null) {
             out.setGameplayTag(archonmode.getGameplayTag());
@@ -495,34 +520,34 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static List<Valorplate> convertValorplateList(Set<org.imrofli.godfall.dao.model.Valorplate> valorplates) {
+    public static List<Valorplate> convertValorplateList(Set<ValorplateModel> valorplates) {
         List<Valorplate> out = new ArrayList<>();
         if (valorplates != null) {
-            for (org.imrofli.godfall.dao.model.Valorplate entry : valorplates) {
+            for (ValorplateModel entry : valorplates) {
                 out.add(convertValorplate(entry));
             }
         }
         return out;
     }
 
-    public static LootEffect convertLootEffect(org.imrofli.godfall.dao.model.LootEffect lootEffect) {
+    public static LootEffect convertLootEffect(LootEffectModel lootEffect) {
         LootEffect out = new LootEffect();
         out.setName(lootEffect.getName());
         out.setMagnitudes(convertMagnitudeList(lootEffect.getMagnitudes()));
         return out;
     }
 
-    public static List<ConditionalLootEffect> convertConditionalLootEffectList(Set<org.imrofli.godfall.dao.model.ConditionalLootEffect> lootEffects){
+    public static List<ConditionalLootEffect> convertConditionalLootEffectList(Set<ConditionalLootEffectModel> lootEffects) {
         List<ConditionalLootEffect> out = new ArrayList<>();
-        if(lootEffects != null){
-            for(org.imrofli.godfall.dao.model.ConditionalLootEffect entry : lootEffects){
+        if (lootEffects != null) {
+            for (ConditionalLootEffectModel entry : lootEffects) {
                 out.add(convertConditionalLootEffect(entry));
             }
         }
         return out;
     }
 
-    public static ConditionalLootEffect convertConditionalLootEffect(org.imrofli.godfall.dao.model.ConditionalLootEffect lootEffect){
+    public static ConditionalLootEffect convertConditionalLootEffect(ConditionalLootEffectModel lootEffect) {
         ConditionalLootEffect out = new ConditionalLootEffect();
         out.setName(lootEffect.getName());
         out.setDescription(lootEffect.getDescription());
@@ -534,13 +559,14 @@ public class DaoToViewInterpreter {
         out.setConditionparamcategory(convertParamCategory(lootEffect.getConditionParamCategory()));
         out.setConditionparamtype(convertParameterType(lootEffect.getConditionParameterType()));
         out.setConditionparamscalar(lootEffect.getConditionParamScalar());
+
         return out;
     }
 
-    public static List<GlobalParameters> convertGlobalParameterSetDao(Set<org.imrofli.godfall.dao.model.GlobalParameters> entrySet) {
+    public static List<GlobalParameters> convertGlobalParameterSetDao(Set<GlobalParametersModel> entrySet) {
         List<GlobalParameters> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.GlobalParameters entry : entrySet) {
+            for (GlobalParametersModel entry : entrySet) {
                 out.add(convertGlobalParameterDao(entry));
             }
         }
@@ -548,7 +574,7 @@ public class DaoToViewInterpreter {
 
     }
 
-    public static GlobalParameters convertGlobalParameterDao(org.imrofli.godfall.dao.model.GlobalParameters entry) {
+    public static GlobalParameters convertGlobalParameterDao(GlobalParametersModel entry) {
         GlobalParameters globalParameters = new GlobalParameters();
         globalParameters.setId(entry.getId());
         globalParameters.setLootTierBonusScalar(entry.getLootTierBonusScalar());
@@ -639,13 +665,14 @@ public class DaoToViewInterpreter {
         globalParameters.setAscendedItemImprovedTraitTierOffset(entry.getAscendedItemImprovedTraitTierOffset());
         globalParameters.setAscendedItemMinRarityIdentifier(convertRarity(entry.getAscendedItemMinRarityIdentifier()));
         globalParameters.setMaxCoopAdjustedLootTier(entry.getMaxCoopAdjustedLootTier());
+        globalParameters.setVersion(convertVersionModelDao(entry.getVersion()));
         return globalParameters;
     }
 
-    public static List<PlayerStrengthIndex> convertPlayerStrengthIndexSetDao(Set<org.imrofli.godfall.dao.model.PlayerStrengthIndex> entrySet) {
+    public static List<PlayerStrengthIndex> convertPlayerStrengthIndexSetDao(Set<PlayerStrengthIndexModel> entrySet) {
         List<PlayerStrengthIndex> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.PlayerStrengthIndex entry : entrySet) {
+            for (PlayerStrengthIndexModel entry : entrySet) {
                 out.add(convertPlayerStrengthIndexDao(entry));
             }
         }
@@ -654,7 +681,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static PlayerStrengthIndex convertPlayerStrengthIndexDao(org.imrofli.godfall.dao.model.PlayerStrengthIndex entry) {
+    public static PlayerStrengthIndex convertPlayerStrengthIndexDao(PlayerStrengthIndexModel entry) {
         PlayerStrengthIndex out = new PlayerStrengthIndex();
         if (entry != null) {
             out.setId(entry.getId());
@@ -664,14 +691,15 @@ public class DaoToViewInterpreter {
             out.setPowerMultiplierPolarityShockwave(entry.getPowerMultiplierPolarityShockwave());
             out.setTakedownMultiplier(entry.getTakedownMultiplier());
             out.setPowerMultiplierDrain(entry.getPowerMultiplierDrain());
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<PlayerTier> convertPlayerTierSetDao(Set<org.imrofli.godfall.dao.model.PlayerTier> entrySet) {
+    public static List<PlayerTier> convertPlayerTierSetDao(Set<PlayerTierModel> entrySet) {
         List<PlayerTier> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.PlayerTier entry : entrySet) {
+            for (PlayerTierModel entry : entrySet) {
                 out.add(convertPlayerTierDao(entry));
             }
         }
@@ -680,7 +708,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static PlayerTier convertPlayerTierDao(org.imrofli.godfall.dao.model.PlayerTier entry) {
+    public static PlayerTier convertPlayerTierDao(PlayerTierModel entry) {
         PlayerTier out = new PlayerTier();
         if (entry != null) {
             out.setId(entry.getId());
@@ -696,14 +724,15 @@ public class DaoToViewInterpreter {
             out.setExpPenaltySafeTierDifference(entry.getExpPenaltySafeTierDifference());
             out.setExpPenaltyMaxTierDifference(entry.getExpPenaltyMaxTierDifference());
             out.setPowerCapacity(entry.getPowerCapacity());
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<EnemyTier> convertEnemyTierSetDao(Set<org.imrofli.godfall.dao.model.EnemyTier> entrySet) {
+    public static List<EnemyTier> convertEnemyTierSetDao(Set<EnemyTierModel> entrySet) {
         List<EnemyTier> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.EnemyTier entry : entrySet) {
+            for (EnemyTierModel entry : entrySet) {
                 out.add(convertEnemyTierDao(entry));
             }
         }
@@ -712,7 +741,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static EnemyTier convertEnemyTierDao(org.imrofli.godfall.dao.model.EnemyTier entry) {
+    public static EnemyTier convertEnemyTierDao(EnemyTierModel entry) {
         EnemyTier out = new EnemyTier();
         if (entry != null) {
             out.setId(entry.getId());
@@ -721,14 +750,15 @@ public class DaoToViewInterpreter {
             out.setBreachHealthScalar(entry.getBreachHealthScalar());
             out.setExperienceScalar(entry.getExperienceScalar());
             out.setHealthScalar(entry.getHealthScalar());
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<EnemyClass> convertEnemyClassSetDao(Set<org.imrofli.godfall.dao.model.EnemyClass> entrySet) {
+    public static List<EnemyClass> convertEnemyClassSetDao(Set<EnemyClassModel> entrySet) {
         List<EnemyClass> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.EnemyClass entry : entrySet) {
+            for (EnemyClassModel entry : entrySet) {
                 out.add(convertEnemyClassDao(entry));
             }
         }
@@ -737,22 +767,22 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static EnemyClass convertEnemyClassDao(org.imrofli.godfall.dao.model.EnemyClass entry) {
+    public static EnemyClass convertEnemyClassDao(EnemyClassModel entry) {
         EnemyClass out = new EnemyClass();
         if (entry != null) {
             out.setId(entry.getId());
             out.setName(entry.getName());
             out.setArchonChargeGainMultiplier(entry.getArchonChargeGainMultiplier());
             out.setEnemyclasslevels(convertEnemyClassLvlSetDao(entry.getEnemyclasslevels()));
-
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<EnemyClassLvl> convertEnemyClassLvlSetDao(Set<org.imrofli.godfall.dao.model.EnemyClassLvl> entrySet) {
+    public static List<EnemyClassLvl> convertEnemyClassLvlSetDao(Set<EnemyClassLvlModel> entrySet) {
         List<EnemyClassLvl> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.EnemyClassLvl entry : entrySet) {
+            for (EnemyClassLvlModel entry : entrySet) {
                 out.add(convertEnemyClassLvlDao(entry));
             }
         }
@@ -761,7 +791,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static EnemyClassLvl convertEnemyClassLvlDao(org.imrofli.godfall.dao.model.EnemyClassLvl entry) {
+    public static EnemyClassLvl convertEnemyClassLvlDao(EnemyClassLvlModel entry) {
         EnemyClassLvl out = new EnemyClassLvl();
         if (entry != null) {
             out.setId(entry.getId());
@@ -775,10 +805,10 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static List<Enemy> convertEnemySetDao(Set<org.imrofli.godfall.dao.model.Enemy> entrySet) {
+    public static List<Enemy> convertEnemySetDao(Set<EnemyModel> entrySet) {
         List<Enemy> out = new ArrayList<>();
         if (entrySet != null) {
-            for (org.imrofli.godfall.dao.model.Enemy entry : entrySet) {
+            for (EnemyModel entry : entrySet) {
                 out.add(convertEnemyDao(entry));
             }
         }
@@ -787,7 +817,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static Enemy convertEnemyDao(org.imrofli.godfall.dao.model.Enemy entry) {
+    public static Enemy convertEnemyDao(EnemyModel entry) {
         Enemy out = new Enemy();
         if (entry != null) {
             out.setId(entry.getId());
@@ -796,21 +826,22 @@ public class DaoToViewInterpreter {
             out.setGameplayTag(entry.getGameplayTag());
             out.setExperienceGranted(entry.getExperienceGranted());
             out.setLootEventRulesType(entry.getLootEventRulesType());
+            out.setVersion(convertVersionModelDao(entry.getVersion()));
         }
         return out;
     }
 
-    public static List<EffectMagnitude> convertMagnitudeList(Set<org.imrofli.godfall.dao.model.EffectMagnitude> magnitudes) {
+    public static List<EffectMagnitude> convertMagnitudeList(Set<EffectMagnitudeModel> magnitudes) {
         List<EffectMagnitude> out = new ArrayList<>();
         if (magnitudes != null) {
-            for (org.imrofli.godfall.dao.model.EffectMagnitude entry : magnitudes) {
+            for (EffectMagnitudeModel entry : magnitudes) {
                 out.add(convertMagnitude(entry));
             }
         }
         return out;
     }
 
-    public static EffectMagnitude convertMagnitude(org.imrofli.godfall.dao.model.EffectMagnitude magnitude) {
+    public static EffectMagnitude convertMagnitude(EffectMagnitudeModel magnitude) {
         EffectMagnitude out = new EffectMagnitude();
         out.setName(magnitude.getName());
         out.setScalar(magnitude.getScalar());
@@ -819,17 +850,17 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    private static List<CalculatedMagnitude> convertCalculatedValuesDaoSet(Set<org.imrofli.godfall.dao.model.CalculatedMagnitude> calculatedMagnitudes) {
+    private static List<CalculatedMagnitude> convertCalculatedValuesDaoSet(Set<CalculatedMagnitudeModel> calculatedMagnitudes) {
         List<CalculatedMagnitude> out = new ArrayList<>();
         if (calculatedMagnitudes != null) {
-            for (org.imrofli.godfall.dao.model.CalculatedMagnitude entry : calculatedMagnitudes) {
+            for (CalculatedMagnitudeModel entry : calculatedMagnitudes) {
                 out.add(convertCalculatedValuesDao(entry));
             }
         }
         return out;
     }
 
-    private static CalculatedMagnitude convertCalculatedValuesDao(org.imrofli.godfall.dao.model.CalculatedMagnitude calculatedMagnitude) {
+    private static CalculatedMagnitude convertCalculatedValuesDao(CalculatedMagnitudeModel calculatedMagnitude) {
         CalculatedMagnitude out = new CalculatedMagnitude();
         if (calculatedMagnitude != null) {
             out.setLevel(calculatedMagnitude.getLevel());
@@ -840,7 +871,7 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static ConditionParamCategory convertParamCategory(org.imrofli.godfall.dao.model.ConditionParamCategory paramCategory) {
+    public static ConditionParamCategory convertParamCategory(ConditionParamCategoryModel paramCategory) {
         ConditionParamCategory out = new ConditionParamCategory();
         if (paramCategory.getAffinity() != null) {
             out.setAffinity(convertAffinity(paramCategory.getAffinity()));
@@ -851,7 +882,7 @@ public class DaoToViewInterpreter {
         return out;
     }
 
-    public static Affinity convertAffinity(org.imrofli.godfall.dao.model.Affinity affinity) {
+    public static Affinity convertAffinity(AffinityModel affinity) {
         if (affinity != null) {
             switch (affinity) {
                 case VITALITY:
@@ -865,17 +896,17 @@ public class DaoToViewInterpreter {
         return null;
     }
 
-    public static List<Affinity> convertAffinitySet(Set<org.imrofli.godfall.dao.model.Affinity> affinitySet) {
+    public static List<Affinity> convertAffinitySet(Set<AffinityModel> affinitySet) {
         List<Affinity> out = new ArrayList<>();
         if (affinitySet != null) {
-            for (org.imrofli.godfall.dao.model.Affinity entry : affinitySet) {
+            for (AffinityModel entry : affinitySet) {
                 out.add(convertAffinity(entry));
             }
         }
         return out;
     }
 
-    public static TraitType convertTraitType(org.imrofli.godfall.dao.model.TraitType traitType) {
+    public static TraitType convertTraitType(TraitTypeModel traitType) {
         switch (traitType) {
             case MASTERWORK:
                 return TraitType.MASTERWORK;
@@ -886,8 +917,8 @@ public class DaoToViewInterpreter {
         }
     }
 
-    public static Color convertColor(org.imrofli.godfall.dao.model.Color color){
-        switch(color){
+    public static Color convertColor(ColorModel color) {
+        switch (color) {
             case BLUE:
                 return Color.BLUE;
             case RED:
@@ -897,8 +928,8 @@ public class DaoToViewInterpreter {
         }
     }
 
-    public static ParamType convertParameterType(ParameterType parameterType){
-        switch (parameterType){
+    public static ParamType convertParameterType(ParameterTypeModel parameterType) {
+        switch (parameterType) {
             case PLAYER_POWER:
                 return ParamType.PLAYER_POWER;
             case CORE_ATTRIBUTE:
@@ -921,7 +952,7 @@ public class DaoToViewInterpreter {
     }
 
 
-    public static Weapon.WeaponclassEnum convertWeaponType(WeaponType weaponType){
+    public static Weapon.WeaponclassEnum convertWeaponType(WeaponTypeModel weaponType) {
         if (weaponType == null) {
             return null;
         }
@@ -941,11 +972,11 @@ public class DaoToViewInterpreter {
         }
     }
 
-    public static List<ItemElement> convertElementsToList(Set<Element> elements) {
+    public static List<ItemElement> convertElementsToList(Set<ElementModel> elements) {
         //in case for duplicates
         List<ItemElement> itemElements = SetUniqueList.setUniqueList(new ArrayList<>());
         if (elements != null) {
-            for (Element ele : elements) {
+            for (ElementModel ele : elements) {
                 switch (ele) {
                     case PHYSICAL:
                         itemElements.add(ItemElement.PHYSICAL);
@@ -974,8 +1005,8 @@ public class DaoToViewInterpreter {
         return itemElements;
     }
 
-    public static Rarity convertRarity(org.imrofli.godfall.dao.model.Rarity rarity){
-        switch (rarity){
+    public static Rarity convertRarity(RarityModel rarity) {
+        switch (rarity) {
             case LEGENDARY:
                 return Rarity.LEGENDARY;
             case EXOTIC:
@@ -991,20 +1022,20 @@ public class DaoToViewInterpreter {
         }
     }
 
-    public static org.imrofli.godfall.dao.model.Rarity convertRarityBack(Rarity rarity) {
+    public static RarityModel convertRarityBack(Rarity rarity) {
         switch (rarity) {
             case LEGENDARY:
-                return org.imrofli.godfall.dao.model.Rarity.LEGENDARY;
+                return RarityModel.LEGENDARY;
             case EXOTIC:
-                return org.imrofli.godfall.dao.model.Rarity.EXOTIC;
+                return RarityModel.EXOTIC;
             case EPIC:
-                return org.imrofli.godfall.dao.model.Rarity.EPIC;
+                return RarityModel.EPIC;
             case RARE:
-                return org.imrofli.godfall.dao.model.Rarity.RARE;
+                return RarityModel.RARE;
             case UNCOMMON:
-                return org.imrofli.godfall.dao.model.Rarity.UNCOMMON;
+                return RarityModel.UNCOMMON;
             default:
-                return org.imrofli.godfall.dao.model.Rarity.COMMON;
+                return RarityModel.COMMON;
         }
     }
 }

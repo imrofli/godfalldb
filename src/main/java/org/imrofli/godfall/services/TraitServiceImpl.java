@@ -2,6 +2,7 @@ package org.imrofli.godfall.services;
 
 import org.imrofli.godfall.api.model.Trait;
 import org.imrofli.godfall.dao.intf.TraitDao;
+import org.imrofli.godfall.dao.model.TraitModel;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.helpers.DaoToViewInterpreter;
 import org.imrofli.godfall.services.intf.CalculationService;
@@ -28,9 +29,9 @@ public class TraitServiceImpl implements TraitService {
 
 
     @Override
-    public List<Trait> getAllTraits() throws ServiceCallException {
-        LOGGER.info("Getting all Traits");
-        Set<org.imrofli.godfall.dao.model.Trait> traitSet = traitDao.findAllAndFetchAll();
+    public List<Trait> getAllTraits(String version) throws ServiceCallException {
+        LOGGER.info("Getting all Traits. Version {}", version);
+        Set<TraitModel> traitSet = traitDao.findAllAndFetchAll(version);
         if (traitSet == null || traitSet.isEmpty()) {
             throw new ServiceCallException("traitDao.findAllAndFetchAll() returned NULL");
         }
@@ -42,7 +43,7 @@ public class TraitServiceImpl implements TraitService {
     @Override
     public Trait getTraitById(Long traitId) throws ServiceCallException {
         LOGGER.info("Getting Trait by id: {}", traitId);
-        org.imrofli.godfall.dao.model.Trait trait = traitDao.findByIdAndFetchAll(traitId);
+        TraitModel trait = traitDao.findByIdAndFetchAll(traitId);
         if (trait == null) {
             throw new ServiceCallException("traitDao.findByIdAndFetchAll returned NULL");
         }
@@ -51,9 +52,9 @@ public class TraitServiceImpl implements TraitService {
     }
 
     @Override
-    public Trait getTraitByName(String name) throws ServiceCallException {
-        LOGGER.info("Getting Trait by name: {}", name);
-        org.imrofli.godfall.dao.model.Trait trait = traitDao.findByNameAndFetchAll(name);
+    public Trait getTraitByName(String name, String version) throws ServiceCallException {
+        LOGGER.info("Getting Trait by name: {} Version {}", name, version);
+        TraitModel trait = traitDao.findByNameAndFetchAll(name, version);
         if (trait == null) {
             throw new ServiceCallException("traitDao.findByNameAndFetchAll returned NULL");
         }
@@ -62,15 +63,15 @@ public class TraitServiceImpl implements TraitService {
     }
 
     @Override
-    public List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags) throws ServiceCallException {
-        LOGGER.info("Getting all Traits for tags: {} and blacklistTags: {}", allowedTraitTags, blacklistTags);
+    public List<Trait> getTraitsByAllowedTraitTagsAndBlacklistTags(List<String> allowedTraitTags, List<String> blacklistTags, String version) throws ServiceCallException {
+        LOGGER.info("Getting all Traits for Version {} tags: {} and blacklistTags: {}", version, allowedTraitTags, blacklistTags);
         if (allowedTraitTags == null) {
             allowedTraitTags = new ArrayList<>();
         }
         if (blacklistTags == null) {
             blacklistTags = new ArrayList<>();
         }
-        Set<org.imrofli.godfall.dao.model.Trait> traitSet = traitDao.findAllByTraitTagsAndNotBlacklistTagsAndFetchAll(allowedTraitTags, blacklistTags);
+        Set<TraitModel> traitSet = traitDao.findAllByTraitTagsAndNotBlacklistTagsAndFetchAll(allowedTraitTags, blacklistTags, version);
         if (traitSet == null || traitSet.isEmpty()) {
             throw new ServiceCallException("traitDao.findAllAndFetchAll() returned NULL");
         }

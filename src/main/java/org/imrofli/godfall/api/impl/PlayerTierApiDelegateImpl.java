@@ -4,6 +4,7 @@ import org.imrofli.godfall.api.PlayertierApiDelegate;
 import org.imrofli.godfall.api.model.PlayerTier;
 import org.imrofli.godfall.exception.ServiceCallException;
 import org.imrofli.godfall.services.intf.PlayerTierService;
+import org.imrofli.godfall.services.intf.VersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,18 @@ public class PlayerTierApiDelegateImpl implements PlayertierApiDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerTierApiDelegateImpl.class);
     @Autowired
     PlayerTierService playerTierService;
+    @Autowired
+    VersionService versionService;
 
     @Override
-    public ResponseEntity<List<PlayerTier>> getAllPlayerTiers() {
-        LOGGER.info("Call to getAllPlayerStrengthIndexes");
+    public ResponseEntity<List<PlayerTier>> getAllPlayerTiers(String version) {
+        LOGGER.info("Call to getAllPlayerStrengthIndexes. Version {}", version);
         List<PlayerTier> outPlayerTiers = null;
         try {
-            outPlayerTiers = playerTierService.getAllPlayerTier();
+            if (version == null) {
+                version = versionService.getLatestVersion().getVersion();
+            }
+            outPlayerTiers = playerTierService.getAllPlayerTier(version);
         } catch (ServiceCallException e) {
             LOGGER.error(e.getMessage());
             return ResponseEntity.notFound().build();

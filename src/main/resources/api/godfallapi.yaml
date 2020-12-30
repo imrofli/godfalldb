@@ -53,6 +53,8 @@ tags:
     description: "Operations about Valorplates"
   - name: skills
     description: "Operations about Mastery/Skills"
+  - name: version
+    description: "Operations about Versions"
 
 components:
   schemas:
@@ -108,6 +110,17 @@ components:
         - PRIMARY_ATTRIBUTE
         - SECONDARY_ATTRIBUTE
         - MASTERWORK_ATTRIBUTE
+    Version:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        version:
+          type: string
+        loadtime:
+          type: string
+          format: date-time
     TraitSlot:
       type: object
       properties:
@@ -318,6 +331,8 @@ components:
         archonModeDamageReduction:
           type: number
           format: double
+        version:
+          $ref: '#/components/schemas/Version'
     Skill:
       type: object
       properties:
@@ -337,6 +352,8 @@ components:
           format: int64
         traitname:
           type: string
+        version:
+          $ref: '#/components/schemas/Version'
 
     Weapon:
       type: object
@@ -382,6 +399,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     Augment:
       type: object
       properties:
@@ -418,6 +437,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     Banner:
       type: object
       properties:
@@ -461,6 +482,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     LifeStone:
       type: object
       properties:
@@ -509,6 +532,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     Ring:
       type: object
       properties:
@@ -545,6 +570,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     Amulet:
       type: object
       properties:
@@ -581,6 +608,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     Charm:
       type: object
       properties:
@@ -617,6 +646,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
     LootInfo:
       type: object
       properties:
@@ -645,6 +676,8 @@ components:
           type: array
           items:
             type: string
+        version:
+          $ref: '#/components/schemas/Version'
     Trait:
       type: object
       properties:
@@ -690,6 +723,8 @@ components:
           type: array
           items:
             type: string
+        version:
+          $ref: '#/components/schemas/Version'
     Scaling:
       type: object
       properties:
@@ -818,6 +853,8 @@ components:
         noVarianceHealthToDamageMax:
           type: number
           format: double
+        version:
+          $ref: '#/components/schemas/Version'
     GlobalParameters:
       type: object
       properties:
@@ -1078,6 +1115,8 @@ components:
         maxCoopAdjustedLootTier:
           type: number
           format: double
+        version:
+          $ref: '#/components/schemas/Version'
     PlayerStrengthIndex:
       type: object
       properties:
@@ -1102,6 +1141,8 @@ components:
         PowerMultiplierDrain:
           type: number
           format: double
+        version:
+          $ref: '#/components/schemas/Version'
     PlayerTier:
       type: object
       properties:
@@ -1144,6 +1185,8 @@ components:
         powerCapacity:
           type: integer
           format: int64
+        version:
+          $ref: '#/components/schemas/Version'
     EnemyTier:
       type: object
       properties:
@@ -1165,6 +1208,8 @@ components:
         experienceScalar:
           type: number
           format: double
+        version:
+          $ref: '#/components/schemas/Version'
     EnemyClassLvl:
       type: object
       properties:
@@ -1204,6 +1249,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EnemyClassLvl'
+        version:
+          $ref: '#/components/schemas/Version'
     Enemy:
       type: object
       properties:
@@ -1221,6 +1268,8 @@ components:
           format: int64
         lootEventRulesType:
           type: string
+        version:
+          $ref: '#/components/schemas/Version'
     BuildWeapon:
       type: object
       properties:
@@ -1456,6 +1505,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1500,6 +1555,12 @@ paths:
         - name: name
           in: query
           description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
           required: false
           schema:
             type: string
@@ -1550,6 +1611,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1593,6 +1660,12 @@ paths:
         - name: name
           in: query
           description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
           required: false
           schema:
             type: string
@@ -1643,6 +1716,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1687,6 +1766,12 @@ paths:
         - name: name
           in: query
           description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
           required: false
           schema:
             type: string
@@ -1737,6 +1822,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1760,7 +1851,6 @@ paths:
           schema:
             type: integer
             format: int64
-
       responses:
         200:
           description: successful operation
@@ -1777,6 +1867,13 @@ paths:
         - lootinfo
       summary: Get all lootinfos
       operationId: getAllLootInfos
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -1800,6 +1897,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1824,6 +1927,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1848,6 +1957,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1872,6 +1987,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1896,6 +2017,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1920,6 +2047,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1944,6 +2077,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -1979,6 +2118,12 @@ paths:
             type: array
             items:
               type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2026,6 +2171,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2052,6 +2203,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2078,6 +2235,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2104,6 +2267,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2130,6 +2299,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2156,6 +2331,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2182,6 +2363,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2208,6 +2395,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2234,6 +2427,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: successful operation
@@ -2268,6 +2467,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2310,6 +2515,13 @@ paths:
         - globalparams
       summary: Get all Global Parameters
       operationId: getAllGlobalParameters
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Global Parameters'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2328,6 +2540,13 @@ paths:
         - playerstrengthindex
       summary: Get all Player Strength Indexes
       operationId: getAllPlayerStrengthIndexes
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2370,6 +2589,13 @@ paths:
         - playertier
       summary: Get all Player Tiers
       operationId: getAllPlayerTiers
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the playertier'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2412,6 +2638,13 @@ paths:
         - enemytier
       summary: Get all Enemy Tiers
       operationId: getAllEnemyTiers
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemytier'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2454,6 +2687,19 @@ paths:
         - enemyclass
       summary: Get all Enemy Classes
       operationId: getAllEnemyClasses
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the enemyclass'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2496,6 +2742,19 @@ paths:
         - enemy
       summary: Get all Enemies
       operationId: getAllEnemies
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the enemy'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemy'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2542,6 +2801,12 @@ paths:
         - name: name
           in: query
           description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Skill'
           required: false
           schema:
             type: string
@@ -2594,6 +2859,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Skill'
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -2629,4 +2900,62 @@ paths:
                 $ref: '#/components/schemas/Skill'
         404:
           description: No Skill found
+          content: { }
+  /version:
+    get:
+      tags:
+        - version
+      summary: Get all Versions
+      operationId: getAllVersions
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Version'
+        404:
+          description: No Versions found
+          content: { }
+  /version/{id}:
+    get:
+      tags:
+        - version
+      summary: Get Version by id
+      operationId: getVersionById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Version'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        404:
+          description: No Version found
+          content: { }
+  /version/latest:
+    get:
+      tags:
+        - version
+      summary: Get latest Version
+      operationId: getLatestVersion
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        404:
+          description: No Version found
           content: { }

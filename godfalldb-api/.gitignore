@@ -1,0 +1,55 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/*
+!.mvn/wrapper
+!**/src/main/**/target/
+!**/src/test/**/target/
+!.node_modules/*
+!.node_modules
+!**/node_modules
+*.log*
+/client_stubs/*.*
+/client_stubs/*
+/archive/*.*
+/archive/*
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Files ###
+create.sql
+mvnw*
+package-lock.json
+package.json
+webpack.config.js
+webpack.generated.js
+HELP.md
+/node_modules/
+/.mvn/wrapper/
+/src/main/resources/static/godfallapi.yaml

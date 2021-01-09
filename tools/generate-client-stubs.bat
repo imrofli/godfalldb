@@ -1,1 +1,0 @@
-java -jar openapi-generator-cli-4.2.3.jar generate -i ..\src\main\resources\api\godfallapi.yaml -g typescript-node -o ..\client_stubs

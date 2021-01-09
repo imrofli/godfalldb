@@ -1,11 +1,5 @@
 package org.imrofli.godfall.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.imrofli.godfall.data.Index;
-
-import java.io.IOException;
-
 public enum Affinity {
     NONE,MIGHT,SPIRIT,VITALITY;
 

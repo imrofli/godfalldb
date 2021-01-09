@@ -1,7 +1,6 @@
 package org.imrofli.godfall.data;
 
 import com.fasterxml.jackson.annotation.*;
-import java.util.List;
 
 public class Fail {
     private AnyUnion any;

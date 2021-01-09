@@ -2,8 +2,6 @@ package org.imrofli.godfall.models;
 
 import org.imrofli.godfall.data.Index;
 
-import java.util.List;
-
 public class Augment {
     private String name;
     private Affinity affinitiy;

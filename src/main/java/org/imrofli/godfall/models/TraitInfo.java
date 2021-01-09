@@ -1,8 +1,5 @@
 package org.imrofli.godfall.models;
 
-import org.imrofli.godfall.data.FluffyNamedLootEffect;
-import org.imrofli.godfall.data.Magnitude;
-
 import java.util.List;
 
 public class TraitInfo {

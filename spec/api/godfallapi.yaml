@@ -1,0 +1,2989 @@
+openapi: 3.0.0
+info:
+  title: GodfallDB Api
+  description: "GodfallDB API"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    url: https://discord.gg/WPmq4NDfJK
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: Release_2_0
+servers:
+  - url: http://testapi.godfalldb.ch/api
+    description: Testserver url
+  - url: http://192.168.1.11:8155/api
+    description: Testserver Local IP
+  - url: http://godfalldb.ch/api
+    description: Production Server
+  - url: http://localhost:8155/api
+    description: Dev Environment
+tags:
+  - name: weapon
+    description: "Operations about weapons"
+  - name: augment
+    description: "Operations about augments"
+  - name: lifestone
+    description: "Operations about lifestones"
+  - name: banner
+    description: "Operations about banners"
+  - name: charm
+    description: "Operations about charms"
+  - name: ring
+    description: "Operations about rings"
+  - name: amulet
+    description: "Operations about amulets"
+  - name: lootinfo
+    description: "Operations about loot info"
+  - name: scaling
+    description: "Operations about scaling"
+  - name: globalparams
+    description: "Operations about global parameters"
+  - name: playerstrengthindex
+    description: "Operations about PlayerStrenght Index"
+  - name: playertier
+    description: "Operations about Player tiers"
+  - name: enemytier
+    description: "Operations about Enemy tiers"
+  - name: enemyclass
+    description: "Operations about Enemy Classes"
+  - name: enemy
+    description: "Operations about Enemies"
+  - name: valorplate
+    description: "Operations about Valorplates"
+  - name: skills
+    description: "Operations about Mastery/Skills"
+  - name: version
+    description: "Operations about Versions"
+
+components:
+  schemas:
+    ItemElement:
+      type: string
+      enum:
+        - VOID
+        - AIR
+        - FIRE
+        - WATER
+        - EARTH
+        - PHYSICAL
+        - NONE
+    Rarity:
+      type: string
+      enum:
+        - COMMON
+        - UNCOMMON
+        - RARE
+        - EPIC
+        - LEGENDARY
+        - EXOTIC
+    Affinity:
+      type: string
+      enum:
+        - MIGHT
+        - SPIRIT
+        - VITALITY
+    Color:
+      type: string
+      enum:
+        - RED
+        - GREEN
+        - BLUE
+    ParamType:
+      type: string
+      enum:
+        - ATTRIBUTE_NO_VARIANCE
+        - CORE_ATTRIBUTE
+        - CORE_ATTRIBUTE_PERCENT
+        - DEFENSE_PERCENT
+        - NON_SCALING
+        - NO_VARIANCE_CORE_ATTRIBUTE_PERCENT
+        - NO_VARIANCE_DEFENSE_PERCENT
+        - NO_VARIANCE_PLAYER_POWER
+        - PLAYER_POWER
+    SlotType:
+      type: string
+      enum:
+        - PRIMARY_TRAIT
+        - SECONDARY_TRAIT
+        - MASTERWORK_TRAIT
+        - PRIMARY_ATTRIBUTE
+        - SECONDARY_ATTRIBUTE
+        - MASTERWORK_ATTRIBUTE
+    Version:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        version:
+          type: string
+        loadtime:
+          type: string
+          format: date-time
+    TraitSlot:
+      type: object
+      properties:
+        name:
+          type: string
+        slotIndex:
+          type: string
+        groupName:
+          type: string
+        slottype:
+          $ref: '#/components/schemas/SlotType'
+        traitCategoryGroup:
+          $ref: '#/components/schemas/SlotType'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+        slotchance:
+          type: integer
+          format: int64
+        traitchance:
+          type: integer
+          format: int64
+        displayname:
+          type: string
+    CalculatedMagnitude:
+      type: object
+      properties:
+        level:
+          type: integer
+          format: int64
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        calculatedmin:
+          type: number
+          format: double
+        calculatedmax:
+          type: number
+          format: double
+    EffectMagnitude:
+      type: object
+      properties:
+        name:
+          type: string
+        conditionparamtype:
+          $ref: '#/components/schemas/ParamType'
+        scalar:
+          type: number
+          format: double
+        calculatedvalues:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalculatedMagnitude'
+    ConditionParamCategory:
+      type: object
+      properties:
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        color:
+          $ref: '#/components/schemas/Color'
+    LootEffect:
+      type: object
+      properties:
+        name:
+          type: string
+        magnitudes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EffectMagnitude'
+    TraitType:
+      type: string
+      enum:
+        - PRIMARY
+        - SECONDARY
+        - MASTERWORK
+    ConditionalLootEffect:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        applytoself:
+          type: boolean
+        applytoconnected:
+          type: boolean
+        applyforeach:
+          type: boolean
+        looteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/LootEffect'
+        conditionname:
+          type: string
+        conditionparamcategory:
+          $ref: '#/components/schemas/ConditionParamCategory'
+        conditionparamtype:
+          $ref: '#/components/schemas/ParamType'
+        conditionparamscalar:
+          type: integer
+          format: int64
+    TraitCategory:
+      type: object
+      properties:
+        name:
+          type: string
+        groupname:
+          type: string
+        traittype:
+          $ref: '#/components/schemas/TraitType'
+        allowedtraittags:
+          type: array
+          items:
+            type: string
+        traitgroup:
+          type: string
+        exclusiongroups:
+          type: array
+          items:
+            type: string
+        minimumtier:
+          type: integer
+          format: int64
+        maximumtier:
+          type: integer
+          format: int64
+        weight:
+          type: integer
+          format: int64
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+    TraitRequirement:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        required:
+          type: boolean
+        actorType:
+          type: string
+    ArchonMode:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        alwaysOn:
+          type: array
+          items:
+            type: string
+        onActivation:
+          type: array
+          items:
+            type: string
+        whileActive:
+          type: array
+          items:
+            type: string
+    AugmentGraph:
+      type: object
+      properties:
+        gameplayTag:
+          type: string
+        graphName:
+          type: string
+        nodeid:
+          type: integer
+        levelAvailable:
+          type: integer
+        affinityRequirement:
+          $ref: '#/components/schemas/Affinity'
+
+    Valorplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        gameplaytag:
+          type: string
+        displayname:
+          type: string
+        archonmode:
+          $ref: '#/components/schemas/ArchonMode'
+        augmentGraphs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AugmentGraph'
+        enabled:
+          type: boolean
+        startinglevel:
+          type: integer
+        archonChargeGainMultiplier:
+          type: number
+          format: double
+        aetheriumArchonChargeRate:
+          type: number
+          format: double
+        archonModeDrainRate:
+          type: number
+          format: double
+        archonDamageScalar:
+          type: number
+          format: double
+        archonModeDamageReduction:
+          type: number
+          format: double
+        version:
+          $ref: '#/components/schemas/Version'
+    Skill:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        skillgroup:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        minPoints:
+          type: integer
+          format: int64
+        traitname:
+          type: string
+        version:
+          $ref: '#/components/schemas/Version'
+
+    Weapon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        weaponclass:
+          type: string
+          enum:
+            - LONGSWORD
+            - GREATSWORD
+            - POLEARM
+            - DUALBLADES
+            - WARHAMMER
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    Augment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    Banner:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        overshieldScalar:
+          type: integer
+          format: int64
+        radiusScalar:
+          type: integer
+          format: int64
+        cooldownScalar:
+          type: integer
+          format: int64
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    LifeStone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        healamount:
+          type: integer
+          format: int64
+        charges:
+          type: integer
+          format: int64
+        healDuration:
+          type: integer
+          format: int64
+        secondaryTraitDuration:
+          type: integer
+          format: int64
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    Ring:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    Amulet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    Charm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayname:
+          type: string
+        displaydescription:
+          type: string
+        gameplayTag:
+          type: string
+        affinities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affinity'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemElement'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        tags:
+          type: array
+          items:
+            type: string
+        blacklisttags:
+          type: array
+          items:
+            type: string
+        traitslots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitSlot'
+        version:
+          $ref: '#/components/schemas/Version'
+    LootInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        gameplayTag:
+          type: string
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+        minimumTier:
+          type: integer
+          format: int64
+        maximumTier:
+          type: integer
+          format: int64
+        TowerDrop:
+          type: boolean
+        PreorderDrop:
+          type: boolean
+        DropTags:
+          type: array
+          items:
+            type: string
+        version:
+          $ref: '#/components/schemas/Version'
+    Trait:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        group:
+          type: string
+        description:
+          type: string
+        traitrequirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraitRequirement'
+        looteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/LootEffect'
+        conditionallooteffects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConditionalLootEffect'
+        minimumrarity:
+          $ref: '#/components/schemas/Rarity'
+        maximumrarity:
+          $ref: '#/components/schemas/Rarity'
+        minimumTier:
+          type: integer
+          format: int64
+        maximumTier:
+          type: integer
+          format: int64
+        matchModifierMagnitudes:
+          type: boolean
+        weight:
+          type: integer
+          format: int64
+        traitcategory:
+          $ref: '#/components/schemas/TraitCategory'
+        keywords:
+          type: array
+          items:
+            type: string
+        version:
+          $ref: '#/components/schemas/Version'
+    Scaling:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        itemlevel:
+          type: integer
+          format: int64
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        playerLevelRequirement:
+          type: integer
+          format: int64
+        minWeaponDamage:
+          type: number
+          format: double
+        maxWeaponDamage:
+          type: number
+          format: double
+        minPotionHeal:
+          type: number
+          format: double
+        maxPotionHeal:
+          type: number
+          format: double
+        minBannerOvershield:
+          type: number
+          format: double
+        maxBannerOvershield:
+          type: number
+          format: double
+        powerDrain:
+          type: integer
+          format: int64
+        itemStrengthIndex:
+          type: integer
+          format: int64
+        coreAttributeMin:
+          type: number
+          format: double
+        coreAttributeMax:
+          type: number
+          format: double
+        coreAttributePercentMin:
+          type: number
+          format: double
+        coreAttributePercentMax:
+          type: number
+          format: double
+        defensePercentMin:
+          type: number
+          format: double
+        defensePercentMax:
+          type: number
+          format: double
+        reverseScalingMin:
+          type: number
+          format: double
+        reverseScalingMax:
+          type: number
+          format: double
+        nonScalingMin:
+          type: number
+          format: double
+        nonScalingMax:
+          type: number
+          format: double
+        playerPowerMin:
+          type: number
+          format: double
+        playerPowerMax:
+          type: number
+          format: double
+        playerHealthMin:
+          type: number
+          format: double
+        playerHealthMax:
+          type: number
+          format: double
+        attributeNoVarianceMin:
+          type: number
+          format: double
+        attributeNoVarianceMax:
+          type: number
+          format: double
+        healthToDamageMin:
+          type: number
+          format: double
+        healthToDamageMax:
+          type: number
+          format: double
+        nonScalingVarianceMin:
+          type: number
+          format: double
+        nonScalingVarianceMax:
+          type: number
+          format: double
+        noVarianceCoreAttributePercentMin:
+          type: number
+          format: double
+        noVarianceCoreAttributePercentMax:
+          type: number
+          format: double
+        noVarianceDefensePercentMin:
+          type: number
+          format: double
+        noVarianceDefensePercentMax:
+          type: number
+          format: double
+        noVariancePlayerPowerMin:
+          type: number
+          format: double
+        noVariancePlayerPowerMax:
+          type: number
+          format: double
+        noVariancePlayerHealthMin:
+          type: number
+          format: double
+        noVariancePlayerHealthMax:
+          type: number
+          format: double
+        noVarianceHealthToDamageMin:
+          type: number
+          format: double
+        noVarianceHealthToDamageMax:
+          type: number
+          format: double
+        version:
+          $ref: '#/components/schemas/Version'
+    GlobalParameters:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        lootTierBonusScalar:
+          type: number
+          format: double
+        shieldBaseDamage:
+          type: number
+          format: double
+        shieldBaseCooldown:
+          type: number
+          format: double
+        archonModeBaseDamage:
+          type: number
+          format: double
+        baseValorplateHealth:
+          type: number
+          format: double
+        activityMaxNumDeaths:
+          type: number
+          format: double
+        spiritArchonDamageMultiplier:
+          type: number
+          format: double
+        spiritBombDamageMultiplier:
+          type: number
+          format: double
+        lowTierMissionXpPenalty:
+          type: number
+          format: double
+        lootComboChargePerAetherium:
+          type: number
+          format: double
+        starterWeaponMain:
+          type: string
+        starterWeaponOffhand:
+          type: string
+        weaponMasteryXpBaseAmount:
+          type: number
+          format: double
+        randomNumberExponent:
+          type: number
+          format: double
+        ailmentHealthRegenDelay:
+          type: number
+          format: double
+        ailmentHealthRegenRate:
+          type: number
+          format: double
+        baseTakedownHeal:
+          type: number
+          format: double
+        spiritTakedownHealMultiplier:
+          type: number
+          format: double
+        baseTakedownArchonCharge:
+          type: number
+          format: double
+        experienceInclusionRadius:
+          type: number
+          format: double
+        archonExplosionDamage:
+          type: number
+          format: double
+        archonExplosionBreachPower:
+          type: number
+          format: double
+        archonExplosionImpactDisplacement:
+          type: number
+          format: double
+        physicalResistanceMax:
+          type: number
+          format: double
+        fireResistanceMax:
+          type: number
+          format: double
+        waterResistanceMax:
+          type: number
+          format: double
+        airResistanceMax:
+          type: number
+          format: double
+        earthResistanceMax:
+          type: number
+          format: double
+        voidResistanceMax:
+          type: number
+          format: double
+        physicalResistancePostModifierMax:
+          type: number
+          format: double
+        fireResistancePostModifierMax:
+          type: number
+          format: double
+        waterResistancePostModifierMax:
+          type: number
+          format: double
+        airResistancePostModifierMax:
+          type: number
+          format: double
+        earthResistancePostModifierMax:
+          type: number
+          format: double
+        voidResistancePostModifierMax:
+          type: number
+          format: double
+        mainQuestType:
+          type: string
+        playerBaseMapIdentifier:
+          type: string
+        ftueProgressionFlagId:
+          type: string
+        progressionFlagRequiredForAchievements:
+          type: string
+        progressionFlagRequiredForPersonalMenu:
+          type: string
+        progressionFlagRequiredForCodexEntries:
+          type: string
+        progressionFlagRequiredForDreamstoneMode:
+          type: string
+        towerOfTrialsEndgameStartingFloor:
+          type: number
+          format: double
+        defaultDifficultyIdentifier:
+          type: number
+          format: double
+        maxExpPenaltyScalar:
+          type: number
+          format: double
+        baseWeaponDamage:
+          type: number
+          format: double
+        mightWeaponDamageMultiplier:
+          type: number
+          format: double
+        spiritWeaponDamageMultiplier:
+          type: number
+          format: double
+        vitalityHealthMultiplier:
+          type: number
+          format: double
+        spiritSpectralDamageMultiplier:
+          type: number
+          format: double
+        potionBaseHealAmount:
+          type: number
+          format: double
+        spiritPotionHealScalar:
+          type: number
+          format: double
+        potionBaseCharges:
+          type: number
+          format: double
+        potionBaseHealDuration:
+          type: number
+          format: double
+        potionBaseSecondaryTraitDuration:
+          type: number
+          format: double
+        minCriticalHitChance:
+          type: number
+          format: double
+        maxCriticalHitChance:
+          type: number
+          format: double
+        defaultCriticalHitChance:
+          type: number
+          format: double
+        minCriticalHitMultiplier:
+          type: number
+          format: double
+        defaultCriticalHitMultiplier:
+          type: number
+          format: double
+        aetheriumArchonBaseChargeAmount:
+          type: number
+          format: double
+        aetheriumPotionRefillChargeAmount:
+          type: number
+          format: double
+        aetheriumPotionChargesGained:
+          type: number
+          format: double
+        aetheriumSpectralCooldownReduction:
+          type: number
+          format: double
+        bannerBaseCooldown:
+          type: number
+          format: double
+        bannerBaseDuration:
+          type: number
+          format: double
+        bannerBaseRadius:
+          type: number
+          format: double
+        bannerSpiritOvershieldScalar:
+          type: number
+          format: double
+        bombBaseDamage:
+          type: number
+          format: double
+        bombBaseCooldown:
+          type: number
+          format: double
+        bombBaseRadius:
+          type: number
+          format: double
+        bombBaseBreachDamage:
+          type: number
+          format: double
+        overshieldDegenDelay:
+          type: number
+          format: double
+        overshieldDegenRate:
+          type: number
+          format: double
+        damageReductionBuffProductMin:
+          type: number
+          format: double
+        damageDebuffProductMin:
+          type: number
+          format: double
+        archonChargeBaseChargePerSecond:
+          type: number
+          format: double
+        archonDrainPerAttack:
+          type: number
+          format: double
+        baseTakedownDamage:
+          type: number
+          format: double
+        spiritTakedownDamageMultiplier:
+          type: number
+          format: double
+        baseDrainDamage:
+          type: number
+          format: double
+        vitalityDrainDamageMultiplier:
+          type: number
+          format: double
+        polarityShockwaveBaseDamage:
+          type: number
+          format: double
+        spiritPolarityShockwaveDamageMultiplier:
+          type: number
+          format: double
+        ascendedItemInitialUpgradeRank:
+          type: integer
+          format: int64
+        ascendedItemImprovedTraitTierOffset:
+          type: number
+          format: double
+        ascendedItemMinRarityIdentifier:
+          $ref: '#/components/schemas/Rarity'
+        maxCoopAdjustedLootTier:
+          type: number
+          format: double
+        version:
+          $ref: '#/components/schemas/Version'
+    PlayerStrengthIndex:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        playerStrengthIndex:
+          type: integer
+          format: int64
+        PowerMultiplierArchonMode:
+          type: number
+          format: double
+        PowerMultiplierWeaponSpectral:
+          type: number
+          format: double
+        PowerMultiplierPolarityShockwave:
+          type: number
+          format: double
+        TakedownMultiplier:
+          type: number
+          format: double
+        PowerMultiplierDrain:
+          type: number
+          format: double
+        version:
+          $ref: '#/components/schemas/Version'
+    PlayerTier:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        tier:
+          type: integer
+          format: int64
+        coopScalingPlayerMinTier:
+          type: integer
+          format: int64
+        coopScalingPlayerMaxTier:
+          type: integer
+          format: int64
+        totalXpRequired:
+          type: integer
+          format: int64
+        totalSkillPoints:
+          type: integer
+          format: int64
+        Might:
+          type: integer
+          format: int64
+        Vitality:
+          type: integer
+          format: int64
+        Spirit:
+          type: integer
+          format: int64
+        baseHealth:
+          type: integer
+          format: int64
+        expPenaltySafeTierDifference:
+          type: integer
+          format: int64
+        expPenaltyMaxTierDifference:
+          type: integer
+          format: int64
+        powerCapacity:
+          type: integer
+          format: int64
+        version:
+          $ref: '#/components/schemas/Version'
+    EnemyTier:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        tier:
+          type: integer
+          format: int64
+        damageScalar:
+          type: number
+          format: double
+        healthScalar:
+          type: number
+          format: double
+        breachHealthScalar:
+          type: number
+          format: double
+        experienceScalar:
+          type: number
+          format: double
+        version:
+          $ref: '#/components/schemas/Version'
+    EnemyClassLvl:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        quantityScalar:
+          type: number
+          format: double
+        experienceScalar:
+          type: number
+          format: double
+        healthScalar:
+          type: number
+          format: double
+        breachHealthScalar:
+          type: number
+          format: double
+        breachRechargeDurationScalar:
+          type: number
+          format: double
+        breachHealthRegenScalar:
+          type: number
+          format: double
+    EnemyClass:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        archonChargeGainMultiplier:
+          type: number
+          format: double
+        enemyclasslevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnemyClassLvl'
+        version:
+          $ref: '#/components/schemas/Version'
+    Enemy:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        gameplayTag:
+          type: string
+        enemyType:
+          type: string
+        experienceGranted:
+          type: integer
+          format: int64
+        lootEventRulesType:
+          type: string
+        version:
+          $ref: '#/components/schemas/Version'
+    BuildWeapon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        weapon:
+          $ref: '#/components/schemas/Weapon'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateWeapon:
+          $ref: '#/components/schemas/Weapon'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildCharm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        charm:
+          $ref: '#/components/schemas/Charm'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateCharm:
+          $ref: '#/components/schemas/Charm'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildLifeStone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        lifeStone:
+          $ref: '#/components/schemas/LifeStone'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateLifeStone:
+          $ref: '#/components/schemas/LifeStone'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildBanner:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        banner:
+          $ref: '#/components/schemas/Banner'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateBanner:
+          $ref: '#/components/schemas/Banner'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildRing:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        ring:
+          $ref: '#/components/schemas/Ring'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateRing:
+          $ref: '#/components/schemas/Ring'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildAmulet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        amulet:
+          $ref: '#/components/schemas/Amulet'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+        alternateAmulet:
+          $ref: '#/components/schemas/Amulet'
+        alternateTraits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        alternateElement:
+          $ref: '#/components/schemas/ItemElement'
+        alternateAffinity:
+          $ref: '#/components/schemas/Affinity'
+        alternateRarity:
+          $ref: '#/components/schemas/Rarity'
+    BuildAugment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        level:
+          type: integer
+          format: int64
+        amulet:
+          $ref: '#/components/schemas/Augment'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        element:
+          $ref: '#/components/schemas/ItemElement'
+        affinity:
+          $ref: '#/components/schemas/Affinity'
+        rarity:
+          $ref: '#/components/schemas/Rarity'
+
+    Build:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        creator:
+          type: string
+        forVersion:
+          $ref: '#/components/schemas/Version'
+        valorplate:
+          $ref: '#/components/schemas/Valorplate'
+        mainWeapon:
+          $ref: '#/components/schemas/BuildWeapon'
+        secondaryWeapon:
+          $ref: '#/components/schemas/BuildWeapon'
+        charm:
+          $ref: '#/components/schemas/BuildCharm'
+        amulet:
+          $ref: '#/components/schemas/BuildAmulet'
+        ring:
+          $ref: '#/components/schemas/BuildRing'
+        lifeStone:
+          $ref: '#/components/schemas/BuildLifeStone'
+        augments:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildAugment'
+
+
+
+paths:
+  /weapon:
+    get:
+      tags:
+        - weapon
+      summary: Get all weapons
+      operationId: getAllWeapons
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Weapon'
+  /weapon/{id}:
+    get:
+      tags:
+        - weapon
+      summary: Get weapon by id
+      operationId: getWeaponById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a weapon'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weapon'
+        404:
+          description: Weapon not found
+          content: { }
+  /augment:
+    get:
+      tags:
+        - augment
+      summary: Get all Augments
+      operationId: getAllAugments
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Augment'
+  /augment/{id}:
+    get:
+      tags:
+        - augment
+      summary: Get augment by id
+      operationId: getAugmentById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a augment'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Augment'
+        404:
+          description: Augment not found
+          content: { }
+  /lifestone:
+    get:
+      tags:
+        - lifestone
+      summary: Get all lifestones
+      operationId: getAllLifestones
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LifeStone'
+  /lifestone/{id}:
+    get:
+      tags:
+        - lifestone
+      summary: Get lifestone by id
+      operationId: getLifestoneById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Lifestone'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifeStone'
+        404:
+          description: Lifestone not found
+          content: { }
+  /banner:
+    get:
+      tags:
+        - banner
+      summary: Get all banners
+      operationId: getAllBanners
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Banner'
+  /banner/{id}:
+    get:
+      tags:
+        - banner
+      summary: Get banner by id
+      operationId: getBannerById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Banner'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Banner'
+        404:
+          description: Banner not found
+          content: { }
+  /amulet:
+    get:
+      tags:
+        - amulet
+      summary: Get all amulets
+      operationId: getAllAmulets
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Amulet'
+  /amulet/{id}:
+    get:
+      tags:
+        - amulet
+      summary: Get amulet by id
+      operationId: getAmuletById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Amulet'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amulet'
+        404:
+          description: Amulet not found
+          content: { }
+  /charm:
+    get:
+      tags:
+        - charm
+      summary: Get all charms
+      operationId: getAllCharms
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Charm'
+  /charm/{id}:
+    get:
+      tags:
+        - charm
+      summary: Get charm by id
+      operationId: getCharmById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Charm'
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charm'
+        404:
+          description: Charm not found
+          content: { }
+  /ring:
+    get:
+      tags:
+        - ring
+      summary: Get all rings
+      operationId: getAllRings
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ring'
+  /ring/{id}:
+    get:
+      tags:
+        - ring
+      summary: Get ring by id
+      operationId: getRingById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Ring'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ring'
+        404:
+          description: Ring not found
+          content: { }
+  /lootinfo:
+    get:
+      tags:
+        - lootinfo
+      summary: Get all lootinfos
+      operationId: getAllLootInfos
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LootInfo'
+  /lootinfo/amulet/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by amulet id
+      operationId: getLootInfoByAmuletId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/augment/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by augment id
+      operationId: getLootInfoByAugmentId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/banner/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by banner id
+      operationId: getLootInfoByBannerId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/charm/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by charm id
+      operationId: getLootInfoByCharmId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/lifestone/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by lifestone id
+      operationId: getLootInfoByLifeStoneId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/weapon/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by weapon id
+      operationId: getLootInfoByWeaponId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /lootinfo/ring/{id}:
+    get:
+      tags:
+        - lootinfo
+      summary: Get lootinfo by ring id
+      operationId: getLootInfoByRingId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a LootInfo'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LootInfo'
+        404:
+          description: LootInfo not found
+          content: { }
+  /trait:
+    get:
+      tags:
+        - trait
+      summary: Get all Traits
+      operationId: getAllTraits
+      parameters:
+        - name: tags
+          in: query
+          description: 'list of tags to filter for'
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: blacklisttags
+          in: query
+          description: 'list of blacklisted tags to filter for'
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+  /trait/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get Trait by id
+      operationId: getTraitById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch info about a Trait'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trait'
+        404:
+          description: Trait not found
+          content: { }
+  /trait/weapon/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by weapon id
+      operationId: getTraitsByWeaponId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for a weapon'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/augment/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by augment id
+      operationId: getTraitsByAugmentId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for aan augment'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/lifestone/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by lifestone id
+      operationId: getTraitsByLifestoneId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Lifestone'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/banner/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by banner id
+      operationId: getTraitsByBannerId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for a Banner'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/charm/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by charm id
+      operationId: getTraitsByCharmId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for a Charm'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/ring/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by ring id
+      operationId: getTraitsByRingId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for a Ring'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/amulet/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by amulet id
+      operationId: getTraitsByAmuletId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Amulet'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/valorplate/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by Valorplate id
+      operationId: getTraitsByValorplateId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Valorplate'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /trait/skill/{id}:
+    get:
+      tags:
+        - trait
+      summary: Get traits by Skill id
+      operationId: getTraitsBySkillId
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch traits for an Skill'
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trait'
+        404:
+          description: No Traits found
+          content: { }
+  /scaling:
+    get:
+      tags:
+        - scaling
+      summary: Get all Scaling
+      operationId: getAllScalings
+      parameters:
+        - name: rarity
+          in: query
+          description: 'Rarity to get scaling for'
+          required: false
+          style: form
+          schema:
+            $ref: '#/components/schemas/Rarity'
+        - name: level
+          in: query
+          description: 'Level to get scaling for'
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scaling'
+        404:
+          description: No Scalings found
+          content: { }
+  /scaling/{id}:
+    get:
+      tags:
+        - scaling
+      summary: Get Scaling by id
+      operationId: getScalingsById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Scaling'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scaling'
+        404:
+          description: No Scalings found
+          content: { }
+  /globalparams:
+    get:
+      tags:
+        - globalparams
+      summary: Get all Global Parameters
+      operationId: getAllGlobalParameters
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Global Parameters'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GlobalParameters'
+        404:
+          description: No Global Parameters found
+          content: { }
+  /playerstrengthindex:
+    get:
+      tags:
+        - playerstrengthindex
+      summary: Get all Player Strength Indexes
+      operationId: getAllPlayerStrengthIndexes
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerStrengthIndex'
+        404:
+          description: No Player Strength Indexes found
+          content: { }
+  /playerstrengthindex/{id}:
+    get:
+      tags:
+        - playerstrengthindex
+      summary: Get PlayerStrengthIndex by id
+      operationId: getPlayerStrengthIndexById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Player Strength Index'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerStrengthIndex'
+        404:
+          description: No Player Strength Indexes found
+          content: { }
+  /playertier:
+    get:
+      tags:
+        - playertier
+      summary: Get all Player Tiers
+      operationId: getAllPlayerTiers
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the playertier'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerTier'
+        404:
+          description: No Player Tiers found
+          content: { }
+  /playertier/{id}:
+    get:
+      tags:
+        - playertier
+      summary: Get Player Tier by id
+      operationId: getPlayerTierById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Player Tier'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerTier'
+        404:
+          description: No Player Tier found
+          content: { }
+  /enemytier:
+    get:
+      tags:
+        - enemytier
+      summary: Get all Enemy Tiers
+      operationId: getAllEnemyTiers
+      parameters:
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemytier'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnemyTier'
+        404:
+          description: No Enemy Tiers found
+          content: { }
+  /enemytier/{id}:
+    get:
+      tags:
+        - enemytier
+      summary: Get Enemy Tier by id
+      operationId: getEnemyTierById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Enemy Tier'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyTier'
+        404:
+          description: No Enemy Tier found
+          content: { }
+  /enemyclass:
+    get:
+      tags:
+        - enemyclass
+      summary: Get all Enemy Classes
+      operationId: getAllEnemyClasses
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the enemyclass'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemyclass'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnemyClass'
+        404:
+          description: No Enemy Classes found
+          content: { }
+  /enemyclass/{id}:
+    get:
+      tags:
+        - enemyclass
+      summary: Get Enemy Class by id
+      operationId: getEnemyClassById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Enemy Class'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyClass'
+        404:
+          description: No Enemy Class found
+          content: { }
+  /enemy:
+    get:
+      tags:
+        - enemy
+      summary: Get all Enemies
+      operationId: getAllEnemies
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the enemy'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the enemy'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Enemy'
+        404:
+          description: No Enemies found
+          content: { }
+  /enemy/{id}:
+    get:
+      tags:
+        - enemy
+      summary: Get Enemy by id
+      operationId: getEnemyById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Enemy'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enemy'
+        404:
+          description: No Enemy found
+          content: { }
+  /valorplate:
+    get:
+      tags:
+        - valorplate
+      summary: Get all Valorplates
+      operationId: getAllValorplates
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the item'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Skill'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Valorplate'
+        404:
+          description: No Valorplates found
+          content: { }
+  /valorplate/{id}:
+    get:
+      tags:
+        - valorplate
+      summary: Get Valorplate by id
+      operationId: getValorplateById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Valorplate'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Valorplate'
+        404:
+          description: No Valorplate found
+          content: { }
+  /skill:
+    get:
+      tags:
+        - skills
+      summary: Get all Skills
+      operationId: getAllSkills
+      parameters:
+        - name: name
+          in: query
+          description: 'The name of the skill'
+          required: false
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: 'The version needed to fetch the Skill'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        404:
+          description: No Skills found
+          content: { }
+  /skill/{id}:
+    get:
+      tags:
+        - skills
+      summary: Get Skill by id
+      operationId: getSkillById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Skill'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        404:
+          description: No Skill found
+          content: { }
+  /version:
+    get:
+      tags:
+        - version
+      summary: Get all Versions
+      operationId: getAllVersions
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Version'
+        404:
+          description: No Versions found
+          content: { }
+  /version/{id}:
+    get:
+      tags:
+        - version
+      summary: Get Version by id
+      operationId: getVersionById
+      parameters:
+        - name: id
+          in: path
+          description: 'The id needed to fetch the Version'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        404:
+          description: No Version found
+          content: { }
+  /version/latest:
+    get:
+      tags:
+        - version
+      summary: Get latest Version
+      operationId: getLatestVersion
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        404:
+          description: No Version found
+          content: { }

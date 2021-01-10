@@ -532,11 +532,6 @@ public class DataLoader implements DataLoaderIntf {
                     }
                 }
                 trait.setKeywords(keywords);
-                try {
-                    calculationService.calculateTrait(version.getVersion(), trait);
-                } catch (ServiceCallException e) {
-                    e.printStackTrace();
-                }
                 traitDao.save(trait);
             }
         }

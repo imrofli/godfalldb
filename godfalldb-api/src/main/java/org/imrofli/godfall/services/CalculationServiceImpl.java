@@ -64,10 +64,6 @@ public class CalculationServiceImpl implements CalculationService {
                 CalculatedMagnitudeModel calculatedMagnitude = calculateValue(globalParameters, scaling, descriptionParamType, effectMagnitude, matchModifierMagnitudes);
                 calculatedMagnitude.setRarity(rarity);
                 calculatedMagnitude.setLevel(level);
-                if (effectMagnitude.getCalculatedMagnitudes() == null) {
-                    effectMagnitude.setCalculatedMagnitudes(new HashSet<>());
-                }
-                effectMagnitude.getCalculatedMagnitudes().add(calculatedMagnitude);
             }
         }
     }

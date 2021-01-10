@@ -846,28 +846,6 @@ public class DaoToViewInterpreter {
         out.setName(magnitude.getName());
         out.setScalar(magnitude.getScalar());
         out.setConditionparamtype(convertParameterType(magnitude.getParameterType()));
-        out.setCalculatedvalues(convertCalculatedValuesDaoSet(magnitude.getCalculatedMagnitudes()));
-        return out;
-    }
-
-    private static List<CalculatedMagnitude> convertCalculatedValuesDaoSet(Set<CalculatedMagnitudeModel> calculatedMagnitudes) {
-        List<CalculatedMagnitude> out = new ArrayList<>();
-        if (calculatedMagnitudes != null) {
-            for (CalculatedMagnitudeModel entry : calculatedMagnitudes) {
-                out.add(convertCalculatedValuesDao(entry));
-            }
-        }
-        return out;
-    }
-
-    private static CalculatedMagnitude convertCalculatedValuesDao(CalculatedMagnitudeModel calculatedMagnitude) {
-        CalculatedMagnitude out = new CalculatedMagnitude();
-        if (calculatedMagnitude != null) {
-            out.setLevel(calculatedMagnitude.getLevel());
-            out.setRarity(convertRarity(calculatedMagnitude.getRarity()));
-            out.setCalculatedmin(calculatedMagnitude.getMinimum());
-            out.setCalculatedmax(calculatedMagnitude.getMaximum());
-        }
         return out;
     }
 

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+</h:head>
+<h:body>
+    <style>
+        .grid-base .grid-UNCOMMON .grid-RARE .grid-EPIC .grid-LEGENDARY .effect-description-last [class^="col-"] {
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        / / margin-bottom: 15 px;
+        }
+
+        .grid-COMMON [class^="col-"] {
+            background-color: rgba(194, 188, 188, 0.5);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+
+        .grid-UNCOMMON [class^="col-"] {
+            background-color: rgba(27, 209, 51, 0.5);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+
+        .grid-RARE [class^="col-"] {
+            background-color: rgba(19, 89, 240, 0.5);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+
+        .grid-EPIC [class^="col-"] {
+            background-color: rgba(106, 53, 205, 0.5);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+
+        .grid-LEGENDARY [class^="col-"] {
+            background-color: rgba(205, 185, 53, 0.5);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+
+        .row {
+            margin-bottom: 0px;
+            align-content: end;
+        }
+
+        .level-column {
+            float: right;
+        }
+
+        .name-column {
+            text-align: center;
+            font-weight: bolder;
+        }
+
+        .rarity-column {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .affinity-value-column {
+            text-align: center;
+            font-weight: bolder;
+        }
+
+        .affinity-type-column {
+            text-align: center;
+            font-weight: normal;
+        }
+
+        .effect-title {
+            font-weight: bold;
+        }
+
+        .effect-description {
+        }
+
+        .effect-description-last [class^="col-"] {
+            margin-bottom: 15px;
+        }
+
+        .item-card {
+            border: black solid 1px;
+            padding: 0px;
+            display: block;
+            box-sizing: content-box;
+            width: fit-content;
+        }
+    </style>
+    <b:container fluid="true">
+        <b:panel mediumScreen="5">
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="9"><h:outputText value="LVL REQ" styleClass="level-column"/></b:column>
+                <b:column mediumScreen="3"><h:outputText value="${lootInfoBean.getLootInfo(param['id']).minimumTier}"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText value="${amuletBean.getAmulet(param['id']).displayname}"
+                                                          styleClass="name-column"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText
+                        value="${amuletBean.getAmulet(param['id']).minimumrarity.value} Amulet"
+                        styleClass="rarity-column"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText value="111" styleClass="affinity-value-column"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12">
+                    <ui:repeat var="affinity" value="${amuletBean.getAmulet(param['id']).affinities}">
+                        <h:outputText value="${affinity.value}" styleClass="affinity-type-column"/>
+                    </ui:repeat>
+                </b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText value="Primary" styleClass="effect-title"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12">
+                    <b:dataTable value="#{amuletBean.getPrimaryTraits(param['id'])}" var="trait">
+                        <f:facet name="header">
+                            <tr>
+                                <th colspan="1" rowspan="2">Trait</th>
+                                <th colspan="2">Rarity</th>
+                                <th colspan="2">Level</th>
+                                <th colspan="1" rowspan="2">Weight</th>
+                            </tr>
+                            <tr>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                            </tr>
+                        </f:facet>
+                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
+                    </b:dataTable>
+                </b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText value="Secondary" styleClass="effect-title"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12">
+                    <b:dataTable value="#{amuletBean.getSecondaryTraits(param['id'])}" var="trait">
+                        <f:facet name="header">
+                            <tr>
+                                <th colspan="1" rowspan="2">Trait</th>
+                                <th colspan="2">Rarity</th>
+                                <th colspan="2">Level</th>
+                                <th colspan="1" rowspan="2">Weight</th>
+                            </tr>
+                            <tr>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                            </tr>
+                        </f:facet>
+                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
+                    </b:dataTable>
+                </b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12"><h:outputText value="Masterwork" styleClass="effect-title"/></b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12">
+                    <b:dataTable value="#{amuletBean.getMasterworkTraits(param['id'])}" var="trait">
+                        <f:facet name="header">
+                            <tr>
+                                <th colspan="1" rowspan="2">Trait</th>
+                                <th colspan="2">Rarity</th>
+                                <th colspan="2">Level</th>
+                                <th colspan="1" rowspan="2">Weight</th>
+                            </tr>
+                            <tr>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                            </tr>
+                        </f:facet>
+                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
+                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
+                    </b:dataTable>
+                </b:column>
+            </b:row>
+        </b:panel>
+    </b:container>
+</h:body>
+</html>

@@ -31,6 +31,39 @@
             <apache.commons.version>3.6.1</apache.commons.version>
             <openapi-generator.version>4.2.3</openapi-generator.version>
             <openapi.spec>spec/api/godfallapi.yaml</openapi.spec>
+            <openapi.spec.dir>spec/api/</openapi.spec.dir>
+            <jackson-version>2.12.0</jackson-version>
+            <javax.validation-version>2.0.1.Final</javax.validation-version>
+            <findbugs-version>3.0.2</findbugs-version>
+            <junit-version>4.13.1</junit-version>
         </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-apis</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/godfalldb-api/src/main/resources/static</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${openapi.spec.dir}</directory>
+                                    <includes>
+                                        <include>*.yaml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

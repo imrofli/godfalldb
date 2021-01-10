@@ -146,20 +146,6 @@ components:
           format: int64
         displayname:
           type: string
-    CalculatedMagnitude:
-      type: object
-      properties:
-        level:
-          type: integer
-          format: int64
-        rarity:
-          $ref: '#/components/schemas/Rarity'
-        calculatedmin:
-          type: number
-          format: double
-        calculatedmax:
-          type: number
-          format: double
     EffectMagnitude:
       type: object
       properties:
@@ -170,10 +156,6 @@ components:
         scalar:
           type: number
           format: double
-        calculatedvalues:
-          type: array
-          items:
-            $ref: '#/components/schemas/CalculatedMagnitude'
     ConditionParamCategory:
       type: object
       properties:

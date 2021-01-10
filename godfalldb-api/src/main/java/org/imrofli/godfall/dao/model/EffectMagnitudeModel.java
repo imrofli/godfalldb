@@ -15,9 +15,6 @@ public class EffectMagnitudeModel extends AbstractEntity {
 
     private Double scalar;
 
-    @OneToMany(cascade = {CascadeType.ALL})
-    private Set<CalculatedMagnitudeModel> calculatedMagnitudes;
-
     public String getName() {
         return name;
     }
@@ -42,11 +39,4 @@ public class EffectMagnitudeModel extends AbstractEntity {
         this.scalar = scalar;
     }
 
-    public Set<CalculatedMagnitudeModel> getCalculatedMagnitudes() {
-        return calculatedMagnitudes;
-    }
-
-    public void setCalculatedMagnitudes(Set<CalculatedMagnitudeModel> calculatedMagnitudes) {
-        this.calculatedMagnitudes = calculatedMagnitudes;
-    }
 }

@@ -9,11 +9,12 @@
 <h:head>
 </h:head>
 <h:body>
+    <ui:include src="includes/header.xhtml"></ui:include>
 
     <b:container fluid="true">
         <b:dataTable value="#{amuletBean.amuletList}" var="amulet">
             <b:dataTableColumn label="Name">
-                <b:link href="/items/amulet.xhtml?id=#{amulet.id}" value="#{amulet.displayname}" />
+                <b:link href="amulet.xhtml?id=#{amulet.id}" value="#{amulet.displayname}" />
             </b:dataTableColumn>
             <b:dataTableColumn value="#{amulet.minimumrarity.value}" label="Minimum Rarity"/>
             <b:dataTableColumn label="Elements">

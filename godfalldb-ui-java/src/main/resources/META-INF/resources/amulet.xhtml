@@ -8,6 +8,7 @@
 <h:head>
 </h:head>
 <h:body>
+    <ui:include src="includes/header.xhtml"></ui:include>
     <style>
         .grid-base .grid-UNCOMMON .grid-RARE .grid-EPIC .grid-LEGENDARY .effect-description-last [class^="col-"] {
             padding-bottom: 10px;
@@ -100,7 +101,9 @@
         }
     </style>
     <b:container fluid="true">
+        <b:form id="amulet-form"  target="amulet?#{param['id']}">
         <b:panel mediumScreen="5">
+            <h:inputHidden id="amulet-id" value="param['id']"></h:inputHidden>
             <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
                 <b:column mediumScreen="9"><h:outputText value="LVL REQ" styleClass="level-column"/></b:column>
                 <b:column mediumScreen="3"><h:outputText value="${lootInfoBean.getLootInfo(param['id']).minimumTier}"/></b:column>
@@ -127,30 +130,11 @@
             <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
                 <b:column mediumScreen="12"><h:outputText value="Primary" styleClass="effect-title"/></b:column>
             </b:row>
-            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+            <b:row styleClass="grid-${amuletBean.getAmulet(amulet-id).minimumrarity.value}">
                 <b:column mediumScreen="12">
-                    <b:dataTable value="#{amuletBean.getPrimaryTraits(param['id'])}" var="trait">
-                        <f:facet name="header">
-                            <tr>
-                                <th colspan="1" rowspan="2">Trait</th>
-                                <th colspan="2">Rarity</th>
-                                <th colspan="2">Level</th>
-                                <th colspan="1" rowspan="2">Weight</th>
-                            </tr>
-                            <tr>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>Min</th>
-                                <th>Max</th>
-                            </tr>
-                        </f:facet>
-                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
-                    </b:dataTable>
+                    <b:selectOneMenu select2="true" required="true" value="#{buildAmuletBean.traitPrimary}">
+                        <f:selectItems value="#{amuletBean.getPrimaryTraits(param['id'])}" var="c" itemValue="#{c.id}" itemLabel="#{c.description}" />
+                    </b:selectOneMenu>
                 </b:column>
             </b:row>
             <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
@@ -158,60 +142,32 @@
             </b:row>
             <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
                 <b:column mediumScreen="12">
-                    <b:dataTable value="#{amuletBean.getSecondaryTraits(param['id'])}" var="trait">
-                        <f:facet name="header">
-                            <tr>
-                                <th colspan="1" rowspan="2">Trait</th>
-                                <th colspan="2">Rarity</th>
-                                <th colspan="2">Level</th>
-                                <th colspan="1" rowspan="2">Weight</th>
-                            </tr>
-                            <tr>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>Min</th>
-                                <th>Max</th>
-                            </tr>
-                        </f:facet>
-                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
-                    </b:dataTable>
+                    <b:selectOneMenu select2="true" required="true" value="#{buildAmuletBean.traitSecondaryOne}">
+                        <f:selectItems value="#{amuletBean.getSecondaryTraits(param['id'])}" var="c" itemValue="#{c.id}" itemLabel="#{c.traitcategory.traittype} - #{c.description}" />
+                    </b:selectOneMenu>
                 </b:column>
-            </b:row>
-            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
-                <b:column mediumScreen="12"><h:outputText value="Masterwork" styleClass="effect-title"/></b:column>
             </b:row>
             <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
                 <b:column mediumScreen="12">
-                    <b:dataTable value="#{amuletBean.getMasterworkTraits(param['id'])}" var="trait">
-                        <f:facet name="header">
-                            <tr>
-                                <th colspan="1" rowspan="2">Trait</th>
-                                <th colspan="2">Rarity</th>
-                                <th colspan="2">Level</th>
-                                <th colspan="1" rowspan="2">Weight</th>
-                            </tr>
-                            <tr>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>Min</th>
-                                <th>Max</th>
-                            </tr>
-                        </f:facet>
-                        <b:dataTableColumn value="#{trait.description}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumrarity.value}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.minimumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.maximumTier}"></b:dataTableColumn>
-                        <b:dataTableColumn value="#{trait.weight}"></b:dataTableColumn>
-                    </b:dataTable>
+                    <b:selectOneMenu select2="true" required="true" value="#{buildAmuletBean.traitSecondaryTwo}">
+                        <f:selectItems value="#{amuletBean.getSecondaryTraits(param['id'])}" var="c" itemValue="#{c.id}" itemLabel="#{c.traitcategory.traittype} - #{c.description}" />
+                    </b:selectOneMenu>
+                </b:column>
+            </b:row>
+            <b:row styleClass="grid-${amuletBean.getAmulet(param['id']).minimumrarity.value}">
+                <b:column mediumScreen="12">
+                    <b:selectOneMenu select2="true" required="true" value="#{buildAmuletBean.traitSecondaryThree}">
+                        <f:selectItems value="#{amuletBean.getSecondaryTraits(param['id'])}" var="c" itemValue="#{c.id}" itemLabel="#{c.traitcategory.traittype} - #{c.description}" />
+                    </b:selectOneMenu>
+                </b:column>
+            </b:row>
+            <b:row>
+                <b:column mediumScreen="3">
+                    <b:commandButton value="Set to Build" action="#{buildCartBean.setAmulet(param['id'], buildAmuletBean.traitPrimary, buildAmuletBean.traitSecondaryOne, buildAmuletBean.traitSecondaryTwo, buildAmuletBean.traitSecondaryThree)}" look="primary" ajax="false"/>
                 </b:column>
             </b:row>
         </b:panel>
+        </b:form>
     </b:container>
 </h:body>
 </html>

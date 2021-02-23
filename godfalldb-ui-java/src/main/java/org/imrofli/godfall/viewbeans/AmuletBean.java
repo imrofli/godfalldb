@@ -97,7 +97,7 @@ public class AmuletBean implements Serializable {
         getTraitList(id);
         List<Trait> out = new ArrayList<>();
         for(Trait t : traitList){
-            if(TraitType.SECONDARY.equals(t.getTraitcategory().getTraittype())){
+            if(TraitType.SECONDARY.equals(t.getTraitcategory().getTraittype()) || TraitType.MASTERWORK.equals(t.getTraitcategory().getTraittype())){
                 out.add(t);
             }
         }
